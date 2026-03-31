@@ -62,14 +62,17 @@ export default function HomeScreen() {
       const formData = new URLSearchParams();
       formData.append("email", trimmedEmail);
 
-      const response = await fetch("http://localhost:8080/email-add", {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+      const response = await fetch(
+        "http://bugetgarden-backend-production.up.railway.app/email-add",
+        {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: formData.toString(),
         },
-        body: formData.toString(),
-      });
+      );
 
       // Mark as submitted and animate success
       setEmailSubmitted(true);
