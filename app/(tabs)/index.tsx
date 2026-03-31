@@ -97,10 +97,6 @@ export default function HomeScreen() {
     }
   };
 
-  const handleGetStarted = () => {
-    router.push("/(tabs)/explore");
-  };
-
   return (
     <>
       <ScrollView
