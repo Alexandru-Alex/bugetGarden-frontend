@@ -63,7 +63,7 @@ export default function HomeScreen() {
       formData.append("email", trimmedEmail);
 
       const response = await fetch(
-        "http://bugetgarden-backend-production.up.railway.app/email-add",
+        "https://bugetgarden-backend-production-7c3b.up.railway.app/email-add",
         {
           method: "POST",
           mode: "no-cors",
