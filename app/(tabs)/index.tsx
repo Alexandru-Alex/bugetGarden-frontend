@@ -14,7 +14,6 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-
 export default function HomeScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -462,7 +461,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: "row",
     gap: 14,
-    backgroundColor: "rgba(0, 0, 0, 0.05)",
+    backgroundColor: "transparent", // 👈 AICI
     width: "100%",
     maxWidth: 500,
   },
