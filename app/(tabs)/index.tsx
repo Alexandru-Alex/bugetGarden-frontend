@@ -1,7 +1,5 @@
 import { AnimatedTreesBackground } from "@/components/animated-trees";
 import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Animated,
@@ -15,9 +13,8 @@ import {
   View,
 } from "react-native";
 export default function HomeScreen() {
-  const router = useRouter();
   const { width } = useWindowDimensions();
-  const isLargeScreen = width > 768;
+  const isLargeScreewn = width > 768;
   const pulseAnim = React.useRef(new Animated.Value(1)).current;
   const [modalVisible, setModalVisible] = useState(false);
   const [email, setEmail] = useState("");
@@ -104,20 +101,15 @@ export default function HomeScreen() {
       <ScrollView
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollBase,
-          isLargeScreen && styles.scrollLarge,
-        ]}
+        contentContainerStyle={[styles.scrollBase]}
       >
-        <ThemedView
-          style={[styles.container, isLargeScreen && styles.containerLarge]}
-        >
+        <View style={[styles.container, { backgroundColor: "#121212" }]}>
           <AnimatedTreesBackground />
           <View style={styles.contentWrapper}>
             <View style={styles.headerSection}>
-              <ThemedView style={styles.logoContainer}>
+              <View style={styles.logoContainer}>
                 <ThemedText style={styles.logoEmoji}>🌱</ThemedText>
-              </ThemedView>
+              </View>
 
               <ThemedText type="title" style={styles.mainTitle}>
                 BugetGarden
@@ -129,7 +121,7 @@ export default function HomeScreen() {
             </View>
 
             {/* Features Section */}
-            <ThemedView style={styles.featuresSection}>
+            <View style={styles.featuresSection}>
               <ThemedText type="subtitle" style={styles.sectionTitle}>
                 ✨ Key Features
               </ThemedText>
@@ -157,10 +149,10 @@ export default function HomeScreen() {
                 title="Detailed Analytics"
                 description="Track your spending, savings and garden progress over time"
               />
-            </ThemedView>
+            </View>
 
             {/* Benefits Section */}
-            <ThemedView style={styles.benefitsSection}>
+            <View style={styles.benefitsSection}>
               <ThemedText type="subtitle" style={styles.sectionTitle}>
                 Why Choose BugetGarden?
               </ThemedText>
@@ -169,10 +161,10 @@ export default function HomeScreen() {
               <BenefitItem text="Grow your virtual garden with coins you earn" />
               <BenefitItem text="Track your budget and garden progress in real-time" />
               <BenefitItem text="Understand your spending and saving habits better" />
-            </ThemedView>
+            </View>
 
             {/* CTA Section */}
-            <ThemedView style={styles.ctaSection}>
+            <View style={styles.ctaSection}>
               <Animated.View style={[{ transform: [{ scale: pulseAnim }] }]}>
                 <Pressable
                   style={({ pressed }) => [
@@ -186,17 +178,17 @@ export default function HomeScreen() {
                   </ThemedText>
                 </Pressable>
               </Animated.View>
-            </ThemedView>
+            </View>
 
             {/* Footer */}
-            <ThemedView style={styles.footer}>
+            <View style={styles.footer}>
               <ThemedText style={styles.footerText}>
                 Manage your budget smartly and grow your virtual garden with
                 earned coins 🌻
               </ThemedText>
-            </ThemedView>
+            </View>
           </View>
-        </ThemedView>
+        </View>
       </ScrollView>
 
       <Modal
@@ -226,7 +218,7 @@ export default function HomeScreen() {
               </ThemedText>
             </Animated.View>
           ) : (
-            <ThemedView style={styles.modalContent}>
+            <View style={styles.modalContent}>
               <ThemedText style={styles.modalTitle}>
                 Join the Waitlist!
               </ThemedText>
@@ -261,7 +253,7 @@ export default function HomeScreen() {
               >
                 <ThemedText style={styles.closeButtonText}>Cancel</ThemedText>
               </Pressable>
-            </ThemedView>
+            </View>
           )}
         </View>
       </Modal>
@@ -279,15 +271,15 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <ThemedView style={styles.featureCard}>
+    <View style={styles.featureCard}>
       <ThemedText style={styles.featureIcon}>{icon}</ThemedText>
-      <ThemedView style={styles.featureContent}>
+      <View style={styles.featureContent}>
         <ThemedText type="defaultSemiBold" style={styles.featureTitle}>
           {title}
         </ThemedText>
         <ThemedText style={styles.featureDescription}>{description}</ThemedText>
-      </ThemedView>
-    </ThemedView>
+      </View>
+    </View>
   );
 }
 
@@ -436,6 +428,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
+    color: "#FFFFFF", // 👈
   },
   subtitle: {
     fontSize: 16,
@@ -443,6 +436,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 24,
     maxWidth: 500,
+    color: "#AAAAAA", // 👈
   },
   sectionTitle: {
     fontSize: 24,
@@ -450,6 +444,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     textAlign: "center",
     width: "100%",
+    color: "#FFFFFF", // 👈
   },
   featuresSection: {
     marginBottom: 36,
@@ -479,12 +474,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 4,
     textAlign: "left",
+    color: "#FFFFFF", // 👈
   },
   featureDescription: {
     fontSize: 13,
     opacity: 0.7,
     lineHeight: 18,
     textAlign: "left",
+    color: "#AAAAAA", // 👈
   },
   benefitsSection: {
     marginBottom: 36,
@@ -511,6 +508,7 @@ const styles = StyleSheet.create({
     flex: 1,
     lineHeight: 20,
     textAlign: "left",
+    color: "#FFFFFF", // 👈
   },
   ctaSection: {
     gap: 12,
@@ -553,6 +551,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     fontStyle: "italic",
     textAlign: "center",
+    color: "#AAAAAA", // 👈
   },
   modalOverlay: {
     flex: 1,
@@ -571,18 +570,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
+    backgroundColor: "#1E1E1E", // 👈 ASTA LIPSEȘTE
+
     elevation: 10,
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
+    color: "#FFFFFF", // 👈
   },
   modalDescription: {
     fontSize: 14,
     opacity: 0.7,
     textAlign: "center",
     lineHeight: 20,
+    color: "#AAAAAA", // 👈
   },
   emailInput: {
     borderWidth: 2,
@@ -615,7 +618,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 14,
-    color: "#666",
+    color: "#AAAAAA", // 👈
   },
   successPopup: {
     alignItems: "center",
