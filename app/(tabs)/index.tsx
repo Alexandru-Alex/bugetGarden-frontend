@@ -1,6 +1,6 @@
 import { AnimatedTreesBackground } from "@/components/animated-trees";
 import { ThemedText } from "@/components/themed-text";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Animated,
   Easing,
@@ -8,13 +8,12 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Text,
   TextInput,
-  useWindowDimensions,
   View,
 } from "react-native";
+
 export default function HomeScreen() {
-  const { width } = useWindowDimensions();
-  const isLargeScreewn = width > 768;
   const pulseAnim = React.useRef(new Animated.Value(1)).current;
   const [modalVisible, setModalVisible] = useState(false);
   const [email, setEmail] = useState("");
@@ -41,14 +40,9 @@ export default function HomeScreen() {
     ).start();
   }, [pulseAnim]);
 
-  const handleWishlist = () => {
-    setModalVisible(true);
-  };
-
   const handleSubmitEmail = async () => {
     const trimmedEmail = email.trim();
 
-    // Validate email contains @
     if (!trimmedEmail.includes("@")) {
       alert("Please enter a valid email address with @");
       return;
@@ -58,7 +52,7 @@ export default function HomeScreen() {
       const formData = new URLSearchParams();
       formData.append("email", trimmedEmail);
 
-      const response = await fetch(
+      await fetch(
         "https://bugetgarden-backend-production-7c3b.up.railway.app/email-add",
         {
           method: "POST",
@@ -70,10 +64,8 @@ export default function HomeScreen() {
         },
       );
 
-      // Mark as submitted and animate success
       setEmailSubmitted(true);
       setShowCelebration(true);
-      console.log("Email submitted successfully:", trimmedEmail);
 
       Animated.timing(successScaleAnim, {
         toValue: 1,
@@ -82,7 +74,6 @@ export default function HomeScreen() {
         useNativeDriver: true,
       }).start();
 
-      // Close modal after delay
       setTimeout(() => {
         setEmail("");
         setEmailSubmitted(false);
@@ -91,7 +82,6 @@ export default function HomeScreen() {
         setTimeout(() => setShowCelebration(false), 500);
       }, 2500);
     } catch (error) {
-      console.error("Error submitting email:", error);
       alert(`Error: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
@@ -101,9 +91,9 @@ export default function HomeScreen() {
       <ScrollView
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[styles.scrollBase]}
+        contentContainerStyle={styles.scrollBase}
       >
-        <View style={[styles.container, { backgroundColor: "#121212" }]}>
+        <View style={styles.container}>
           <AnimatedTreesBackground />
           <View style={styles.contentWrapper}>
             <View style={styles.headerSection}>
@@ -120,7 +110,6 @@ export default function HomeScreen() {
               </ThemedText>
             </View>
 
-            {/* Features Section */}
             <View style={styles.featuresSection}>
               <ThemedText type="subtitle" style={styles.sectionTitle}>
                 ✨ Key Features
@@ -151,7 +140,6 @@ export default function HomeScreen() {
               />
             </View>
 
-            {/* Benefits Section */}
             <View style={styles.benefitsSection}>
               <ThemedText type="subtitle" style={styles.sectionTitle}>
                 Why Choose BugetGarden?
@@ -163,7 +151,6 @@ export default function HomeScreen() {
               <BenefitItem text="Understand your spending and saving habits better" />
             </View>
 
-            {/* CTA Section */}
             <View style={styles.ctaSection}>
               <Animated.View style={[{ transform: [{ scale: pulseAnim }] }]}>
                 <Pressable
@@ -171,7 +158,7 @@ export default function HomeScreen() {
                     styles.wishlistButton,
                     pressed && styles.wishlistButtonPressed,
                   ]}
-                  onPress={handleWishlist}
+                  onPress={() => setModalVisible(true)}
                 >
                   <ThemedText style={styles.wishlistButtonText}>
                     ❤️ Add to Wishlist
@@ -180,7 +167,6 @@ export default function HomeScreen() {
               </Animated.View>
             </View>
 
-            {/* Footer */}
             <View style={styles.footer}>
               <ThemedText style={styles.footerText}>
                 Manage your budget smartly and grow your virtual garden with
@@ -287,16 +273,19 @@ interface BenefitItemProps {
   text: string;
 }
 
+const PARTICLE_TYPES = ["🪙", "✨", "⭐", "🌸", "💚", "🎉"];
+
 function CelebrationEffect() {
-  const particles = Array.from({ length: 15 }).map((_, i) => {
-    const types = ["🪙", "✨", "⭐", "🌸", "💚", "🎉"];
-    return {
-      id: i,
-      leftPercent: Math.random() * 100,
-      delay: i * 50,
-      type: types[Math.floor(Math.random() * types.length)],
-    };
-  });
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 15 }, (_, i) => ({
+        id: i,
+        leftPercent: Math.random() * 100,
+        delay: i * 50,
+        type: PARTICLE_TYPES[Math.floor(Math.random() * PARTICLE_TYPES.length)],
+      })),
+    [],
+  );
 
   return (
     <View style={styles.celebrationContainer} pointerEvents="none">
@@ -341,10 +330,10 @@ function FallingObject({
     ]).start();
   }, [fallAnim, rotateAnim, delay]);
 
-  const rotation = rotateAnim.interpolate({
-    inputRange: [0, 360],
-    outputRange: ["0deg", "360deg"],
-  });
+  const rotation = useMemo(
+    () => rotateAnim.interpolate({ inputRange: [0, 360], outputRange: ["0deg", "360deg"] }),
+    [rotateAnim],
+  );
 
   return (
     <Animated.View
@@ -356,7 +345,7 @@ function FallingObject({
         },
       ]}
     >
-      {emoji}
+      <Text style={styles.fallingCoinText}>{emoji}</Text>
     </Animated.View>
   );
 }
@@ -380,10 +369,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     width: "100%",
   },
-  scrollLarge: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
   container: {
     flex: 1,
     padding: 20,
@@ -392,19 +377,13 @@ const styles = StyleSheet.create({
     minHeight: "100%",
     width: "100%",
     position: "relative",
+    backgroundColor: "#121212",
   },
   contentWrapper: {
     flex: 1,
     width: "100%",
     alignItems: "center",
     zIndex: 1,
-  },
-  containerLarge: {
-    width: "100%",
-    alignSelf: "center",
-    padding: 60,
-    alignItems: "center",
-    position: "relative",
   },
   headerSection: {
     alignItems: "center",
@@ -428,7 +407,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
-    color: "#FFFFFF", // 👈
+    color: "#FFFFFF",
   },
   subtitle: {
     fontSize: 16,
@@ -436,7 +415,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 24,
     maxWidth: 500,
-    color: "#AAAAAA", // 👈
+    color: "#AAAAAA",
   },
   sectionTitle: {
     fontSize: 24,
@@ -444,7 +423,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     textAlign: "center",
     width: "100%",
-    color: "#FFFFFF", // 👈
+    color: "#FFFFFF",
   },
   featuresSection: {
     marginBottom: 36,
@@ -456,7 +435,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: "row",
     gap: 14,
-    backgroundColor: "transparent", // 👈 AICI
+    backgroundColor: "transparent",
     width: "100%",
     maxWidth: 500,
   },
@@ -474,14 +453,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 4,
     textAlign: "left",
-    color: "#FFFFFF", // 👈
+    color: "#FFFFFF",
   },
   featureDescription: {
     fontSize: 13,
     opacity: 0.7,
     lineHeight: 18,
     textAlign: "left",
-    color: "#AAAAAA", // 👈
+    color: "#AAAAAA",
   },
   benefitsSection: {
     marginBottom: 36,
@@ -508,7 +487,7 @@ const styles = StyleSheet.create({
     flex: 1,
     lineHeight: 20,
     textAlign: "left",
-    color: "#FFFFFF", // 👈
+    color: "#FFFFFF",
   },
   ctaSection: {
     gap: 12,
@@ -551,7 +530,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     fontStyle: "italic",
     textAlign: "center",
-    color: "#AAAAAA", // 👈
+    color: "#AAAAAA",
   },
   modalOverlay: {
     flex: 1,
@@ -570,22 +549,21 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    backgroundColor: "#1E1E1E", // 👈 ASTA LIPSEȘTE
-
+    backgroundColor: "#1E1E1E",
     elevation: 10,
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    color: "#FFFFFF", // 👈
+    color: "#FFFFFF",
   },
   modalDescription: {
     fontSize: 14,
     opacity: 0.7,
     textAlign: "center",
     lineHeight: 20,
-    color: "#AAAAAA", // 👈
+    color: "#AAAAAA",
   },
   emailInput: {
     borderWidth: 2,
@@ -618,7 +596,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 14,
-    color: "#AAAAAA", // 👈
+    color: "#AAAAAA",
   },
   successPopup: {
     alignItems: "center",
@@ -676,7 +654,9 @@ const styles = StyleSheet.create({
   },
   fallingCoin: {
     position: "absolute",
-    fontSize: 40,
     top: -50,
+  },
+  fallingCoinText: {
+    fontSize: 40,
   },
 });

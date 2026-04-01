@@ -1,7 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Animated, Easing, StyleSheet, Text, View } from "react-native";
 
 const TREE_TYPES = ["🌳", "🌲", "🌴", "🎋", "🌵"];
+
+const SIZE_MAP = {
+  small: { width: 40, height: 50, fontSize: 30 },
+  medium: { width: 60, height: 80, fontSize: 45 },
+  large: { width: 80, height: 100, fontSize: 60 },
+};
 
 interface AnimatedTreeProps {
   x: string;
@@ -32,18 +38,12 @@ function AnimatedTree({ x, y, size, treeType }: AnimatedTreeProps) {
     ).start();
   }, [rotateAnim]);
 
-  const rotation = rotateAnim.interpolate({
-    inputRange: [-3, 3],
-    outputRange: ["-3deg", "3deg"],
-  });
+  const rotation = useMemo(
+    () => rotateAnim.interpolate({ inputRange: [-3, 3], outputRange: ["-3deg", "3deg"] }),
+    [rotateAnim],
+  );
 
-  const sizeMap = {
-    small: { width: 40, height: 50, fontSize: 30 },
-    medium: { width: 60, height: 80, fontSize: 45 },
-    large: { width: 80, height: 100, fontSize: 60 },
-  };
-
-  const { width, height, fontSize } = sizeMap[size];
+  const { width, height, fontSize } = SIZE_MAP[size];
 
   return (
     <Animated.View
@@ -75,7 +75,6 @@ function AnimatedCoin({ x, y }: AnimatedCoinProps) {
   const spinAnim = React.useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Float animation
     Animated.loop(
       Animated.sequence([
         Animated.timing(floatAnim, {
@@ -93,7 +92,6 @@ function AnimatedCoin({ x, y }: AnimatedCoinProps) {
       ]),
     ).start();
 
-    // Spin animation
     Animated.loop(
       Animated.timing(spinAnim, {
         toValue: 1,
@@ -104,15 +102,15 @@ function AnimatedCoin({ x, y }: AnimatedCoinProps) {
     ).start();
   }, [floatAnim, spinAnim]);
 
-  const translateY = floatAnim.interpolate({
-    inputRange: [-20, 20],
-    outputRange: [0, 40],
-  });
+  const translateY = useMemo(
+    () => floatAnim.interpolate({ inputRange: [-20, 20], outputRange: [0, 40] }),
+    [floatAnim],
+  );
 
-  const rotate = spinAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
-  });
+  const rotate = useMemo(
+    () => spinAnim.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] }),
+    [spinAnim],
+  );
 
   return (
     <Animated.View
@@ -130,42 +128,39 @@ function AnimatedCoin({ x, y }: AnimatedCoinProps) {
   );
 }
 
+const TREES = [
+  // Top row
+  { x: "5%", y: "5%", size: "small" as const, type: 0 },
+  { x: "15%", y: "2%", size: "large" as const, type: 1 },
+  { x: "30%", y: "8%", size: "medium" as const, type: 2 },
+  { x: "50%", y: "3%", size: "small" as const, type: 3 },
+  { x: "65%", y: "10%", size: "large" as const, type: 4 },
+  { x: "80%", y: "5%", size: "medium" as const, type: 0 },
+  { x: "92%", y: "8%", size: "small" as const, type: 1 },
+  // Middle row
+  { x: "10%", y: "35%", size: "medium" as const, type: 2 },
+  { x: "88%", y: "40%", size: "large" as const, type: 3 },
+  // Bottom row
+  { x: "5%", y: "75%", size: "large" as const, type: 4 },
+  { x: "20%", y: "82%", size: "medium" as const, type: 0 },
+  { x: "40%", y: "78%", size: "small" as const, type: 1 },
+  { x: "60%", y: "80%", size: "large" as const, type: 2 },
+  { x: "75%", y: "75%", size: "medium" as const, type: 3 },
+  { x: "90%", y: "82%", size: "small" as const, type: 4 },
+];
+
+const COINS = [
+  { x: "20%", y: "20%" },
+  { x: "45%", y: "45%" },
+  { x: "70%", y: "30%" },
+  { x: "25%", y: "60%" },
+  { x: "80%", y: "50%" },
+];
+
 export function AnimatedTreesBackground() {
-  const trees = [
-    // Top row
-    { x: "5%", y: "5%", size: "small" as const, type: 0 },
-    { x: "15%", y: "2%", size: "large" as const, type: 1 },
-    { x: "30%", y: "8%", size: "medium" as const, type: 2 },
-    { x: "50%", y: "3%", size: "small" as const, type: 3 },
-    { x: "65%", y: "10%", size: "large" as const, type: 4 },
-    { x: "80%", y: "5%", size: "medium" as const, type: 0 },
-    { x: "92%", y: "8%", size: "small" as const, type: 1 },
-
-    // Middle row
-    { x: "10%", y: "35%", size: "medium" as const, type: 2 },
-    { x: "88%", y: "40%", size: "large" as const, type: 3 },
-
-    // Bottom row
-    { x: "5%", y: "75%", size: "large" as const, type: 4 },
-    { x: "20%", y: "82%", size: "medium" as const, type: 0 },
-    { x: "40%", y: "78%", size: "small" as const, type: 1 },
-    { x: "60%", y: "80%", size: "large" as const, type: 2 },
-    { x: "75%", y: "75%", size: "medium" as const, type: 3 },
-    { x: "90%", y: "82%", size: "small" as const, type: 4 },
-  ];
-
-  const coins = [
-    { x: "20%", y: "20%" },
-    { x: "45%", y: "45%" },
-    { x: "70%", y: "30%" },
-    { x: "25%", y: "60%" },
-    { x: "80%", y: "50%" },
-  ];
-
   return (
     <View style={styles.backgroundContainer}>
-      {/* Trees */}
-      {trees.map((tree, idx) => (
+      {TREES.map((tree, idx) => (
         <AnimatedTree
           key={`tree-${idx}`}
           x={tree.x}
@@ -174,9 +169,7 @@ export function AnimatedTreesBackground() {
           treeType={tree.type}
         />
       ))}
-
-      {/* Coins */}
-      {coins.map((coin, idx) => (
+      {COINS.map((coin, idx) => (
         <AnimatedCoin key={`coin-${idx}`} x={coin.x} y={coin.y} />
       ))}
     </View>
