@@ -116,7 +116,7 @@ export default function HomeScreen() {
               </ThemedText>
 
               <FeatureCard
-                icon="�"
+                icon="💰"
                 title="Dynamic Budget Score"
                 description="Calculate your budget score based on your spending and savings, in real-time"
               />
@@ -151,8 +151,15 @@ export default function HomeScreen() {
               <BenefitItem text="Understand your spending and saving habits better" />
             </View>
 
+            <SocialProofSection />
+
             <View style={styles.ctaSection}>
-              <Animated.View style={[{ transform: [{ scale: pulseAnim }] }]}>
+              <View style={styles.urgencyBadge}>
+                <Text style={styles.urgencyText}>
+                  ⚡ Limited spots — secure yours now
+                </Text>
+              </View>
+              <Animated.View style={[{ transform: [{ scale: pulseAnim }] }, { width: "100%" }]}>
                 <Pressable
                   style={({ pressed }) => [
                     styles.wishlistButton,
@@ -161,10 +168,11 @@ export default function HomeScreen() {
                   onPress={() => setModalVisible(true)}
                 >
                   <ThemedText style={styles.wishlistButtonText}>
-                    ❤️ Add to Wishlist
+                    ❤️ Join the Waitlist
                   </ThemedText>
                 </Pressable>
               </Animated.View>
+              <Text style={styles.ctaSubtext}>Free • No spam • Cancel anytime</Text>
             </View>
 
             <View style={styles.footer}>
@@ -271,6 +279,75 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
 
 interface BenefitItemProps {
   text: string;
+}
+
+const SOCIAL_PROOF_AVATARS = [
+  { color: "#FF6B6B", label: "A" },
+  { color: "#4CAF50", label: "M" },
+  { color: "#2196F3", label: "S" },
+  { color: "#FF9800", label: "L" },
+  { color: "#9C27B0", label: "R" },
+];
+
+const TARGET_COUNT = 1247;
+
+function SocialProofSection() {
+  const [count, setCount] = useState(0);
+  const progressAnim = React.useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const steps = 50;
+    const stepDuration = 1200 / steps;
+    let step = 0;
+    const timer = setInterval(() => {
+      step++;
+      setCount(Math.round((step / steps) * TARGET_COUNT));
+      if (step >= steps) clearInterval(timer);
+    }, stepDuration);
+
+    Animated.timing(progressAnim, {
+      toValue: 0.73,
+      duration: 1800,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: false,
+    }).start();
+
+    return () => clearInterval(timer);
+  }, [progressAnim]);
+
+  const progressWidth = progressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0%", "100%"],
+  });
+
+  return (
+    <View style={styles.socialProofSection}>
+      <View style={styles.avatarRow}>
+        {SOCIAL_PROOF_AVATARS.map((av, i) => (
+          <View
+            key={i}
+            style={[styles.avatar, { backgroundColor: av.color, marginLeft: i === 0 ? 0 : -10 }]}
+          >
+            <Text style={styles.avatarLabel}>{av.label}</Text>
+          </View>
+        ))}
+        <View style={styles.joinedTextContainer}>
+          <Text style={styles.joinedCount}>{count.toLocaleString()}+</Text>
+          <Text style={styles.joinedLabel}> already joined</Text>
+        </View>
+      </View>
+
+      <View style={styles.progressContainer}>
+        <View style={styles.progressHeader}>
+          <Text style={styles.progressLabel}>🔥 Early access filling up</Text>
+          <Text style={styles.progressPercent}>73%</Text>
+        </View>
+        <View style={styles.progressTrack}>
+          <Animated.View style={[styles.progressFill, { width: progressWidth }]} />
+        </View>
+      </View>
+    </View>
+  );
 }
 
 const PARTICLE_TYPES = ["🪙", "✨", "⭐", "🌸", "💚", "🎉"];
@@ -658,5 +735,94 @@ const styles = StyleSheet.create({
   },
   fallingCoinText: {
     fontSize: 40,
+  },
+  // Social proof
+  socialProofSection: {
+    width: "100%",
+    maxWidth: 500,
+    marginBottom: 28,
+    gap: 16,
+  },
+  avatarRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#121212",
+  },
+  avatarLabel: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  joinedTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 14,
+  },
+  joinedCount: {
+    color: "#4CAF50",
+    fontWeight: "bold",
+    fontSize: 15,
+  },
+  joinedLabel: {
+    color: "#AAAAAA",
+    fontSize: 14,
+  },
+  progressContainer: {
+    gap: 8,
+  },
+  progressHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  progressLabel: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  progressPercent: {
+    color: "#FF6B6B",
+    fontSize: 13,
+    fontWeight: "bold",
+  },
+  progressTrack: {
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 5,
+    backgroundColor: "#FF6B6B",
+  },
+  // CTA extras
+  urgencyBadge: {
+    backgroundColor: "rgba(255, 107, 107, 0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 107, 0.4)",
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+  },
+  urgencyText: {
+    color: "#FF8A80",
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  ctaSubtext: {
+    color: "#666666",
+    fontSize: 12,
+    textAlign: "center",
+    marginTop: 4,
   },
 });
