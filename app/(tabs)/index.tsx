@@ -1,5 +1,6 @@
 import { AnimatedTreesBackground } from "@/components/animated-trees";
 import { ThemedText } from "@/components/themed-text";
+import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Animated,
@@ -14,6 +15,7 @@ import {
 } from "react-native";
 
 export default function HomeScreen() {
+  const router = useRouter();
   const pulseAnim = React.useRef(new Animated.Value(1)).current;
   const [modalVisible, setModalVisible] = useState(false);
   const [email, setEmail] = useState("");
@@ -139,6 +141,8 @@ export default function HomeScreen() {
                 description="Track your spending, savings and garden progress over time"
               />
             </View>
+
+            <RoadmapButton onPress={() => router.push("/(tabs)/roadmap")} />
 
             <View style={styles.benefitsSection}>
               <ThemedText type="subtitle" style={styles.sectionTitle}>
@@ -423,6 +427,86 @@ function FallingObject({
       ]}
     >
       <Text style={styles.fallingCoinText}>{emoji}</Text>
+    </Animated.View>
+  );
+}
+
+function RoadmapButton({ onPress }: { onPress: () => void }) {
+  const glowAnim = React.useRef(new Animated.Value(0)).current;
+  const scaleAnim = React.useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: false,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: false,
+        }),
+      ]),
+    ).start();
+  }, [glowAnim]);
+
+  const borderColor = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["rgba(76,175,80,0.3)", "rgba(76,175,80,1)"],
+  });
+
+  const shadowOpacity = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.2, 0.75],
+  });
+
+  const handlePressIn = () => {
+    Animated.timing(scaleAnim, {
+      toValue: 0.96,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.timing(scaleAnim, {
+      toValue: 1,
+      duration: 150,
+      easing: Easing.out(Easing.back(2)),
+      useNativeDriver: true,
+    }).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        styles.roadmapButtonWrapper,
+        {
+          transform: [{ scale: scaleAnim }],
+          borderColor,
+          shadowOpacity,
+        },
+      ]}
+    >
+      <Pressable
+        style={styles.roadmapButton}
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+      >
+        <Text style={styles.roadmapButtonEmoji}>🗺️</Text>
+        <View style={styles.roadmapButtonContent}>
+          <Text style={styles.roadmapButtonTitle}>View Roadmap</Text>
+          <Text style={styles.roadmapButtonSub}>See what's coming next →</Text>
+        </View>
+        <View style={styles.roadmapButtonBadge}>
+          <Text style={styles.roadmapButtonBadgeText}>NEW</Text>
+        </View>
+      </Pressable>
     </Animated.View>
   );
 }
@@ -824,5 +908,53 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     marginTop: 4,
+  },
+  roadmapButtonWrapper: {
+    width: "100%",
+    maxWidth: 500,
+    marginBottom: 28,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    backgroundColor: "rgba(76, 175, 80, 0.08)",
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  roadmapButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    gap: 14,
+  },
+  roadmapButtonEmoji: {
+    fontSize: 32,
+  },
+  roadmapButtonContent: {
+    flex: 1,
+    gap: 2,
+  },
+  roadmapButtonTitle: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  roadmapButtonSub: {
+    color: "#4CAF50",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  roadmapButtonBadge: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 6,
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+  },
+  roadmapButtonBadgeText: {
+    color: "#FFFFFF",
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.5,
   },
 });

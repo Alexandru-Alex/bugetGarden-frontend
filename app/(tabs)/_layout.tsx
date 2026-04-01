@@ -27,6 +27,12 @@ export default function TabLayout() {
           title: "Explore",
         }}
       />
+      <Tabs.Screen
+        name="roadmap"
+        options={{
+          title: "Roadmap",
+        }}
+      />
     </Tabs>
   );
 }
