@@ -8,11 +8,11 @@ import {
   Modal,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { styles } from "./index.styles";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -163,7 +163,12 @@ export default function HomeScreen() {
                   ⚡ Limited spots — secure yours now
                 </Text>
               </View>
-              <Animated.View style={[{ transform: [{ scale: pulseAnim }] }, { width: "100%" }]}>
+              <Animated.View
+                style={[
+                  { transform: [{ scale: pulseAnim }] },
+                  { width: "100%" },
+                ]}
+              >
                 <Pressable
                   style={({ pressed }) => [
                     styles.wishlistButton,
@@ -176,7 +181,9 @@ export default function HomeScreen() {
                   </ThemedText>
                 </Pressable>
               </Animated.View>
-              <Text style={styles.ctaSubtext}>Free • No spam • Cancel anytime</Text>
+              <Text style={styles.ctaSubtext}>
+                Free • No spam • Cancel anytime
+              </Text>
             </View>
 
             <View style={styles.footer}>
@@ -330,7 +337,10 @@ function SocialProofSection() {
         {SOCIAL_PROOF_AVATARS.map((av, i) => (
           <View
             key={i}
-            style={[styles.avatar, { backgroundColor: av.color, marginLeft: i === 0 ? 0 : -10 }]}
+            style={[
+              styles.avatar,
+              { backgroundColor: av.color, marginLeft: i === 0 ? 0 : -10 },
+            ]}
           >
             <Text style={styles.avatarLabel}>{av.label}</Text>
           </View>
@@ -344,10 +354,12 @@ function SocialProofSection() {
       <View style={styles.progressContainer}>
         <View style={styles.progressHeader}>
           <Text style={styles.progressLabel}>🔥 Early access filling up</Text>
-          <Text style={styles.progressPercent}>73%</Text>
+          <Text style={styles.progressPercent}>1%</Text>
         </View>
         <View style={styles.progressTrack}>
-          <Animated.View style={[styles.progressFill, { width: progressWidth }]} />
+          <Animated.View
+            style={[styles.progressFill, { width: progressWidth }]}
+          />
         </View>
       </View>
     </View>
@@ -412,7 +424,11 @@ function FallingObject({
   }, [fallAnim, rotateAnim, delay]);
 
   const rotation = useMemo(
-    () => rotateAnim.interpolate({ inputRange: [0, 360], outputRange: ["0deg", "360deg"] }),
+    () =>
+      rotateAnim.interpolate({
+        inputRange: [0, 360],
+        outputRange: ["0deg", "360deg"],
+      }),
     [rotateAnim],
   );
 
@@ -519,442 +535,3 @@ function BenefitItem({ text }: BenefitItemProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContainer: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  scrollBase: {
-    flexGrow: 1,
-    width: "100%",
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    paddingBottom: 40,
-    alignItems: "center",
-    minHeight: "100%",
-    width: "100%",
-    position: "relative",
-    backgroundColor: "#121212",
-  },
-  contentWrapper: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  headerSection: {
-    alignItems: "center",
-    marginBottom: 48,
-    marginTop: 40,
-  },
-  logoContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-    backgroundColor: "#E8F5E9",
-  },
-  logoEmoji: {
-    fontSize: 50,
-  },
-  mainTitle: {
-    fontSize: 40,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-    color: "#FFFFFF",
-  },
-  subtitle: {
-    fontSize: 16,
-    opacity: 0.7,
-    textAlign: "center",
-    lineHeight: 24,
-    maxWidth: 500,
-    color: "#AAAAAA",
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 18,
-    textAlign: "center",
-    width: "100%",
-    color: "#FFFFFF",
-  },
-  featuresSection: {
-    marginBottom: 36,
-    gap: 14,
-    alignItems: "center",
-  },
-  featureCard: {
-    padding: 16,
-    borderRadius: 12,
-    flexDirection: "row",
-    gap: 14,
-    backgroundColor: "transparent",
-    width: "100%",
-    maxWidth: 500,
-  },
-  featureIcon: {
-    fontSize: 32,
-    width: 50,
-    textAlign: "center",
-    minWidth: 50,
-  },
-  featureContent: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  featureTitle: {
-    fontSize: 16,
-    marginBottom: 4,
-    textAlign: "left",
-    color: "#FFFFFF",
-  },
-  featureDescription: {
-    fontSize: 13,
-    opacity: 0.7,
-    lineHeight: 18,
-    textAlign: "left",
-    color: "#AAAAAA",
-  },
-  benefitsSection: {
-    marginBottom: 36,
-    gap: 10,
-    alignItems: "center",
-  },
-  benefitItem: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-    paddingVertical: 8,
-    maxWidth: 500,
-    width: "100%",
-  },
-  benefitCheckmark: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#4CAF50",
-    marginTop: 2,
-    minWidth: 20,
-  },
-  benefitText: {
-    fontSize: 14,
-    flex: 1,
-    lineHeight: 20,
-    textAlign: "left",
-    color: "#FFFFFF",
-  },
-  ctaSection: {
-    gap: 12,
-    marginBottom: 32,
-    width: "100%",
-    maxWidth: 500,
-    alignItems: "center",
-  },
-  wishlistButton: {
-    backgroundColor: "#FF6B6B",
-    paddingVertical: 24,
-    paddingHorizontal: 30,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    shadowColor: "#FF6B6B",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  wishlistButtonPressed: {
-    backgroundColor: "#FF5252",
-    opacity: 0.95,
-  },
-  wishlistButtonText: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  footer: {
-    paddingTop: 24,
-    alignItems: "center",
-    borderTopWidth: 1,
-    borderTopColor: "rgba(0, 0, 0, 0.1)",
-  },
-  footerText: {
-    fontSize: 14,
-    opacity: 0.6,
-    fontStyle: "italic",
-    textAlign: "center",
-    color: "#AAAAAA",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  modalContent: {
-    borderRadius: 20,
-    padding: 30,
-    width: "100%",
-    maxWidth: 400,
-    gap: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    backgroundColor: "#1E1E1E",
-    elevation: 10,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#FFFFFF",
-  },
-  modalDescription: {
-    fontSize: 14,
-    opacity: 0.7,
-    textAlign: "center",
-    lineHeight: 20,
-    color: "#AAAAAA",
-  },
-  emailInput: {
-    borderWidth: 2,
-    borderColor: "#4CAF50",
-    borderRadius: 12,
-    padding: 14,
-    fontSize: 14,
-    color: "#333",
-    backgroundColor: "#F5F5F5",
-  },
-  submitButton: {
-    backgroundColor: "#FF6B6B",
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  submitButtonPressed: {
-    backgroundColor: "#FF5252",
-    opacity: 0.9,
-  },
-  submitButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  closeButton: {
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  closeButtonText: {
-    fontSize: 14,
-    color: "#AAAAAA",
-  },
-  successPopup: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 40,
-    paddingVertical: 50,
-    borderRadius: 20,
-    backgroundColor: "#66BB6A",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 10,
-    maxWidth: 350,
-  },
-  successEmoji: {
-    fontSize: 60,
-  },
-  successIconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "rgba(255,255,255,0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  successTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  successMessage: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#FFFFFF",
-    marginBottom: 12,
-    lineHeight: 24,
-  },
-  successSubtext: {
-    fontSize: 14,
-    textAlign: "center",
-    color: "rgba(255,255,255,0.9)",
-    fontStyle: "italic",
-  },
-  celebrationContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    overflow: "hidden",
-  },
-  fallingCoin: {
-    position: "absolute",
-    top: -50,
-  },
-  fallingCoinText: {
-    fontSize: 40,
-  },
-  // Social proof
-  socialProofSection: {
-    width: "100%",
-    maxWidth: 500,
-    marginBottom: 28,
-    gap: 16,
-  },
-  avatarRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#121212",
-  },
-  avatarLabel: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 14,
-  },
-  joinedTextContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 14,
-  },
-  joinedCount: {
-    color: "#4CAF50",
-    fontWeight: "bold",
-    fontSize: 15,
-  },
-  joinedLabel: {
-    color: "#AAAAAA",
-    fontSize: 14,
-  },
-  progressContainer: {
-    gap: 8,
-  },
-  progressHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  progressLabel: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  progressPercent: {
-    color: "#FF6B6B",
-    fontSize: 13,
-    fontWeight: "bold",
-  },
-  progressTrack: {
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 5,
-    backgroundColor: "#FF6B6B",
-  },
-  // CTA extras
-  urgencyBadge: {
-    backgroundColor: "rgba(255, 107, 107, 0.15)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 107, 107, 0.4)",
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-  },
-  urgencyText: {
-    color: "#FF8A80",
-    fontSize: 13,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  ctaSubtext: {
-    color: "#666666",
-    fontSize: 12,
-    textAlign: "center",
-    marginTop: 4,
-  },
-  roadmapButtonWrapper: {
-    width: "100%",
-    maxWidth: 500,
-    marginBottom: 28,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    backgroundColor: "rgba(76, 175, 80, 0.08)",
-    shadowColor: "#4CAF50",
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 12,
-    elevation: 6,
-  },
-  roadmapButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    gap: 14,
-  },
-  roadmapButtonEmoji: {
-    fontSize: 32,
-  },
-  roadmapButtonContent: {
-    flex: 1,
-    gap: 2,
-  },
-  roadmapButtonTitle: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  roadmapButtonSub: {
-    color: "#4CAF50",
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  roadmapButtonBadge: {
-    backgroundColor: "#4CAF50",
-    borderRadius: 6,
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-  },
-  roadmapButtonBadgeText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 0.5,
-  },
-});

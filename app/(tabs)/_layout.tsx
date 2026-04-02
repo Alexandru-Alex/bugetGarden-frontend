@@ -33,6 +33,12 @@ export default function TabLayout() {
           title: "Roadmap",
         }}
       />
+      <Tabs.Screen
+        name="income"
+        options={{
+          title: "Income",
+        }}
+      />
     </Tabs>
   );
 }

@@ -3,6 +3,12 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import {
+  Nunito_700Bold,
+  Nunito_800ExtraBold,
+  Nunito_900Black,
+  useFonts,
+} from "@expo-google-fonts/nunito";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
@@ -15,6 +21,12 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
+  const [fontsLoaded] = useFonts({
+    Nunito_700Bold,
+    Nunito_800ExtraBold,
+    Nunito_900Black,
+  });
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
