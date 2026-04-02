@@ -31,7 +31,7 @@ const PHASES: Phase[] = [
     title: "Start Your Garden",
     subtitle: "4–6 weeks · Coming Soon",
     status: "active",
-    tagline: "Start simple. See your progress instantly.",
+    tagline: "🌿 Start simple. See your progress instantly.",
     items: [
       "💰 Add your income and daily expenses",
       "📊 Get your daily Budget Score",
