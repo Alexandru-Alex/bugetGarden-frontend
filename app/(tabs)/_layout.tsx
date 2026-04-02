@@ -22,21 +22,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Explore",
-        }}
-      />
-      <Tabs.Screen
         name="roadmap"
         options={{
           title: "Roadmap",
         }}
       />
       <Tabs.Screen
-        name="income"
+        name="dashboard"
         options={{
-          title: "Income",
+          title: "Dashboard",
         }}
       />
     </Tabs>

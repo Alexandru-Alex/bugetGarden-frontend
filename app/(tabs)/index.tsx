@@ -12,6 +12,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./index.styles";
 
 export default function HomeScreen() {
@@ -90,111 +91,113 @@ export default function HomeScreen() {
 
   return (
     <>
-      <ScrollView
-        style={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollBase}
-      >
-        <View style={styles.container}>
-          <AnimatedTreesBackground />
-          <View style={styles.contentWrapper}>
-            <View style={styles.headerSection}>
-              <View style={styles.logoContainer}>
-                <ThemedText style={styles.logoEmoji}>🌱</ThemedText>
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <ScrollView
+          style={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollBase}
+        >
+          <View style={styles.container}>
+            <AnimatedTreesBackground />
+            <View style={styles.contentWrapper}>
+              <View style={styles.headerSection}>
+                <View style={styles.logoContainer}>
+                  <ThemedText style={styles.logoEmoji}>🌱</ThemedText>
+                </View>
+
+                <ThemedText type="title" style={styles.mainTitle}>
+                  BugetGarden
+                </ThemedText>
+
+                <ThemedText style={styles.subtitle}>
+                  Save smartly, earn coins and grow your virtual garden
+                </ThemedText>
               </View>
 
-              <ThemedText type="title" style={styles.mainTitle}>
-                BugetGarden
-              </ThemedText>
+              <View style={styles.featuresSection}>
+                <ThemedText type="subtitle" style={styles.sectionTitle}>
+                  ✨ Key Features
+                </ThemedText>
 
-              <ThemedText style={styles.subtitle}>
-                Save smartly, earn coins and grow your virtual garden
-              </ThemedText>
-            </View>
+                <FeatureCard
+                  icon="💰"
+                  title="Dynamic Budget Score"
+                  description="Calculate your budget score based on your spending and savings, in real-time"
+                />
 
-            <View style={styles.featuresSection}>
-              <ThemedText type="subtitle" style={styles.sectionTitle}>
-                ✨ Key Features
-              </ThemedText>
+                <FeatureCard
+                  icon="🪙"
+                  title="Earn Coins"
+                  description="Get virtual coins for every saving you make and use them at the garden shop"
+                />
 
-              <FeatureCard
-                icon="💰"
-                title="Dynamic Budget Score"
-                description="Calculate your budget score based on your spending and savings, in real-time"
-              />
+                <FeatureCard
+                  icon="🌳"
+                  title="Grow Your Virtual Garden"
+                  description="Buy trees and plants with your earned coins and watch your garden grow"
+                />
 
-              <FeatureCard
-                icon="🪙"
-                title="Earn Coins"
-                description="Get virtual coins for every saving you make and use them at the garden shop"
-              />
+                <FeatureCard
+                  icon="📊"
+                  title="Detailed Analytics"
+                  description="Track your spending, savings and garden progress over time"
+                />
+              </View>
 
-              <FeatureCard
-                icon="🌳"
-                title="Grow Your Virtual Garden"
-                description="Buy trees and plants with your earned coins and watch your garden grow"
-              />
+              <RoadmapButton onPress={() => router.push("/(tabs)/roadmap")} />
 
-              <FeatureCard
-                icon="📊"
-                title="Detailed Analytics"
-                description="Track your spending, savings and garden progress over time"
-              />
-            </View>
+              <View style={styles.benefitsSection}>
+                <ThemedText type="subtitle" style={styles.sectionTitle}>
+                  Why Choose BugetGarden?
+                </ThemedText>
 
-            <RoadmapButton onPress={() => router.push("/(tabs)/roadmap")} />
+                <BenefitItem text="Turn your savings into virtual coins and rewards" />
+                <BenefitItem text="Grow your virtual garden with coins you earn" />
+                <BenefitItem text="Track your budget and garden progress in real-time" />
+                <BenefitItem text="Understand your spending and saving habits better" />
+              </View>
 
-            <View style={styles.benefitsSection}>
-              <ThemedText type="subtitle" style={styles.sectionTitle}>
-                Why Choose BugetGarden?
-              </ThemedText>
+              <SocialProofSection />
 
-              <BenefitItem text="Turn your savings into virtual coins and rewards" />
-              <BenefitItem text="Grow your virtual garden with coins you earn" />
-              <BenefitItem text="Track your budget and garden progress in real-time" />
-              <BenefitItem text="Understand your spending and saving habits better" />
-            </View>
-
-            <SocialProofSection />
-
-            <View style={styles.ctaSection}>
-              <View style={styles.urgencyBadge}>
-                <Text style={styles.urgencyText}>
-                  ⚡ Limited spots — secure yours now
+              <View style={styles.ctaSection}>
+                <View style={styles.urgencyBadge}>
+                  <Text style={styles.urgencyText}>
+                    ⚡ Limited spots — secure yours now
+                  </Text>
+                </View>
+                <Animated.View
+                  style={[
+                    { transform: [{ scale: pulseAnim }] },
+                    { width: "100%" },
+                  ]}
+                >
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.wishlistButton,
+                      pressed && styles.wishlistButtonPressed,
+                    ]}
+                    onPress={() => setModalVisible(true)}
+                  >
+                    <ThemedText style={styles.wishlistButtonText}>
+                      ❤️ Join the Waitlist
+                    </ThemedText>
+                  </Pressable>
+                </Animated.View>
+                <Text style={styles.ctaSubtext}>
+                  Free • No spam • Cancel anytime
                 </Text>
               </View>
-              <Animated.View
-                style={[
-                  { transform: [{ scale: pulseAnim }] },
-                  { width: "100%" },
-                ]}
-              >
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.wishlistButton,
-                    pressed && styles.wishlistButtonPressed,
-                  ]}
-                  onPress={() => setModalVisible(true)}
-                >
-                  <ThemedText style={styles.wishlistButtonText}>
-                    ❤️ Join the Waitlist
-                  </ThemedText>
-                </Pressable>
-              </Animated.View>
-              <Text style={styles.ctaSubtext}>
-                Free • No spam • Cancel anytime
-              </Text>
-            </View>
 
-            <View style={styles.footer}>
-              <ThemedText style={styles.footerText}>
-                Manage your budget smartly and grow your virtual garden with
-                earned coins 🌻
-              </ThemedText>
+              <View style={styles.footer}>
+                <ThemedText style={styles.footerText}>
+                  Manage your budget smartly and grow your virtual garden with
+                  earned coins 🌻
+                </ThemedText>
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
 
       <Modal
         visible={modalVisible}
@@ -346,7 +349,7 @@ function SocialProofSection() {
           </View>
         ))}
         <View style={styles.joinedTextContainer}>
-          <Text style={styles.joinedCount}>{count.toLocaleString()}+</Text>
+          <Text style={styles.joinedCount}>10</Text>
           <Text style={styles.joinedLabel}> already joined</Text>
         </View>
       </View>
@@ -357,9 +360,7 @@ function SocialProofSection() {
           <Text style={styles.progressPercent}>1%</Text>
         </View>
         <View style={styles.progressTrack}>
-          <Animated.View
-            style={[styles.progressFill, { width: progressWidth }]}
-          />
+          <Animated.View style={[styles.progressFill, { width: 1 }]} />
         </View>
       </View>
     </View>
@@ -484,7 +485,7 @@ function RoadmapButton({ onPress }: { onPress: () => void }) {
     Animated.timing(scaleAnim, {
       toValue: 0.96,
       duration: 100,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
   };
 
@@ -493,7 +494,7 @@ function RoadmapButton({ onPress }: { onPress: () => void }) {
       toValue: 1,
       duration: 150,
       easing: Easing.out(Easing.back(2)),
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
   };
 
@@ -501,11 +502,7 @@ function RoadmapButton({ onPress }: { onPress: () => void }) {
     <Animated.View
       style={[
         styles.roadmapButtonWrapper,
-        {
-          transform: [{ scale: scaleAnim }],
-          borderColor,
-          shadowOpacity,
-        },
+        { transform: [{ scale: scaleAnim }], borderColor, shadowOpacity },
       ]}
     >
       <Pressable
@@ -513,6 +510,7 @@ function RoadmapButton({ onPress }: { onPress: () => void }) {
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        android_ripple={{ color: "rgba(76,175,80,0.2)", borderless: false }}
       >
         <Text style={styles.roadmapButtonEmoji}>🗺️</Text>
         <View style={styles.roadmapButtonContent}>

@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./roadmap.styles";
 
 type PhaseStatus = "active" | "upcoming";
@@ -107,6 +108,7 @@ export default function RoadmapScreen() {
   const router = useRouter();
 
   return (
+    <SafeAreaView style={styles.safeArea} edges={["top"]}>
     <ScrollView
       style={styles.scrollContainer}
       showsVerticalScrollIndicator={false}
@@ -139,6 +141,7 @@ export default function RoadmapScreen() {
         </View>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 

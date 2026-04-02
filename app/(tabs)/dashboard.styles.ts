@@ -1,6 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#121212",
+  },
   scrollContainer: {
     flex: 1,
     backgroundColor: "#121212",
@@ -265,8 +269,7 @@ export const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#AEED6F",
     letterSpacing: 1,
-    // @ts-ignore - web only
-    outlineStyle: "none",
+    outlineStyle: "none" as any,
   },
 
   // ── Expense rows ─────────────────────────────────────────────────────────────
@@ -307,8 +310,7 @@ export const styles = StyleSheet.create({
     color: "#FFD54F",
     paddingVertical: 14,
     minWidth: 0,
-    // @ts-ignore - web only
-    outlineStyle: "none",
+    outlineStyle: "none" as any,
   },
 
   // ── Divider ──────────────────────────────────────────────────────────────────
@@ -568,5 +570,88 @@ export const styles = StyleSheet.create({
   bugEmoji: {
     position: "absolute",
     fontSize: 26,
+  },
+
+  // ── Score History Chart ───────────────────────────────────────────────────────
+  chartCardOuter: {
+    width: "100%",
+    backgroundColor: "#0F1A08",
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: "#4CAF50",
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
+    marginVertical: 6,
+  },
+  chartCardInner: {
+    padding: 22,
+    paddingTop: 14,
+    gap: 8,
+  },
+  chartBarsRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    height: 120,
+    paddingHorizontal: 4,
+    marginTop: 24,
+  },
+  chartBarCol: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 4,
+  },
+  chartBarScoreLabel: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: "#CCCCCC",
+    marginBottom: 2,
+  },
+  chartBar: {
+    width: "70%",
+    borderRadius: 4,
+    minHeight: 4,
+  },
+  chartDayLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#7A9A5A",
+    marginTop: 6,
+    textAlign: "center",
+  },
+  chartDateLabel: {
+    fontSize: 9,
+    fontWeight: "600",
+    color: "#4A6A3A",
+    textAlign: "center",
+    marginTop: 1,
+  },
+  chartAxisLine: {
+    width: "100%",
+    height: 1,
+    backgroundColor: "rgba(76,175,80,0.25)",
+    marginBottom: 2,
+  },
+  chartLoadingContainer: {
+    height: 120,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  chartLoadingText: {
+    color: "#7A9A5A",
+    fontSize: 13,
+    fontStyle: "italic",
+    marginTop: 8,
+  },
+  chartEmptyText: {
+    color: "#7A9A5A",
+    fontSize: 13,
+    fontStyle: "italic",
+    textAlign: "center",
+    paddingVertical: 40,
   },
 });

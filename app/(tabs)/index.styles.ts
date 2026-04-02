@@ -1,27 +1,25 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#121212",
+  },
   scrollContainer: {
     flex: 1,
-    width: "100%",
-    height: "100%",
   },
   scrollBase: {
     flexGrow: 1,
-    width: "100%",
   },
   container: {
-    flex: 1,
+    width: "100%",
     padding: 20,
     paddingBottom: 40,
     alignItems: "center",
-    minHeight: "100%",
-    width: "100%",
     position: "relative",
     backgroundColor: "#121212",
   },
   contentWrapper: {
-    flex: 1,
     width: "100%",
     alignItems: "center",
     zIndex: 1,
@@ -29,7 +27,7 @@ export const styles = StyleSheet.create({
   headerSection: {
     alignItems: "center",
     marginBottom: 48,
-    marginTop: 40,
+    marginTop: 16,
   },
   logoContainer: {
     width: 100,
@@ -67,6 +65,7 @@ export const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   featuresSection: {
+    width: "100%",
     marginBottom: 36,
     gap: 14,
     alignItems: "center",
@@ -104,6 +103,7 @@ export const styles = StyleSheet.create({
     color: "#AAAAAA",
   },
   benefitsSection: {
+    width: "100%",
     marginBottom: 36,
     gap: 10,
     alignItems: "center",
@@ -393,7 +393,7 @@ export const styles = StyleSheet.create({
     marginBottom: 28,
     borderRadius: 16,
     borderWidth: 1.5,
-    backgroundColor: "rgba(76, 175, 80, 0.08)",
+    backgroundColor: "#182018",
     shadowColor: "#4CAF50",
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 12,
@@ -405,6 +405,9 @@ export const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 20,
     gap: 14,
+    borderRadius: 16,
+    overflow: "hidden",
+    backgroundColor: "transparent",
   },
   roadmapButtonEmoji: {
     fontSize: 32,

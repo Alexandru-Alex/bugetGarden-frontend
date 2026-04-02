@@ -11,7 +11,8 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { styles } from "./income.styles";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { styles } from "./dashboard.styles";
 
 export default function DashboardScreen() {
   const { width } = useWindowDimensions();
@@ -19,6 +20,7 @@ export default function DashboardScreen() {
 
   if (isWide) {
     return (
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <ScrollView
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
@@ -33,6 +35,9 @@ export default function DashboardScreen() {
             {/* Score card — full width, horizontal layout */}
             <ScoreCard horizontal />
 
+            {/* Score history chart — full width */}
+            <ScoreHistoryChart />
+
             {/* Inputs row */}
             <View style={styles.inputRow}>
               <View style={styles.inputRowLeft}><IncomeCard /></View>
@@ -41,10 +46,12 @@ export default function DashboardScreen() {
           </View>
         </View>
       </ScrollView>
+      </SafeAreaView>
     );
   }
 
   return (
+    <SafeAreaView style={styles.safeArea} edges={["top"]}>
     <ScrollView
       style={styles.scrollContainer}
       showsVerticalScrollIndicator={false}
@@ -57,6 +64,8 @@ export default function DashboardScreen() {
           <GrassRow emojis={["🌱", "🌿", "🌾", "🌱", "🌿", "🌾", "🌱"]} />
           <ScoreCard />
           <GardenSeparator emojis={["🌸", "🐝", "🌿", "🌼", "🦋"]} />
+          <ScoreHistoryChart />
+          <GardenSeparator emojis={["🌿", "🌼", "🌿", "🌼", "🌿"]} />
           <IncomeCard />
           <GardenSeparator emojis={["🌿", "🌼", "🌿", "🌼", "🌿"]} />
           <ExpensesCard />
@@ -65,6 +74,7 @@ export default function DashboardScreen() {
         </View>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -103,6 +113,114 @@ function DashboardHeader({ compact = false }: { compact?: boolean }) {
       </Animated.View>
       <Text style={styles.mainTitle}>My Garden Dashboard</Text>
       <Text style={styles.subtitle}>Plant your numbers and watch your budget grow 🌱</Text>
+    </View>
+  );
+}
+
+// ─── Score History Chart ──────────────────────────────────────────────────────
+
+interface DayScore {
+  date: string;
+  score: number;
+}
+
+const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function chartBarColor(score: number): string {
+  if (score >= 80) return "#4CAF50";
+  if (score >= 60) return "#8BC34A";
+  if (score >= 40) return "#FF9800";
+  return "#EF5350";
+}
+
+const MOCK_SCORE_HISTORY: DayScore[] = [
+  { date: "2026-03-27", score: 32 },
+  { date: "2026-03-28", score: 55 },
+  { date: "2026-03-29", score: 48 },
+  { date: "2026-03-30", score: 71 },
+  { date: "2026-03-31", score: 63 },
+  { date: "2026-04-01", score: 85 },
+  { date: "2026-04-02", score: 100 },
+];
+
+function ScoreHistoryChart() {
+  const [data, setData] = useState<DayScore[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const barAnims = useRef(Array.from({ length: 7 }, () => new Animated.Value(0))).current;
+
+  useEffect(() => {
+    // TODO: replace with real fetch when backend is ready
+    // fetch("https://bugetgarden-backend-production-7c3b.up.railway.app/dashboard")
+    setTimeout(() => {
+      setData(MOCK_SCORE_HISTORY);
+      setLoading(false);
+      MOCK_SCORE_HISTORY.forEach((item, i) => {
+        Animated.timing(barAnims[i], {
+          toValue: item.score / 100,
+          duration: 500 + i * 80,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: false,
+        }).start();
+      });
+    }, 600);
+  }, []);
+
+  return (
+    <View style={styles.chartCardOuter}>
+      <View style={styles.nailRow}>
+        <View style={[styles.nail, { backgroundColor: "#4CAF50" }]} />
+        <View style={[styles.nail, { backgroundColor: "#4CAF50" }]} />
+      </View>
+
+      <View style={styles.chartCardInner}>
+        <View style={[styles.cardBadge, { alignSelf: "center" }]}>
+          <Text style={styles.cardBadgeText}>📈 Score — Last 7 Days</Text>
+        </View>
+
+        {loading ? (
+          <View style={styles.chartLoadingContainer}>
+            <ActivityIndicator color="#4CAF50" />
+            <Text style={styles.chartLoadingText}>Loading garden history…</Text>
+          </View>
+        ) : error || data.length === 0 ? (
+          <Text style={styles.chartEmptyText}>
+            {error ? "🌧️ Could not load score history" : "🌱 No score history yet"}
+          </Text>
+        ) : (
+          <>
+            <View style={styles.chartBarsRow}>
+              {data.slice(-7).map((item, i) => {
+                const color = chartBarColor(item.score);
+                const d = new Date(item.date);
+                const dayLabel = DAY_LABELS[d.getDay()];
+                const dateLabel = `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}`;
+                const barHeight = barAnims[i].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [4, 110],
+                });
+                return (
+                  <View key={item.date} style={styles.chartBarCol}>
+                    <Text style={[styles.chartBarScoreLabel, { color }]}>{item.score}</Text>
+                    <Animated.View
+                      style={[styles.chartBar, { height: barHeight, backgroundColor: color }]}
+                    />
+                    <Text style={styles.chartDayLabel}>{dayLabel}</Text>
+                    <Text style={styles.chartDateLabel}>{dateLabel}</Text>
+                  </View>
+                );
+              })}
+            </View>
+            <View style={styles.chartAxisLine} />
+          </>
+        )}
+      </View>
+
+      <View style={styles.nailRow}>
+        <View style={[styles.nail, { backgroundColor: "#4CAF50" }]} />
+        <View style={[styles.nail, { backgroundColor: "#4CAF50" }]} />
+      </View>
     </View>
   );
 }
