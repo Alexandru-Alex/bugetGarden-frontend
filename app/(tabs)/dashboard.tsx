@@ -193,9 +193,6 @@ function ScoreHistoryChart() {
             <View style={styles.chartBarsRow}>
               {data.slice(-7).map((item, i) => {
                 const color = chartBarColor(item.score);
-                const d = new Date(item.date);
-                const dayLabel = DAY_LABELS[d.getDay()];
-                const dateLabel = `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}`;
                 const barHeight = barAnims[i].interpolate({
                   inputRange: [0, 1],
                   outputRange: [4, 110],
@@ -206,13 +203,24 @@ function ScoreHistoryChart() {
                     <Animated.View
                       style={[styles.chartBar, { height: barHeight, backgroundColor: color }]}
                     />
-                    <Text style={styles.chartDayLabel}>{dayLabel}</Text>
-                    <Text style={styles.chartDateLabel}>{dateLabel}</Text>
                   </View>
                 );
               })}
             </View>
             <View style={styles.chartAxisLine} />
+            <View style={styles.chartLabelsRow}>
+              {data.slice(-7).map((item) => {
+                const d = new Date(item.date);
+                const dayLabel = DAY_LABELS[d.getDay()];
+                const dateLabel = `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}`;
+                return (
+                  <View key={item.date} style={styles.chartLabelCol}>
+                    <Text style={styles.chartDayLabel} numberOfLines={1}>{dayLabel}</Text>
+                    <Text style={styles.chartDateLabel} numberOfLines={1}>{dateLabel}</Text>
+                  </View>
+                );
+              })}
+            </View>
           </>
         )}
       </View>

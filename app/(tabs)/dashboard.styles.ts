@@ -604,6 +604,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
     gap: 4,
+    overflow: "hidden",
   },
   chartBarScoreLabel: {
     fontSize: 10,
@@ -616,11 +617,20 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
     minHeight: 4,
   },
+  chartLabelsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 4,
+    marginTop: 4,
+  },
+  chartLabelCol: {
+    flex: 1,
+    alignItems: "center",
+  },
   chartDayLabel: {
     fontSize: 11,
     fontWeight: "700",
     color: "#7A9A5A",
-    marginTop: 6,
     textAlign: "center",
   },
   chartDateLabel: {
