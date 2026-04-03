@@ -5,7 +5,11 @@
 import { Asset } from "expo-asset";
 import React, { useEffect, useRef } from "react";
 
-const BG = require("@/assets/images/welcome-bg.png");
+const BG = require("@/assets/images/welcome-bg.webp");
+
+// Preincarca imaginea la nivel de modul (inainte ca componenta sa fie montata)
+const _bgAsset = Asset.fromModule(BG);
+_bgAsset.downloadAsync();
 
 // ─── Shaders ──────────────────────────────────────────────────────────────────
 
@@ -25,10 +29,24 @@ const FRAG = `
   precision mediump float;
   uniform sampler2D u_img;
   uniform float u_time;
+  uniform float u_imgAspect;
+  uniform float u_canvasAspect;
   varying vec2 v_uv;
 
   void main() {
-    float y = v_uv.y; // 0=sus, 1=jos (dupa flip din vertex shader)
+    // Corecție aspect ratio tip "cover": imaginea umple canvas-ul fără stretch
+    vec2 uv = v_uv;
+    if (u_canvasAspect > u_imgAspect) {
+      // Canvas mai lat — crop sus/jos
+      float scale = u_imgAspect / u_canvasAspect;
+      uv.y = uv.y * scale + (1.0 - scale) * 0.5;
+    } else {
+      // Canvas mai înalt — crop stânga/dreapta
+      float scale = u_canvasAspect / u_imgAspect;
+      uv.x = uv.x * scale + (1.0 - scale) * 0.5;
+    }
+
+    float y = uv.y; // 0=sus, 1=jos (dupa flip din vertex shader)
 
     // Zona de iarba: smoothstep intre 55% si 72% din inaltime
     float grassMask = smoothstep(0.52, 0.70, y);
@@ -37,13 +55,13 @@ const FRAG = `
 
     // 3 sinusoide suprapuse => miscare organica, nu robotica
     float wave =
-      sin(v_uv.x * 22.0 + u_time * 0.4)  * 0.0006 +
-      sin(v_uv.x * 11.0 - u_time * 0.3)  * 0.0005 +
-      sin(v_uv.x *  5.5 + u_time * 0.2)  * 0.0008;
+      sin(uv.x * 22.0 + u_time * 0.4)  * 0.0006 +
+      sin(uv.x * 11.0 - u_time * 0.3)  * 0.0005 +
+      sin(uv.x *  5.5 + u_time * 0.2)  * 0.0008;
 
     float dx = wave * grassMask * depthAmp;
 
-    gl_FragColor = texture2D(u_img, vec2(v_uv.x + dx, v_uv.y));
+    gl_FragColor = texture2D(u_img, vec2(uv.x + dx, uv.y));
   }
 `;
 
@@ -74,10 +92,6 @@ export function GrassWave() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = canvas.clientWidth * dpr;
-    canvas.height = canvas.clientHeight * dpr;
-
     const gl = canvas.getContext("webgl");
     if (!gl) return;
 
@@ -97,18 +111,29 @@ export function GrassWave() {
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
     const timeLoc = gl.getUniformLocation(prog, "u_time");
+    const imgAspectLoc = gl.getUniformLocation(prog, "u_imgAspect");
+    const canvasAspectLoc = gl.getUniformLocation(prog, "u_canvasAspect");
 
     // Incarca imaginea ca textura WebGL
     const tex = gl.createTexture();
     let ready = false;
+    let imgAspect = 1.0;
+
+    const updateCanvasSize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+    };
+    const resizeObserver = new ResizeObserver(updateCanvasSize);
+    resizeObserver.observe(canvas);
 
     (async () => {
-      const asset = Asset.fromModule(BG);
-      await asset.downloadAsync();
+      await _bgAsset.downloadAsync();
 
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.onload = () => {
+        imgAspect = img.naturalWidth / img.naturalHeight;
         gl.bindTexture(gl.TEXTURE_2D, tex);
         gl.texImage2D(
           gl.TEXTURE_2D,
@@ -124,7 +149,7 @@ export function GrassWave() {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         ready = true;
       };
-      img.src = asset.uri;
+      img.src = _bgAsset.uri;
     })();
 
     const t0 = performance.now();
@@ -134,12 +159,15 @@ export function GrassWave() {
       const t = (performance.now() - t0) / 1000;
       gl.viewport(0, 0, canvas!.width, canvas!.height);
       gl.uniform1f(timeLoc, t);
+      gl.uniform1f(imgAspectLoc, imgAspect);
+      gl.uniform1f(canvasAspectLoc, canvas!.width / canvas!.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
     frame();
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      resizeObserver.disconnect();
     };
   }, []);
 
