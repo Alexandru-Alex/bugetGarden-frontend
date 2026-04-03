@@ -25,7 +25,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
-import Svg, { Text as SvgText } from "react-native-svg";
+import Svg, { Path as SvgPath, Text as SvgText } from "react-native-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 function GoogleLogo({ size = 20 }: { size?: number }) {
