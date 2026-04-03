@@ -1,13 +1,12 @@
 import { FlowerPetals } from "@/components/flower-petals";
 import { GrassWave } from "@/components/grass-wave";
 import { ThemedText } from "@/components/themed-text";
-import * as Google from "expo-auth-session/providers/google";
-import * as WebBrowser from "expo-web-browser";
+import { Ionicons } from "@expo/vector-icons";
 import { makeRedirectUri } from "expo-auth-session";
+import * as Google from "expo-auth-session/providers/google";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
-
-WebBrowser.maybeCompleteAuthSession();
+import * as WebBrowser from "expo-web-browser";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -29,9 +28,10 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { Ionicons } from "@expo/vector-icons";
-import Svg, { Path as SvgPath, Text as SvgText } from "react-native-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Svg, { Path as SvgPath, Text as SvgText } from "react-native-svg";
+
+WebBrowser.maybeCompleteAuthSession();
 
 function GoogleLogo({ size = 20 }: { size?: number }) {
   return (
@@ -149,11 +149,6 @@ function AuthModal({ visible, onClose, onSuccess }: {
     redirectUri: makeRedirectUri({ scheme: "bugetgardenfront", path: "auth" }),
   });
 
-  useEffect(() => {
-    if (googleRequest) {
-      console.log("REDIRECT URI:", googleRequest.redirectUri);
-    }
-  }, [googleRequest]);
 
   useEffect(() => {
     if (googleResponse?.type === "success") {
@@ -176,7 +171,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
       if (!res.ok) throw new Error("Server error");
       onSuccess();
     } catch {
-      setError("Autentificarea cu Google a eșuat. Încearcă din nou.");
+      setError("Google sign-in failed. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -361,8 +356,8 @@ export default function LandingScreen() {
   const [authVisible, setAuthVisible] = useState(false);
 
   const time = useSharedValue(0);
-  const fadeAnim = useSharedValue(0);
-  const slideAnim = useSharedValue(40);
+  const fadeAnim = useSharedValue(Platform.OS === "android" ? 1 : 0);
+  const slideAnim = useSharedValue(Platform.OS === "android" ? 0 : 40);
   const btnScale = useSharedValue(1);
   const pulseRing = useSharedValue(0);
 

@@ -63,7 +63,15 @@ export function GrassWave({ time }: Props) {
     );
   }
 
-  if (!image) return null;
+  if (!image) {
+    return (
+      <Image
+        source={BG}
+        style={{ width: W, height: H }}
+        resizeMode="cover"
+      />
+    );
+  }
 
   return (
     <Canvas style={{ width: W, height: H }}>
