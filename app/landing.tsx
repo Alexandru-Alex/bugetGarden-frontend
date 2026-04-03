@@ -25,7 +25,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
-import Svg, { Defs, Path as SvgPath, Text as SvgText, TextPath } from "react-native-svg";
+import Svg, { Text as SvgText } from "react-native-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 function GoogleLogo({ size = 20 }: { size?: number }) {
@@ -41,34 +41,68 @@ function GoogleLogo({ size = 20 }: { size?: number }) {
 
 const { width: W } = Dimensions.get("window");
 
-// Două arcuri concentrice — "Buget" exterior, "Garden" interior (badge style)
+// Arc text layout — fără TextPath, fiecare caracter pozitionat matematic
 const SVG_W = W - 16;
 const R_OUT = 162;
 const R_IN  = 108;
 const CX = SVG_W / 2;
 const CY = R_OUT + 70;
 const SVG_H = CY + 12;
-const ARC_OUT = `M ${CX - R_OUT},${CY} A ${R_OUT},${R_OUT} 0 0,1 ${CX + R_OUT},${CY}`;
-const ARC_IN  = `M ${CX - R_IN},${CY} A ${R_IN},${R_IN} 0 0,1 ${CX + R_IN},${CY}`;
 
-const SHADOW_LAYERS = [
-  { dy: 7, fill: "rgba(90,40,0,0.9)" },
-  { dy: 5, fill: "rgba(150,70,0,0.65)" },
-  { dy: 3, fill: "rgba(200,120,5,0.45)" },
-  { dy: 1, fill: "rgba(240,175,40,0.25)" },
-];
+// Pozitia si rotatia unui caracter la distanta `s` pe arc de raza `r`
+// Arcul merge de la θ=π (stanga) la θ=0 (dreapta), trecand prin θ=π/2 (sus)
+function charOnArc(s: number, r: number) {
+  const θ = Math.PI - s / r;
+  return {
+    x: CX + r * Math.cos(θ),
+    y: CY - r * Math.sin(θ),
+    rot: 90 - θ * (180 / Math.PI),
+  };
+}
 
-function ArcWord({ pathId, word, fontSize }: { pathId: string; word: string; fontSize: number }) {
+function ArcWord({ word, r, fontSize, charSpacing }: {
+  word: string; r: number; fontSize: number; charSpacing: number;
+}) {
+  const totalWidth = (word.length - 1) * charSpacing;
+  const midArc = (Math.PI * r) / 2;
+  const startArc = midArc - totalWidth / 2;
+
+  const chars = word.split('').map((char, i) => {
+    const { x, y, rot } = charOnArc(startArc + i * charSpacing, r);
+    return { char, x, y, rot };
+  });
+
   return (
     <>
-      {SHADOW_LAYERS.map(({ dy, fill }, i) => (
-        <SvgText key={i} fontFamily="Pacifico_400Regular" fontSize={fontSize} fill={fill} dy={dy}>
-          <TextPath href={`#${pathId}`} startOffset="50%" textAnchor="middle">{word}</TextPath>
+      {/* Shadow */}
+      {chars.map(({ char, x, y, rot }, i) => (
+        <SvgText key={`sh-${i}`} x={x} y={y} fontSize={fontSize}
+          fontFamily="Pacifico_400Regular" textAnchor="middle"
+          fill="rgba(90,40,0,0.85)" stroke="rgba(90,40,0,0.85)"
+          strokeWidth={14} strokeLinejoin="round"
+          transform={`rotate(${rot}, ${x}, ${y})`}>
+          {char}
         </SvgText>
       ))}
-      <SvgText fontFamily="Pacifico_400Regular" fontSize={fontSize} fill="#FFE566" stroke="#FFE566" strokeWidth={2.5} dy={0}>
-        <TextPath href={`#${pathId}`} startOffset="50%" textAnchor="middle">{word}</TextPath>
-      </SvgText>
+      {/* Glow */}
+      {chars.map(({ char, x, y, rot }, i) => (
+        <SvgText key={`gl-${i}`} x={x} y={y} fontSize={fontSize}
+          fontFamily="Pacifico_400Regular" textAnchor="middle"
+          fill="rgba(240,175,40,0.35)" stroke="rgba(240,175,40,0.35)"
+          strokeWidth={6} strokeLinejoin="round"
+          transform={`rotate(${rot}, ${x}, ${y})`}>
+          {char}
+        </SvgText>
+      ))}
+      {/* Main */}
+      {chars.map(({ char, x, y, rot }, i) => (
+        <SvgText key={`m-${i}`} x={x} y={y} fontSize={fontSize}
+          fontFamily="Pacifico_400Regular" textAnchor="middle"
+          fill="#FFE566" stroke="#FFE566" strokeWidth={2.5} strokeLinejoin="round"
+          transform={`rotate(${rot}, ${x}, ${y})`}>
+          {char}
+        </SvgText>
+      ))}
     </>
   );
 }
@@ -76,12 +110,8 @@ function ArcWord({ pathId, word, fontSize }: { pathId: string; word: string; fon
 function ArcTitle() {
   return (
     <Svg width={SVG_W} height={SVG_H} style={{ overflow: "visible" }}>
-      <Defs>
-        <SvgPath id="arc-out" d={ARC_OUT} fill="none" />
-        <SvgPath id="arc-in"  d={ARC_IN}  fill="none" />
-      </Defs>
-      <ArcWord pathId="arc-out" word="Buget"  fontSize={58} />
-      <ArcWord pathId="arc-in"  word="Garden" fontSize={50} />
+      <ArcWord word="Budget" r={R_OUT} fontSize={58} charSpacing={38} />
+      <ArcWord word="Garden" r={R_IN}  fontSize={50} charSpacing={32} />
     </Svg>
   );
 }
@@ -349,9 +379,11 @@ export default function LandingScreen() {
 
           <ArcTitle />
 
-          <ThemedText style={styles.tagline}>
-            Save smartly, grow your garden
-          </ThemedText>
+          <View style={styles.taglineWrap}>
+            <ThemedText style={styles.tagline}>
+              Save smartly, grow your garden
+            </ThemedText>
+          </View>
 
           <Animated.View style={[styles.btnWrapper, btnStyle]}>
             <Pressable
@@ -403,6 +435,13 @@ const styles = StyleSheet.create({
     fontSize: 60,
     marginBottom: 2,
   },
+  taglineWrap: {
+    backgroundColor: "rgba(0,0,0,0.22)",
+    borderRadius: 20,
+    overflow: "hidden",
+    marginTop: 2,
+    marginBottom: 22,
+  },
   tagline: {
     fontSize: 15,
     fontFamily: "Nunito_800ExtraBold",
@@ -413,13 +452,8 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 6,
     textAlign: "center",
-    backgroundColor: "rgba(0,0,0,0.22)",
     paddingHorizontal: 18,
     paddingVertical: 6,
-    borderRadius: 20,
-    overflow: "hidden",
-    marginTop: 2,
-    marginBottom: 22,
   },
   pulseRing: {
     ...StyleSheet.absoluteFillObject,

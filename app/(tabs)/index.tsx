@@ -1,5 +1,6 @@
 import { AnimatedTreesBackground } from "@/components/animated-trees";
 import { ThemedText } from "@/components/themed-text";
+import { styles } from "@/styles/tabs/index.styles";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -13,7 +14,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { styles } from "./index.styles";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -106,7 +106,7 @@ export default function HomeScreen() {
                 </View>
 
                 <ThemedText type="title" style={styles.mainTitle}>
-                  BugetGarden
+                  BudgetGarden
                 </ThemedText>
 
                 <ThemedText style={styles.subtitle}>

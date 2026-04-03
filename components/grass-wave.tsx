@@ -9,9 +9,9 @@ import {
   Shader,
   useImage,
 } from "@shopify/react-native-skia";
-import React from "react";
-import { Dimensions } from "react-native";
-import { SharedValue } from "react-native-reanimated";
+import React, { useMemo } from "react";
+import { Dimensions, Image } from "react-native";
+import { SharedValue, useDerivedValue } from "react-native-reanimated";
 
 const { width: W, height: H } = Dimensions.get("window");
 
@@ -46,15 +46,30 @@ interface Props {
 
 export function GrassWave({ time }: Props) {
   const image = useImage(BG);
-  const effect = RuntimeEffect.Make(SKSL);
+  const effect = useMemo(() => RuntimeEffect?.Make?.(SKSL) ?? null, []);
 
-  if (!image || !effect) return null;
+  const uniforms = useDerivedValue(() => ({
+    resolution: [W, H],
+    time: time.value,
+  }));
+
+  if (!effect) {
+    return (
+      <Image
+        source={BG}
+        style={{ width: W, height: H }}
+        resizeMode="cover"
+      />
+    );
+  }
+
+  if (!image) return null;
 
   return (
     <Canvas style={{ width: W, height: H }}>
       <Shader
         source={effect}
-        uniforms={{ resolution: [W, H], time }}
+        uniforms={uniforms}
       >
         <ImageShader
           image={image}

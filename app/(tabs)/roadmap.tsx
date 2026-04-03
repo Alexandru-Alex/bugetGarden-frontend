@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { styles } from "./roadmap.styles";
+import { styles } from "@/styles/tabs/roadmap.styles";
 
 type PhaseStatus = "active" | "upcoming";
 

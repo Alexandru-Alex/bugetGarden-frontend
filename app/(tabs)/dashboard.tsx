@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { styles } from "./dashboard.styles";
+import { styles } from "@/styles/tabs/dashboard.styles";
 
 export default function DashboardScreen() {
   const { width } = useWindowDimensions();
