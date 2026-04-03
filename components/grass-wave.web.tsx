@@ -172,15 +172,29 @@ export function GrassWave() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        display: "block",
-      }}
-    />
+    <div style={{ position: "absolute", inset: 0 }}>
+      {/* Imaginea statică vizibilă instant (din cache) cât timp WebGL compilează shaderele */}
+      <img
+        src={_bgAsset.uri}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          display: "block",
+        }}
+      />
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          display: "block",
+        }}
+      />
+    </div>
   );
 }
