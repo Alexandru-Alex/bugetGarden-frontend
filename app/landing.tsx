@@ -1,8 +1,13 @@
 import { FlowerPetals } from "@/components/flower-petals";
 import { GrassWave } from "@/components/grass-wave";
 import { ThemedText } from "@/components/themed-text";
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
+import { makeRedirectUri } from "expo-auth-session";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
+
+WebBrowser.maybeCompleteAuthSession();
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -118,6 +123,12 @@ function ArcTitle() {
 
 // ─── Auth Modal ─────────────────────────────────────────────────────────────
 
+const GOOGLE_CLIENT_IDS = {
+  webClientId: "975323074001-kuerkjh4jje7oidr8kb4l888p6lh81sv.apps.googleusercontent.com",
+  androidClientId: "975323074001-qdr2kgv00149gc5ru0106sa9qffuj5nh.apps.googleusercontent.com",
+  iosClientId: "975323074001-re455uukp107dpf8l25q75nia9co29td.apps.googleusercontent.com",
+};
+
 function AuthModal({ visible, onClose, onSuccess }: {
   visible: boolean;
   onClose: () => void;
@@ -132,6 +143,44 @@ function AuthModal({ visible, onClose, onSuccess }: {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [googleRequest, googleResponse, googlePromptAsync] = Google.useAuthRequest({
+    ...GOOGLE_CLIENT_IDS,
+    redirectUri: makeRedirectUri({ scheme: "bugetgardenfront", path: "auth" }),
+  });
+
+  useEffect(() => {
+    if (googleRequest) {
+      console.log("REDIRECT URI:", googleRequest.redirectUri);
+    }
+  }, [googleRequest]);
+
+  useEffect(() => {
+    if (googleResponse?.type === "success") {
+      const { authentication } = googleResponse;
+      if (authentication?.accessToken) {
+        handleGoogleToken(authentication.accessToken);
+      }
+    }
+  }, [googleResponse]);
+
+  const handleGoogleToken = async (accessToken: string) => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("http://localhost:8080/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: accessToken, provider: "google" }),
+      });
+      if (!res.ok) throw new Error("Server error");
+      onSuccess();
+    } catch {
+      setError("Autentificarea cu Google a eșuat. Încearcă din nou.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const cardY = useSharedValue(60);
   const cardOpacity = useSharedValue(0);
@@ -292,6 +341,8 @@ function AuthModal({ visible, onClose, onSuccess }: {
             {/* Google button */}
             <Pressable
               style={({ pressed }) => [auth.googleBtn, pressed && auth.googleBtnPressed]}
+              onPress={() => googlePromptAsync()}
+              disabled={!googleRequest || loading}
             >
               <GoogleLogo size={20} />
               <Text style={auth.googleText}>Continue with Google</Text>
