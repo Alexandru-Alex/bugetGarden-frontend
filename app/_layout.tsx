@@ -9,6 +9,7 @@ import {
   Nunito_900Black,
   useFonts,
 } from "@expo-google-fonts/nunito";
+import { Pacifico_400Regular } from "@expo-google-fonts/pacifico";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
@@ -23,12 +24,13 @@ export default function RootLayout() {
     Nunito_700Bold,
     Nunito_800ExtraBold,
     Nunito_900Black,
+    Pacifico_400Regular,
   });
 
   return (
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
+        <Stack initialRouteName="landing">
           <Stack.Screen name="landing" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen
