@@ -48,10 +48,10 @@ const { width: W } = Dimensions.get("window");
 
 // Arc text layout — fără TextPath, fiecare caracter pozitionat matematic
 const SVG_W = W - 16;
-const R_OUT = 162;
-const R_IN  = 108;
+const R_OUT = 180;
+const R_IN  =  92;
 const CX = SVG_W / 2;
-const CY = R_OUT + 70;
+const CY = R_OUT + 60;
 const SVG_H = CY + 12;
 
 // Pozitia si rotatia unui caracter la distanta `s` pe arc de raza `r`
@@ -422,7 +422,9 @@ export default function LandingScreen() {
       </View>
 
       <View style={styles.overlay} />
-      <FlowerPetals />
+      <View style={styles.petalsLayer} pointerEvents="none">
+        <FlowerPetals />
+      </View>
 
       <SafeAreaView style={styles.safe}>
         <Animated.View style={[styles.content, contentStyle]}>
@@ -467,15 +469,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#5a9e2f",
+    ...(Platform.OS === "web" ? { minHeight: "100vh", overflow: "hidden" } : {}),
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.12)",
+    zIndex: 1,
+  },
+  petalsLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 2,
   },
   safe: {
     flex: 1,
     justifyContent: "center",
     paddingBottom: 80,
+    zIndex: 3,
   },
   content: {
     alignItems: "center",
@@ -547,6 +556,9 @@ const auth = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "center",
     paddingHorizontal: 20,
+    ...(Platform.OS === "web"
+      ? { position: "fixed" as any, top: 0, left: 0, right: 0, bottom: 0 }
+      : {}),
   },
   card: {
     backgroundColor: "#f0f9ec",
