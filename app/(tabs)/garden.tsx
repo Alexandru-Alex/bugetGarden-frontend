@@ -11,8 +11,21 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const COLS = 5;
 const MAX_CELL_SIZE = 100;
+
+function getBestGrid(n: number) {
+  let best: { rows: number; cols: number; score: number } | null = null;
+  for (let cols = Math.ceil(Math.sqrt(n)); cols >= 1; cols--) {
+    const rows = Math.ceil(n / cols);
+    const empty = rows * cols - n;
+    const diff = Math.abs(rows - cols);
+    const score = diff * 2 + empty;
+    if (!best || score < best.score) {
+      best = { rows, cols, score };
+    }
+  }
+  return best!;
+}
 
 const MONTH_NAMES = [
   "January", "February", "March", "April",
@@ -37,7 +50,7 @@ export default function GardenScreen() {
     viewYear > now.getFullYear() ||
     (viewYear === now.getFullYear() && viewMonth > now.getMonth());
 
-  const rows = Math.ceil(daysInMonth / COLS);
+  const { rows, cols: COLS } = getBestGrid(daysInMonth);
 
   const [gridContainerW, setGridContainerW] = useState(0);
   const CELL_SIZE = gridContainerW > 0
@@ -128,11 +141,7 @@ export default function GardenScreen() {
                 style={styles.gridWrapper}
                 onLayout={(e) => setGridContainerW(e.nativeEvent.layout.width)}
               >
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingTop: CELL_SIZE * 0.65, paddingBottom: 8, flexGrow: 1, justifyContent: "center" }}
-              >
+              <View style={{ paddingTop: CELL_SIZE * 0.65, paddingBottom: 8, alignItems: "center" }}>
                 <View style={[styles.grid, { width: isoW, height: isoH }]}>
                   {CELL_SIZE > 0 && tiles.map(({ r: row, c: col }) => {
                     const day = row * COLS + col + 1;
@@ -235,7 +244,7 @@ export default function GardenScreen() {
                     );
                   })}
                 </View>
-              </ScrollView>
+              </View>
               </View>
 
               <Text style={styles.counter}>
