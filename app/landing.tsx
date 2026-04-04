@@ -17,7 +17,9 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TextStyle,
   View,
+  ViewStyle,
 } from "react-native";
 import Animated, {
   Easing,
@@ -342,6 +344,16 @@ function AuthModal({ visible, onClose, onSuccess }: {
               <GoogleLogo size={20} />
               <Text style={auth.googleText}>Continue with Google</Text>
             </Pressable>
+
+            {/* Apple button */}
+            <Pressable
+              style={({ pressed }) => [auth.appleBtn, pressed && auth.appleBtnPressed]}
+              onPress={() => alert("Apple Sign In coming soon!")}
+              disabled={loading}
+            >
+              <Ionicons name="logo-apple" size={20} color="#000000" />
+              <Text style={auth.appleText}>Sign in with Apple</Text>
+            </Pressable>
           </ScrollView>
         </Animated.View>
       </KeyboardAvoidingView>
@@ -460,11 +472,25 @@ export default function LandingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<{
+  container: ViewStyle;
+  overlay: ViewStyle;
+  petalsLayer: ViewStyle;
+  safe: ViewStyle;
+  content: ViewStyle;
+  emoji: TextStyle;
+  taglineWrap: ViewStyle;
+  tagline: TextStyle;
+  pulseRing: ViewStyle;
+  btnWrapper: ViewStyle;
+  ctaButton: ViewStyle;
+  ctaButtonPressed: ViewStyle;
+  ctaText: TextStyle;
+}>({
   container: {
     flex: 1,
     backgroundColor: "#5a9e2f",
-    ...(Platform.OS === "web" ? { minHeight: "100vh", overflow: "hidden" } : {}),
+    ...(Platform.OS === "web" ? { minHeight: "100vh" as any, overflow: "hidden" } : {}),
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -545,7 +571,37 @@ const styles = StyleSheet.create({
   },
 });
 
-const auth = StyleSheet.create({
+const auth = StyleSheet.create<{
+  backdrop: ViewStyle;
+  card: ViewStyle;
+  gardenStrip: ViewStyle;
+  gardenEmoji: TextStyle;
+  scroll: ViewStyle;
+  title: TextStyle;
+  subtitle: TextStyle;
+  tabs: ViewStyle;
+  tab: ViewStyle;
+  tabActive: ViewStyle;
+  tabText: TextStyle;
+  tabTextActive: TextStyle;
+  inputWrap: ViewStyle;
+  inputWrapFocused: ViewStyle;
+  inputIcon: TextStyle;
+  input: TextStyle;
+  error: TextStyle;
+  submitBtn: ViewStyle;
+  submitBtnPressed: ViewStyle;
+  submitText: TextStyle;
+  divider: ViewStyle;
+  dividerLine: ViewStyle;
+  dividerText: TextStyle;
+  googleBtn: ViewStyle;
+  googleBtnPressed: ViewStyle;
+  googleText: TextStyle;
+  appleBtn: ViewStyle;
+  appleBtnPressed: ViewStyle;
+  appleText: TextStyle;
+}>({
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.45)",
@@ -727,6 +783,33 @@ const auth = StyleSheet.create({
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 15,
     color: "#ffffff",
+    letterSpacing: 0.3,
+  },
+  appleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    paddingVertical: 13,
+    gap: 10,
+    marginTop: 10,
+    borderWidth: 1.5,
+    borderColor: "#d0d0d0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  appleBtnPressed: {
+    backgroundColor: "#f0f0f0",
+    transform: [{ scale: 0.98 }],
+  },
+  appleText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 15,
+    color: "#000000",
     letterSpacing: 0.3,
   },
 });

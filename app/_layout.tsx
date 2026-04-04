@@ -27,6 +27,10 @@ export default function RootLayout() {
     Pacifico_400Regular,
   });
 
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
