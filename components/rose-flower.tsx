@@ -1,0 +1,73 @@
+import React, { useEffect } from "react";
+import { Image, StyleSheet, View } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
+
+const roseImage = require("../flowers/lily.png");
+
+interface RoseFlowerProps {
+  size?: number;
+  delay?: number;
+}
+
+export function RoseFlower({ size = 48, delay = 0 }: RoseFlowerProps) {
+  const sway = useSharedValue(0);
+  const pulse = useSharedValue(1);
+
+  useEffect(() => {
+    // Sway: leganare stanga-dreapta, natural si lent
+    sway.value = withDelay(
+      delay,
+      withRepeat(
+        withTiming(1, { duration: 3200, easing: Easing.inOut(Easing.sin) }),
+        -1,
+        true,
+      ),
+    );
+
+    // Pulse: pulsatie subtila de scala
+    pulse.value = withDelay(
+      delay + 200,
+      withRepeat(
+        withTiming(1.06, { duration: 2400, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true,
+      ),
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      // Rotatie din baza florii (transform-origin simulat cu translateY)
+      { translateY: size * 0.4 },
+      { rotate: `${(sway.value - 0.5) * 10}deg` },
+      { translateY: -size * 0.4 },
+      { scale: pulse.value },
+    ],
+  }));
+
+  return (
+    <View style={[styles.container, { width: size, height: size, overflow: "hidden" }]}>
+      <Animated.View style={[{ width: size, height: size }, animatedStyle]}>
+        <Image
+          source={roseImage}
+          style={{ width: size, height: size }}
+          resizeMode="contain"
+        />
+      </Animated.View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

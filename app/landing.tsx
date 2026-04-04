@@ -1,5 +1,6 @@
 import { FlowerPetals } from "@/components/flower-petals";
 import { GrassWave } from "@/components/grass-wave";
+import { RoseFlower } from "@/components/rose-flower";
 import { ThemedText } from "@/components/themed-text";
 import { Ionicons } from "@expo/vector-icons";
 import { makeRedirectUri } from "expo-auth-session";
@@ -435,7 +436,9 @@ export default function LandingScreen() {
 
       <SafeAreaView style={styles.safe}>
         <Animated.View style={[styles.content, contentStyle]}>
-          <Text style={styles.emoji}>🌱</Text>
+          <View style={styles.flowerTreeRow}>
+            <RoseFlower size={48} delay={400} />
+          </View>
 
           <ArcTitle />
 
@@ -479,6 +482,7 @@ const styles = StyleSheet.create<{
   safe: ViewStyle;
   content: ViewStyle;
   emoji: TextStyle;
+  flowerTreeRow: ViewStyle;
   taglineWrap: ViewStyle;
   tagline: TextStyle;
   pulseRing: ViewStyle;
@@ -515,6 +519,11 @@ const styles = StyleSheet.create<{
   emoji: {
     fontSize: 60,
     marginBottom: 2,
+  },
+  flowerTreeRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: 12,
   },
   taglineWrap: {
     backgroundColor: "rgba(0,0,0,0.22)",
