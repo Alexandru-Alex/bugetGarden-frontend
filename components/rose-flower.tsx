@@ -9,14 +9,22 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-const roseImage = require("../flowers/lily.png");
+const FLOWER_IMAGES = [
+  require("../flowers/lily.png"),
+  require("../flowers/rose.png"),
+  require("../flowers/daisy.png"),
+  require("../flowers/sunflower.png"),
+  require("../flowers/tulpin.png"),
+];
 
 interface RoseFlowerProps {
   size?: number;
   delay?: number;
+  flowerIndex?: number;
 }
 
-export function RoseFlower({ size = 48, delay = 0 }: RoseFlowerProps) {
+export function RoseFlower({ size = 48, delay = 0, flowerIndex = 0 }: RoseFlowerProps) {
+  const source = FLOWER_IMAGES[flowerIndex % FLOWER_IMAGES.length];
   const sway = useSharedValue(0);
   const pulse = useSharedValue(1);
 
@@ -56,7 +64,7 @@ export function RoseFlower({ size = 48, delay = 0 }: RoseFlowerProps) {
     <View style={[styles.container, { width: size, height: size, overflow: "hidden" }]}>
       <Animated.View style={[{ width: size, height: size }, animatedStyle]}>
         <Image
-          source={roseImage}
+          source={source}
           style={{ width: size, height: size }}
           resizeMode="contain"
         />

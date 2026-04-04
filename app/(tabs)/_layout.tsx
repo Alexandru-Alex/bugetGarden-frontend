@@ -9,12 +9,19 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      initialRouteName="garden"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarStyle: { display: "none" },
       }}
     >
+      <Tabs.Screen
+        name="garden"
+        options={{
+          title: "Garden",
+        }}
+      />
       <Tabs.Screen
         name="index"
         options={{
