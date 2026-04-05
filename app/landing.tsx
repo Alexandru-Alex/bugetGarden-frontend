@@ -166,7 +166,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:8080/login", {
+      const res = await fetch("https://bugetgarden-backend-production-7c3b.up.railway.app/authorization-google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: accessToken, provider: "google" }),
