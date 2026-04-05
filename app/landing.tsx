@@ -136,7 +136,7 @@ const GOOGLE_CLIENT_IDS = {
 function AuthModal({ visible, onClose, onSuccess }: {
   visible: boolean;
   onClose: () => void;
-  onSuccess: (isNewUser: boolean) => void;
+  onSuccess: (newUser: boolean) => void;
 }) {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [name, setName] = useState("");
@@ -180,7 +180,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
       } else {
         await SecureStore.setItemAsync("auth_token", backendToken);
       }
-      onSuccess(data.isNewUser);
+      onSuccess(data.newUser);
     } catch {
       setError("Google sign-in failed. Please try again later.");
     } finally {
@@ -474,9 +474,9 @@ export default function LandingScreen() {
       <AuthModal
         visible={authVisible}
         onClose={() => setAuthVisible(false)}
-        onSuccess={(isNewUser) => {
+        onSuccess={(newUser) => {
           setAuthVisible(false);
-          if (isNewUser) {
+          if (newUser) {
             router.replace("/hello");
           } else {
             router.replace("/(tabs)");
