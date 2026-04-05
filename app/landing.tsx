@@ -479,7 +479,7 @@ export default function LandingScreen() {
           if (newUser) {
             router.replace("/hello");
           } else {
-            router.replace("/(tabs)");
+            router.replace("/garden");
           }
         }}
       />
