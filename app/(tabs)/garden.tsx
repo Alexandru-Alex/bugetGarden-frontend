@@ -1,6 +1,8 @@
 import { GrassCube } from "@/components/grass-cube";
 import { RoseFlower } from "@/components/rose-flower";
-import React, { useCallback, useState } from "react";
+import { Redirect } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -38,6 +40,16 @@ function getDaysInMonth(year: number, month: number) {
 }
 
 export default function GardenScreen() {
+  const [token, setToken] = useState<string | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (Platform.OS === "web") {
+      setToken(localStorage.getItem("auth_token"));
+    } else {
+      SecureStore.getItemAsync("auth_token").then(setToken);
+    }
+  }, []);
+
   const now = new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
   const [viewMonth, setViewMonth] = useState(now.getMonth());
@@ -99,6 +111,9 @@ export default function GardenScreen() {
     if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
     else setViewMonth(m => m + 1);
   };
+
+  if (token === undefined) return null;
+  if (!token) return <Redirect href="/landing" />;
 
   return (
     <View style={styles.container}>

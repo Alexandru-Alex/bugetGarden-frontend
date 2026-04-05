@@ -1,9 +1,12 @@
 import { AnimatedTreesBackground } from "@/components/animated-trees";
+import { Redirect } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
   Easing,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -17,6 +20,18 @@ import { styles } from "@/styles/tabs/dashboard.styles";
 export default function DashboardScreen() {
   const { width } = useWindowDimensions();
   const isWide = width >= 720;
+  const [token, setToken] = useState<string | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (Platform.OS === "web") {
+      setToken(localStorage.getItem("auth_token"));
+    } else {
+      SecureStore.getItemAsync("auth_token").then(setToken);
+    }
+  }, []);
+
+  if (token === undefined) return null;
+  if (!token) return <Redirect href="/landing" />;
 
   if (isWide) {
     return (

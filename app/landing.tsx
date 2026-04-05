@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { makeRedirectUri } from "expo-auth-session";
 import * as Google from "expo-auth-session/providers/google";
 import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import * as WebBrowser from "expo-web-browser";
 import React, { useEffect, useState } from "react";
 import {
@@ -172,6 +173,12 @@ function AuthModal({ visible, onClose, onSuccess }: {
         body: JSON.stringify({ token: accessToken, provider: "google" }),
       });
       if (!res.ok) throw new Error("Server error");
+      const backendToken = await res.text();
+      if (Platform.OS === "web") {
+        localStorage.setItem("auth_token", backendToken);
+      } else {
+        await SecureStore.setItemAsync("auth_token", backendToken);
+      }
       onSuccess();
     } catch {
       setError("Google sign-in failed. Please try again later.");
@@ -468,7 +475,7 @@ export default function LandingScreen() {
         onClose={() => setAuthVisible(false)}
         onSuccess={() => {
           setAuthVisible(false);
-          router.replace("/(tabs)");
+          router.replace("/hello");
         }}
       />
     </View>
