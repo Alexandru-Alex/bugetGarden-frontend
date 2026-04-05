@@ -136,7 +136,7 @@ const GOOGLE_CLIENT_IDS = {
 function AuthModal({ visible, onClose, onSuccess }: {
   visible: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (isNewUser: boolean) => void;
 }) {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [name, setName] = useState("");
@@ -173,13 +173,14 @@ function AuthModal({ visible, onClose, onSuccess }: {
         body: JSON.stringify({ token: accessToken, provider: "google" }),
       });
       if (!res.ok) throw new Error("Server error");
-      const backendToken = await res.text();
+      const data = await res.json();
+      const backendToken = data.token;
       if (Platform.OS === "web") {
         localStorage.setItem("auth_token", backendToken);
       } else {
         await SecureStore.setItemAsync("auth_token", backendToken);
       }
-      onSuccess();
+      onSuccess(data.isNewUser);
     } catch {
       setError("Google sign-in failed. Please try again later.");
     } finally {
@@ -219,7 +220,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
     try {
       // TODO: înlocuiește cu apelul real de autentificare
       await new Promise((r) => setTimeout(r, 800));
-      onSuccess();
+      onSuccess(true);
     } catch {
       setError("Ceva nu a mers. Încearcă din nou.");
     } finally {
@@ -473,9 +474,13 @@ export default function LandingScreen() {
       <AuthModal
         visible={authVisible}
         onClose={() => setAuthVisible(false)}
-        onSuccess={() => {
+        onSuccess={(isNewUser) => {
           setAuthVisible(false);
-          router.replace("/hello");
+          if (isNewUser) {
+            router.replace("/hello");
+          } else {
+            router.replace("/(tabs)");
+          }
         }}
       />
     </View>
