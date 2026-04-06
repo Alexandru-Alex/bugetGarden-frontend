@@ -27,6 +27,11 @@ export function RoseFlower({ size = 48, delay = 0, flowerIndex = 0 }: RoseFlower
   const source = FLOWER_IMAGES[flowerIndex % FLOWER_IMAGES.length];
   const sway = useSharedValue(0);
   const pulse = useSharedValue(1);
+  const sizeSV = useSharedValue(size);
+
+  useEffect(() => {
+    sizeSV.value = size;
+  }, [size]);
 
   useEffect(() => {
     // Sway: leganare stanga-dreapta, natural si lent
@@ -53,15 +58,15 @@ export function RoseFlower({ size = 48, delay = 0, flowerIndex = 0 }: RoseFlower
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       // Rotatie din baza florii (transform-origin simulat cu translateY)
-      { translateY: size * 0.4 },
+      { translateY: sizeSV.value * 0.4 },
       { rotate: `${(sway.value - 0.5) * 10}deg` },
-      { translateY: -size * 0.4 },
+      { translateY: -sizeSV.value * 0.4 },
       { scale: pulse.value },
     ],
   }));
 
   return (
-    <View style={[styles.container, { width: size, height: size, overflow: "hidden" }]}>
+    <View style={[styles.container, { width: size, height: size }]}>
       <Animated.View style={[{ width: size, height: size }, animatedStyle]}>
         <Image
           source={source}
