@@ -233,16 +233,15 @@ export default function GardenScreen() {
                       >
                         <GrassCube size={CELL_SIZE} variant={cubeVariant} />
 
-                        {/* Floare — iese deasupra cubului */}
+                        {/* Floare — iese deasupra cubului, centrata explicit pe fata izometrica */}
                         {hasFlower && (
                           <View
                             pointerEvents="none"
                             style={{
                               position: "absolute",
                               top: -CELL_SIZE * 0.6,
-                              left: 0,
-                              right: 0,
-                              alignItems: "center",
+                              left: -8,
+                              width: CELL_SIZE + 16,
                             }}
                           >
                             <RoseFlower size={CELL_SIZE + 16} delay={day * 80} flowerIndex={flowerIndex} />
