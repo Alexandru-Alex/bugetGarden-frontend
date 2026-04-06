@@ -4,6 +4,7 @@ import { Redirect } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  Image,
   Platform,
   Pressable,
   ScrollView,
@@ -12,22 +13,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Svg, { Polygon } from "react-native-svg";
 
 const MAX_CELL_SIZE = 100;
-
-function getBestGrid(n: number) {
-  let best: { rows: number; cols: number; score: number } | null = null;
-  for (let cols = Math.ceil(Math.sqrt(n)); cols >= 1; cols--) {
-    const rows = Math.ceil(n / cols);
-    const empty = rows * cols - n;
-    const diff = Math.abs(rows - cols);
-    const score = diff * 2 + empty;
-    if (!best || score < best.score) {
-      best = { rows, cols, score };
-    }
-  }
-  return best!;
-}
+const ROWS = 7;
+const COLS = 7;
+const INNER_ROWS = 6;
+const INNER_COLS = 6;
 
 const MONTH_NAMES = [
   "January", "February", "March", "April",
@@ -62,21 +54,19 @@ export default function GardenScreen() {
     viewYear > now.getFullYear() ||
     (viewYear === now.getFullYear() && viewMonth > now.getMonth());
 
-  const { rows, cols: COLS } = getBestGrid(daysInMonth);
-
   const [gridContainerW, setGridContainerW] = useState(0);
   const CELL_SIZE = gridContainerW > 0
-    ? Math.min(MAX_CELL_SIZE, Math.floor(gridContainerW * 2 / (COLS + rows)))
+    ? Math.min(MAX_CELL_SIZE, Math.floor(gridContainerW * 2 / (COLS + ROWS)))
     : 0;
 
   // xOffset: deplaseaza totul la dreapta ca x minim sa fie 0
-  const isoXOffset = (rows - 1) * (CELL_SIZE / 2);
+  const isoXOffset = (ROWS - 1) * (CELL_SIZE / 2);
   // dimensiuni container
-  const isoW = (COLS + rows - 2) * (CELL_SIZE / 2) + CELL_SIZE;
-  const isoH = (COLS + rows - 2) * (CELL_SIZE / 4) + CELL_SIZE;
+  const isoW = (COLS + ROWS - 2) * (CELL_SIZE / 2) + CELL_SIZE;
+  const isoH = (COLS + ROWS - 2) * (CELL_SIZE / 4) + CELL_SIZE;
 
   // Toate tilurile, sortate back-to-front dupa (row+col)
-  const tiles = Array.from({ length: rows }, (_, r) =>
+  const tiles = Array.from({ length: ROWS }, (_, r) =>
     Array.from({ length: COLS }, (_, c) => ({ r, c }))
   ).flat().sort((a, b) => (a.r + a.c) - (b.r + b.c));
 
@@ -159,30 +149,71 @@ export default function GardenScreen() {
               <View style={{ paddingTop: CELL_SIZE * 0.65, paddingBottom: 8, alignItems: "center" }}>
                 <View style={[styles.grid, { width: isoW, height: isoH }]}>
                   {CELL_SIZE > 0 && tiles.map(({ r: row, c: col }) => {
-                    const day = row * COLS + col + 1;
-                    const isValid = day >= 1 && day <= daysInMonth;
-
                     // coordonate izometrice
                     const x = isoXOffset + (col - row) * (CELL_SIZE / 2);
                     const y = (col + row) * (CELL_SIZE / 4);
 
-                    if (!isValid) return null;
+                    // Bordura: colt, gard_dreapta, gard_stanga
+                    const isCorner = row === 0 && col === 0;
+                    const isFenceRight = row === 0 && col > 0;
+                    const isFenceLeft = col === 0 && row > 0;
+                    const isBorder = isCorner || isFenceRight || isFenceLeft;
 
+                    if (isBorder) {
+                      const src = isCorner
+                        ? require("../../gradina/colt.png")
+                        : isFenceRight
+                          ? require("../../gradina/gard_dreapta.png")
+                          : require("../../gradina/gard_stanga.png");
+
+                      const scale = 1.30;
+                      const imgSize = CELL_SIZE * scale;
+                      const offsetX = -(CELL_SIZE * (scale - 1)) / 2;
+                      const offsetY = -(CELL_SIZE * (scale - 1)) * 0.65 - CELL_SIZE * 0.07;
+
+                      return (
+                        <View
+                          key={`${row}-${col}`}
+                          pointerEvents="none"
+                          style={{
+                            position: "absolute",
+                            left: x,
+                            top: y,
+                            width: CELL_SIZE,
+                            height: CELL_SIZE,
+                            overflow: "visible",
+                          }}
+                        >
+                          <Image
+                            source={src}
+                            style={{
+                              position: "absolute",
+                              left: offsetX,
+                              top: offsetY,
+                              width: imgSize,
+                              height: imgSize,
+                            }}
+                            resizeMode="stretch"
+                          />
+                        </View>
+                      );
+                    }
+
+                    // Tile de iarba din zona interioara (rows 1-6, cols 1-6)
+                    const day = (row - 1) * INNER_COLS + (col - 1) + 1;
+                    const isOutOfMonth = day > daysInMonth;
                     const hasFlower = flowers.has(day);
                     const flowerIndex = flowers.get(day) ?? 0;
                     const isHovered = hovered === day;
-                    const isToday = isCurrentMonth && day === today;
-                    const isFuture = isFutureMonth || (isCurrentMonth && day > today);
+                    const isFuture = isFutureMonth;
 
                     const cubeVariant = hasFlower
                       ? "flower"
                       : isHovered
                         ? "hovered"
-                        : isToday
-                          ? "today"
-                          : isFuture
-                            ? "future"
-                            : "normal";
+                        : isFuture
+                          ? "future"
+                          : "normal";
 
                     return (
                       // Container vizual — pozitionat izometric, contine cubul + floarea
@@ -218,43 +249,51 @@ export default function GardenScreen() {
                           </View>
                         )}
 
-                        {/* Zona de touch — limitata la fata de sus a cubului (jumatate din inaltime) */}
+                        {/* Hover overlay — romb izometric, deasupra cubului */}
+                        {!hasFlower && isHovered && (
+                          <Svg
+                            viewBox="0 0 100 50"
+                            width={CELL_SIZE}
+                            height={CELL_SIZE / 2}
+                            // @ts-ignore
+                            pointerEvents="none"
+                            style={{ position: "absolute", top: 0, left: 0 }}
+                          >
+                            <Polygon
+                              points="50,2 97,26 50,48 3,26"
+                              fill="rgba(255,255,255,0.22)"
+                              stroke="rgba(255,255,255,0.6)"
+                              strokeWidth="2.5"
+                            />
+                          </Svg>
+                        )}
+
+                        {/* Plus la hover — centrat pe fata de sus */}
+                        {!hasFlower && isHovered && (
+                          <View
+                            pointerEvents="none"
+                            style={{
+                              position: "absolute",
+                              top: CELL_SIZE * 0.08,
+                              left: 0,
+                              right: 0,
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.dayNumber}>+</Text>
+                          </View>
+                        )}
+
+                        {/* Zona de touch — limitata la centrul rombului pentru a nu bloca celulele din spate */}
                         <Pressable
                           onPress={() => !isFuture && toggleFlower(day)}
                           // @ts-ignore
                           onHoverIn={() => !isFuture && setHovered(day)}
                           // @ts-ignore
                           onHoverOut={() => setHovered(null)}
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: CELL_SIZE,
-                            height: CELL_SIZE / 2,
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          {/* Numar zi pe fata de sus */}
-                          {!hasFlower && (
-                            <Text
-                              style={[
-                                styles.dayNumber,
-                                isToday && styles.dayNumberToday,
-                                isFuture && styles.dayNumberFuture,
-                              ]}
-                            >
-                              {day}
-                            </Text>
-                          )}
-
-                          {/* Plus on hover */}
-                          {!hasFlower && isHovered && (
-                            <View style={styles.plusOverlay}>
-                              <Text style={styles.plusIcon}>+</Text>
-                            </View>
-                          )}
-                        </Pressable>
+                          android_ripple={null}
+                          style={{ position: "absolute", top: CELL_SIZE * 0.05, left: CELL_SIZE * 0.22, width: CELL_SIZE * 0.56, height: CELL_SIZE * 0.35 }}
+                        />
                       </View>
                     );
                   })}
@@ -370,8 +409,8 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
     color: "#3a6a2a",
-    marginBottom: 4,
     fontWeight: "600",
+    textAlign: "center",
   },
   dayNumberToday: {
     fontFamily: "Nunito_800ExtraBold",
@@ -380,21 +419,6 @@ const styles = StyleSheet.create({
   },
   dayNumberFuture: {
     color: "#8aab6e",
-  },
-  plusOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  plusIcon: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 22,
-    color: "#4a9e2f",
-    fontWeight: "300",
   },
   counter: {
     marginTop: 20,
