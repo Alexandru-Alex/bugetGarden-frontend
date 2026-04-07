@@ -278,11 +278,11 @@ function AuthModal({ visible, onClose, onSuccess }: {
             {/* Name field (signup only) */}
             {mode === "signup" && (
               <View style={[auth.inputWrap, nameFocused && auth.inputWrapFocused]}>
-                <Ionicons name="person-outline" size={18} color="#8aab6e" style={auth.inputIcon} />
+                <Ionicons name="person-outline" size={18} color="#79AE6F" style={auth.inputIcon} />
                 <TextInput
                   style={auth.input}
                   placeholder="Your name"
-                  placeholderTextColor="#8aab6e"
+                  placeholderTextColor="#79AE6F"
                   value={name}
                   onChangeText={setName}
                   onFocus={() => setNameFocused(true)}
@@ -294,11 +294,11 @@ function AuthModal({ visible, onClose, onSuccess }: {
 
             {/* Email field */}
             <View style={[auth.inputWrap, emailFocused && auth.inputWrapFocused]}>
-              <Ionicons name="mail-outline" size={18} color="#8aab6e" style={auth.inputIcon} />
+              <Ionicons name="mail-outline" size={18} color="#79AE6F" style={auth.inputIcon} />
               <TextInput
                 style={auth.input}
                 placeholder="Email"
-                placeholderTextColor="#8aab6e"
+                placeholderTextColor="#79AE6F"
                 value={email}
                 onChangeText={setEmail}
                 onFocus={() => setEmailFocused(true)}
@@ -311,11 +311,11 @@ function AuthModal({ visible, onClose, onSuccess }: {
 
             {/* Password field */}
             <View style={[auth.inputWrap, passwordFocused && auth.inputWrapFocused]}>
-              <Ionicons name="lock-closed-outline" size={18} color="#8aab6e" style={auth.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={18} color="#79AE6F" style={auth.inputIcon} />
               <TextInput
                 style={auth.input}
                 placeholder="Password"
-                placeholderTextColor="#8aab6e"
+                placeholderTextColor="#79AE6F"
                 value={password}
                 onChangeText={setPassword}
                 onFocus={() => setPasswordFocused(true)}
@@ -505,7 +505,7 @@ const styles = StyleSheet.create<{
 }>({
   container: {
     flex: 1,
-    backgroundColor: "#5a9e2f",
+    backgroundColor: "#346739",
     ...(Platform.OS === "web" ? { minHeight: "100vh" as any, overflow: "hidden" } : {}),
   },
   overlay: {
@@ -581,11 +581,11 @@ const styles = StyleSheet.create<{
     borderColor: "rgba(255,255,255,0.6)",
   },
   ctaButtonPressed: {
-    backgroundColor: "#e8f5e9",
+    backgroundColor: "#ffffff",
     transform: [{ scale: 0.97 }],
   },
   ctaText: {
-    color: "#1b5e20",
+    color: "#346739",
     fontSize: 16,
     fontFamily: "Nunito_800ExtraBold",
     letterSpacing: 0.6,
@@ -633,7 +633,7 @@ const auth = StyleSheet.create<{
       : {}),
   },
   card: {
-    backgroundColor: "#f0f9ec",
+    backgroundColor: "#ffffff",
     borderRadius: 28,
     overflow: "hidden",
     width: "100%",
@@ -650,9 +650,9 @@ const auth = StyleSheet.create<{
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 10,
-    backgroundColor: "#d6f0c8",
+    backgroundColor: "#9FCB98",
     borderBottomWidth: 1,
-    borderBottomColor: "#b8dfa8",
+    borderBottomColor: "#79AE6F",
   },
   gardenEmoji: {
     fontSize: 22,
@@ -665,7 +665,7 @@ const auth = StyleSheet.create<{
   title: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 26,
-    color: "#1b4d1b",
+    color: "#346739",
     textAlign: "center",
     width: "100%",
     marginBottom: 4,
@@ -673,7 +673,7 @@ const auth = StyleSheet.create<{
   subtitle: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
-    color: "#5a8a3c",
+    color: "#79AE6F",
     textAlign: "center",
     width: "100%",
     marginBottom: 20,
@@ -681,7 +681,7 @@ const auth = StyleSheet.create<{
   },
   tabs: {
     flexDirection: "row",
-    backgroundColor: "#d4ebc8",
+    backgroundColor: "#9FCB98",
     borderRadius: 14,
     padding: 4,
     marginBottom: 20,
@@ -703,25 +703,25 @@ const auth = StyleSheet.create<{
   tabText: {
     fontFamily: "Nunito_700Bold",
     fontSize: 14,
-    color: "#5a8a3c",
+    color: "#79AE6F",
   },
   tabTextActive: {
-    color: "#1b4d1b",
+    color: "#346739",
     fontFamily: "Nunito_800ExtraBold",
   },
   inputWrap: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1.5,
-    borderColor: "#b8dfa8",
+    borderColor: "#79AE6F",
     borderRadius: 14,
     backgroundColor: "#ffffff",
     marginBottom: 12,
     paddingHorizontal: 14,
   },
   inputWrapFocused: {
-    borderColor: "#4a9e2f",
-    shadowColor: "#4a9e2f",
+    borderColor: "#346739",
+    shadowColor: "#346739",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
@@ -734,7 +734,7 @@ const auth = StyleSheet.create<{
     flex: 1,
     fontFamily: "Nunito_700Bold",
     fontSize: 15,
-    color: "#1b4d1b",
+    color: "#346739",
     paddingVertical: 12,
   },
   error: {
@@ -745,19 +745,19 @@ const auth = StyleSheet.create<{
     marginBottom: 10,
   },
   submitBtn: {
-    backgroundColor: "#4a9e2f",
+    backgroundColor: "#346739",
     borderRadius: 16,
     paddingVertical: 14,
     alignItems: "center",
     marginTop: 4,
-    shadowColor: "#4a9e2f",
+    shadowColor: "#346739",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,
     elevation: 6,
   },
   submitBtnPressed: {
-    backgroundColor: "#3a7e22",
+    backgroundColor: "#2d5a30",
     transform: [{ scale: 0.98 }],
   },
   submitText: {
@@ -774,12 +774,12 @@ const auth = StyleSheet.create<{
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "#d4ebc8",
+    backgroundColor: "#9FCB98",
   },
   dividerText: {
     fontFamily: "Nunito_700Bold",
     fontSize: 13,
-    color: "#8aab6e",
+    color: "#79AE6F",
     marginHorizontal: 12,
   },
   googleBtn: {
