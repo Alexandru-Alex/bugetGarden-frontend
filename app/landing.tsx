@@ -167,7 +167,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("https://bugetgarden-backend-production-7c3b.up.railway.app/authorization-google", {
+      const res = await fetch("http://localhost:8080/authorization-google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: accessToken, provider: "google" }),
@@ -374,9 +374,22 @@ function AuthModal({ visible, onClose, onSuccess }: {
 
 // ─── Landing Screen ──────────────────────────────────────────────────────────
 
+// ─── DEV BYPASS (remove before production) ───────────────────────────────────
+const DEV_BYPASS_TOKEN = __DEV__ && Platform.OS === "android"
+  ? "m_icr3lqiAD35b94HXI6Y_6vdfGxCAg5LLZ5KwhWQTM"
+  : null;
+
 export default function LandingScreen() {
   const router = useRouter();
   const [authVisible, setAuthVisible] = useState(false);
+
+  useEffect(() => {
+    if (DEV_BYPASS_TOKEN) {
+      SecureStore.setItemAsync("auth_token", DEV_BYPASS_TOKEN)
+        .then(() => SecureStore.setItemAsync("is_new_user", "true"))
+        .then(() => router.replace("/garden"));
+    }
+  }, []);
 
   const time = useSharedValue(0);
   const fadeAnim = useSharedValue(Platform.OS === "android" ? 1 : 0);
