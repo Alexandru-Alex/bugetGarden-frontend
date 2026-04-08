@@ -177,8 +177,10 @@ function AuthModal({ visible, onClose, onSuccess }: {
       const backendToken = data.token;
       if (Platform.OS === "web") {
         localStorage.setItem("auth_token", backendToken);
+        localStorage.setItem("is_new_user", String(data.newUser));
       } else {
         await SecureStore.setItemAsync("auth_token", backendToken);
+        await SecureStore.setItemAsync("is_new_user", String(data.newUser));
       }
       onSuccess(data.newUser);
     } catch {
