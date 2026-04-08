@@ -37,7 +37,7 @@ export default function HelloScreen() {
     if (!name.trim()) return;
     try {
       await fetch(
-        "http://localhost:8080/accounts/name",
+        "https://bugetgarden-backend-production-7c3b.up.railway.app/accounts/name",
         {
           method: "POST",
           headers: {
