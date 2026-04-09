@@ -66,6 +66,57 @@ export const styles = StyleSheet.create({
       default: {},
     }),
   },
+  currencySection: {
+    gap: 8,
+  },
+  currencyLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#79AE6F",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    paddingLeft: 4,
+  },
+  currencyRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  currencyOption: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    borderWidth: 1.5,
+    borderColor: "#9FCB98",
+    borderRadius: 14,
+    paddingVertical: 11,
+    backgroundColor: "#ffffff",
+  },
+  currencyOptionSelected: {
+    backgroundColor: "#346739",
+    borderColor: "#346739",
+  },
+  currencyOptionPressed: {
+    backgroundColor: "#f0f8ee",
+  },
+  currencySymbol: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 18,
+    color: "#79AE6F",
+  },
+  currencySymbolSelected: {
+    color: "#ffffff",
+  },
+  currencyName: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#79AE6F",
+    letterSpacing: 0.3,
+  },
+  currencyNameSelected: {
+    color: "#ffffff",
+  },
   btn: {
     backgroundColor: "#346739",
     borderRadius: 16,

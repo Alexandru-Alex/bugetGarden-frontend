@@ -46,7 +46,13 @@ interface Props {
 
 export function GrassWave({ time }: Props) {
   const image = useImage(BG);
-  const effect = useMemo(() => Skia.RuntimeEffect.Make(SKSL) ?? null, []);
+  const effect = useMemo(() => {
+    try {
+      return Skia.RuntimeEffect.Make(SKSL) ?? null;
+    } catch {
+      return null;
+    }
+  }, []);
 
   const uniforms = useDerivedValue(() => ({
     resolution: [W, H],

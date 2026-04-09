@@ -71,6 +71,26 @@ export const api = {
     }
   },
 
+  async patch<T = unknown>(path: string, body: unknown): Promise<T> {
+    const headers = await buildHeaders({ "Content-Type": "application/json" });
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => res.statusText);
+      throw new Error(`${res.status}: ${text}`);
+    }
+    const text = await res.text();
+    if (!text) return undefined as T;
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      return text as T;
+    }
+  },
+
   async get<T = unknown>(path: string): Promise<T> {
     const headers = await buildHeaders();
     const res = await fetch(`${BASE_URL}${path}`, { headers });

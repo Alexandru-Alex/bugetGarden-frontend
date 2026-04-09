@@ -13,12 +13,15 @@ import {
   View,
 } from "react-native";
 
+type Currency = "USD" | "EUR";
+
 export default function HelloScreen() {
   const router = useRouter();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [isNewUser, setIsNewUser] = useState<boolean | undefined>(undefined);
   const [name, setName] = useState("");
   const [nameFocused, setNameFocused] = useState(false);
+  const [currency, setCurrency] = useState<Currency>("USD");
 
   useEffect(() => {
     getStoredToken().then(setToken);
@@ -36,14 +39,16 @@ export default function HelloScreen() {
   const handleContinue = async () => {
     if (!name.trim()) return;
     try {
-      await api.post("/accounts/name", name.trim(), { contentType: "text/plain" });
+      await api.patch("/accounts", { name: name.trim(), currency });
     } catch {
       // ignoră erorile de rețea, continuă oricum
     }
     if (Platform.OS === "web") {
       localStorage.setItem("is_new_user", "false");
+      localStorage.setItem("currency", currency);
     } else {
       await SecureStore.setItemAsync("is_new_user", "false");
+      await SecureStore.setItemAsync("currency", currency);
     }
     router.replace("/garden");
   };
@@ -81,6 +86,40 @@ export default function HelloScreen() {
               onSubmitEditing={handleContinue}
               underlineColorAndroid="transparent"
             />
+          </View>
+
+          <View style={styles.currencySection}>
+            <Text style={styles.currencyLabel}>Currency</Text>
+            <View style={styles.currencyRow}>
+              {(["USD", "EUR"] as Currency[]).map((c) => (
+                <Pressable
+                  key={c}
+                  style={({ pressed }) => [
+                    styles.currencyOption,
+                    currency === c && styles.currencyOptionSelected,
+                    pressed && currency !== c && styles.currencyOptionPressed,
+                  ]}
+                  onPress={() => setCurrency(c)}
+                >
+                  <Text
+                    style={[
+                      styles.currencySymbol,
+                      currency === c && styles.currencySymbolSelected,
+                    ]}
+                  >
+                    {c === "USD" ? "$" : "€"}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.currencyName,
+                      currency === c && styles.currencyNameSelected,
+                    ]}
+                  >
+                    {c}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
           </View>
 
           <Pressable

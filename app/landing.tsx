@@ -13,6 +13,7 @@ import * as WebBrowser from "expo-web-browser";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
+  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -48,7 +49,21 @@ function GoogleLogo({ size = 20 }: { size?: number }) {
   );
 }
 
-const { width: W } = Dimensions.get("window");
+const { width: W, height: H } = Dimensions.get("window");
+
+const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
+
+class GrassBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
+}
 
 // Arc text layout — fără TextPath, fiecare caracter pozitionat matematic
 const SVG_W = W - 16;
@@ -432,7 +447,14 @@ export default function LandingScreen() {
   return (
     <View style={styles.container}>
       <View style={StyleSheet.absoluteFill}>
-        <GrassWave time={time} />
+        <Image
+          source={BG_IMAGE}
+          style={{ width: W, height: H }}
+          resizeMode="cover"
+        />
+        <GrassBoundary>
+          <GrassWave time={time} />
+        </GrassBoundary>
       </View>
 
       <View style={styles.overlay} />
