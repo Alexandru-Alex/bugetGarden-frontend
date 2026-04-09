@@ -50,7 +50,7 @@ export default function HelloScreen() {
       await SecureStore.setItemAsync("is_new_user", "false");
       await SecureStore.setItemAsync("currency", currency);
     }
-    router.replace("/garden");
+    router.replace("/dashboard");
   };
 
   return (
