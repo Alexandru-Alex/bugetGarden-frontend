@@ -1,6 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/hello.styles";
+import { Ionicons } from "@expo/vector-icons";
 import { Redirect, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
@@ -34,7 +34,7 @@ export default function HelloScreen() {
 
   if (token === undefined || isNewUser === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
-  if (!isNewUser) return <Redirect href="/garden" />;
+  if (!isNewUser) return <Redirect href="/dashboard" />;
 
   const handleContinue = async () => {
     if (!name.trim()) return;
@@ -138,4 +138,3 @@ export default function HelloScreen() {
     </KeyboardAvoidingView>
   );
 }
-
