@@ -479,6 +479,9 @@ export const styles = StyleSheet.create({
     fontSize: 46,
     fontWeight: "900",
     lineHeight: 52,
+    textAlign: "center",
+    textAlignVertical: "center",
+    width: 120,
   },
   scoreOutOf: {
     fontSize: 14,

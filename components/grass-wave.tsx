@@ -5,8 +5,8 @@
 import {
   Canvas,
   ImageShader,
-  RuntimeEffect,
   Shader,
+  Skia,
   useImage,
 } from "@shopify/react-native-skia";
 import React, { useMemo } from "react";
@@ -46,24 +46,14 @@ interface Props {
 
 export function GrassWave({ time }: Props) {
   const image = useImage(BG);
-  const effect = useMemo(() => RuntimeEffect?.Make?.(SKSL) ?? null, []);
+  const effect = useMemo(() => Skia.RuntimeEffect.Make(SKSL) ?? null, []);
 
   const uniforms = useDerivedValue(() => ({
     resolution: [W, H],
     time: time.value,
   }));
 
-  if (!effect) {
-    return (
-      <Image
-        source={BG}
-        style={{ width: W, height: H }}
-        resizeMode="cover"
-      />
-    );
-  }
-
-  if (!image) {
+  if (!effect || !image) {
     return (
       <Image
         source={BG}

@@ -1,5 +1,13 @@
-import React, { useEffect, useMemo } from "react";
-import { Animated, Easing, StyleSheet, Text, View } from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 
 const TREE_TYPES = ["🌳", "🌲", "🌴", "🎋", "🌵"];
 
@@ -17,31 +25,22 @@ interface AnimatedTreeProps {
 }
 
 function AnimatedTree({ x, y, size, treeType }: AnimatedTreeProps) {
-  const rotateAnim = React.useRef(new Animated.Value(0)).current;
+  const rotate = useSharedValue(0);
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotateAnim, {
-          toValue: 3,
-          duration: 2000,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: -3,
-          duration: 2000,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [rotateAnim]);
+    rotate.value = withRepeat(
+      withSequence(
+        withTiming(3,  { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+        withTiming(-3, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+      ),
+      -1,
+      false,
+    );
+  }, []);
 
-  const rotation = useMemo(
-    () => rotateAnim.interpolate({ inputRange: [-3, 3], outputRange: ["-3deg", "3deg"] }),
-    [rotateAnim],
-  );
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotate.value}deg` }],
+  }));
 
   const { width, height, fontSize } = SIZE_MAP[size];
 
@@ -49,13 +48,8 @@ function AnimatedTree({ x, y, size, treeType }: AnimatedTreeProps) {
     <Animated.View
       style={[
         styles.treeContainer,
-        {
-          left: x,
-          top: y,
-          width,
-          height,
-          transform: [{ rotate: rotation }],
-        } as any,
+        { left: x, top: y, width, height } as any,
+        animStyle,
       ]}
     >
       <Text style={[styles.foliage, { fontSize }]}>
@@ -71,57 +65,35 @@ interface AnimatedCoinProps {
 }
 
 function AnimatedCoin({ x, y }: AnimatedCoinProps) {
-  const floatAnim = React.useRef(new Animated.Value(0)).current;
-  const spinAnim = React.useRef(new Animated.Value(0)).current;
+  const translateY = useSharedValue(0);
+  const rotate = useSharedValue(0);
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim, {
-          toValue: -20,
-          duration: 3000,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim, {
-          toValue: 20,
-          duration: 3000,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
+    translateY.value = withRepeat(
+      withSequence(
+        withTiming(-20, { duration: 3000, easing: Easing.inOut(Easing.sin) }),
+        withTiming(20,  { duration: 3000, easing: Easing.inOut(Easing.sin) }),
+      ),
+      -1,
+      false,
+    );
+    rotate.value = withRepeat(
+      withTiming(360, { duration: 2000, easing: Easing.linear }),
+      -1,
+      false,
+    );
+  }, []);
 
-    Animated.loop(
-      Animated.timing(spinAnim, {
-        toValue: 1,
-        duration: 2000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ).start();
-  }, [floatAnim, spinAnim]);
-
-  const translateY = useMemo(
-    () => floatAnim.interpolate({ inputRange: [-20, 20], outputRange: [0, 40] }),
-    [floatAnim],
-  );
-
-  const rotate = useMemo(
-    () => spinAnim.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] }),
-    [spinAnim],
-  );
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: translateY.value },
+      { rotate: `${rotate.value}deg` },
+    ],
+  }));
 
   return (
     <Animated.View
-      style={[
-        styles.coinContainer,
-        {
-          left: x,
-          top: y,
-          transform: [{ translateY }, { rotate }],
-        } as any,
-      ]}
+      style={[styles.coinContainer, { left: x, top: y } as any, animStyle]}
     >
       <Text style={styles.coin}>🪙</Text>
     </Animated.View>
@@ -130,23 +102,23 @@ function AnimatedCoin({ x, y }: AnimatedCoinProps) {
 
 const TREES = [
   // Top row
-  { x: "5%", y: "5%", size: "small" as const, type: 0 },
-  { x: "15%", y: "2%", size: "large" as const, type: 1 },
-  { x: "30%", y: "8%", size: "medium" as const, type: 2 },
-  { x: "50%", y: "3%", size: "small" as const, type: 3 },
-  { x: "65%", y: "10%", size: "large" as const, type: 4 },
-  { x: "80%", y: "5%", size: "medium" as const, type: 0 },
-  { x: "92%", y: "8%", size: "small" as const, type: 1 },
+  { x: "5%",  y: "5%",  size: "small"  as const, type: 0 },
+  { x: "15%", y: "2%",  size: "large"  as const, type: 1 },
+  { x: "30%", y: "8%",  size: "medium" as const, type: 2 },
+  { x: "50%", y: "3%",  size: "small"  as const, type: 3 },
+  { x: "65%", y: "10%", size: "large"  as const, type: 4 },
+  { x: "80%", y: "5%",  size: "medium" as const, type: 0 },
+  { x: "92%", y: "8%",  size: "small"  as const, type: 1 },
   // Middle row
   { x: "10%", y: "35%", size: "medium" as const, type: 2 },
-  { x: "88%", y: "40%", size: "large" as const, type: 3 },
+  { x: "88%", y: "40%", size: "large"  as const, type: 3 },
   // Bottom row
-  { x: "5%", y: "75%", size: "large" as const, type: 4 },
+  { x: "5%",  y: "75%", size: "large"  as const, type: 4 },
   { x: "20%", y: "82%", size: "medium" as const, type: 0 },
-  { x: "40%", y: "78%", size: "small" as const, type: 1 },
-  { x: "60%", y: "80%", size: "large" as const, type: 2 },
+  { x: "40%", y: "78%", size: "small"  as const, type: 1 },
+  { x: "60%", y: "80%", size: "large"  as const, type: 2 },
   { x: "75%", y: "75%", size: "medium" as const, type: 3 },
-  { x: "90%", y: "82%", size: "small" as const, type: 4 },
+  { x: "90%", y: "82%", size: "small"  as const, type: 4 },
 ];
 
 const COINS = [

@@ -1,5 +1,6 @@
 import { AnimatedTreesBackground } from "@/components/animated-trees";
 import { ThemedText } from "@/components/themed-text";
+import { BASE_URL } from "@/lib/api";
 import { styles } from "@/styles/tabs/index.styles";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
@@ -55,17 +56,12 @@ export default function HomeScreen() {
       const formData = new URLSearchParams();
       formData.append("email", trimmedEmail);
 
-      await fetch(
-        "https://bugetgarden-backend-production-7c3b.up.railway.app/email-add",
-        {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: formData.toString(),
-        },
-      );
+      await fetch(`${BASE_URL}/email-add`, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString(),
+      });
 
       setEmailSubmitted(true);
       setShowCelebration(true);

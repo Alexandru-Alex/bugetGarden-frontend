@@ -1,12 +1,12 @@
 import { AnimatedTreesBackground } from "@/components/animated-trees";
+import { api, getStoredToken } from "@/lib/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Redirect } from "expo-router";
-import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
   Easing,
-  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -14,6 +14,18 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import Reanimated, {
+  Easing as REasing,
+  useAnimatedProps,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
+
+// TextInput animat — permite actualizarea textului direct pe UI thread (zero re-rendere JS)
+const AnimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "@/styles/tabs/dashboard.styles";
 
@@ -23,11 +35,7 @@ export default function DashboardScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
-    if (Platform.OS === "web") {
-      setToken(localStorage.getItem("auth_token"));
-    } else {
-      SecureStore.getItemAsync("auth_token").then(setToken);
-    }
+    getStoredToken().then(setToken);
   }, []);
 
   if (token === undefined) return null;
@@ -96,23 +104,29 @@ export default function DashboardScreen() {
 // ─── Dashboard Header ────────────────────────────────────────────────────────
 
 function DashboardHeader({ compact = false }: { compact?: boolean }) {
-  const floatAnim = useRef(new Animated.Value(0)).current;
+  const floatY = useSharedValue(0);
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim, { toValue: -8, duration: 1800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(floatAnim, { toValue: 0,  duration: 1800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-      ]),
-    ).start();
-  }, [floatAnim]);
+    floatY.value = withRepeat(
+      withSequence(
+        withTiming(-8, { duration: 1800, easing: REasing.inOut(REasing.ease) }),
+        withTiming(0,  { duration: 1800, easing: REasing.inOut(REasing.ease) }),
+      ),
+      -1,
+      false,
+    );
+  }, []);
+
+  const floatStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: floatY.value }],
+  }));
 
   if (compact) {
     return (
       <View style={styles.headerCompact}>
-        <Animated.Text style={[styles.headerCompactEmoji, { transform: [{ translateY: floatAnim }] }]}>
+        <Reanimated.Text style={[styles.headerCompactEmoji, floatStyle]}>
           🌿
-        </Animated.Text>
+        </Reanimated.Text>
         <View>
           <Text style={styles.headerCompactTitle}>My Garden Dashboard</Text>
           <Text style={styles.headerCompactSub}>Plant your numbers and watch your budget grow 🌱</Text>
@@ -123,9 +137,9 @@ function DashboardHeader({ compact = false }: { compact?: boolean }) {
 
   return (
     <View style={styles.headerSection}>
-      <Animated.View style={[styles.logoContainer, { transform: [{ translateY: floatAnim }] }]}>
+      <Reanimated.View style={[styles.logoContainer, floatStyle]}>
         <Text style={styles.logoEmoji}>🌿</Text>
-      </Animated.View>
+      </Reanimated.View>
       <Text style={styles.mainTitle}>My Garden Dashboard</Text>
       <Text style={styles.subtitle}>Plant your numbers and watch your budget grow 🌱</Text>
     </View>
@@ -159,28 +173,26 @@ const MOCK_SCORE_HISTORY: DayScore[] = [
 ];
 
 function ScoreHistoryChart() {
-  const [data, setData] = useState<DayScore[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
   const barAnims = useRef(Array.from({ length: 7 }, () => new Animated.Value(0))).current;
 
+  // TODO: înlocuiește queryFn cu api.get<DayScore[]>("/dashboard/score-history") când backend-ul e gata
+  const { data = [], isLoading: loading, isError: error } = useQuery<DayScore[]>({
+    queryKey: ["scoreHistory"],
+    queryFn: () => Promise.resolve(MOCK_SCORE_HISTORY),
+    staleTime: Infinity,
+  });
+
   useEffect(() => {
-    // TODO: replace with real fetch when backend is ready
-    // fetch("https://bugetgarden-backend-production-7c3b.up.railway.app/dashboard")
-    setTimeout(() => {
-      setData(MOCK_SCORE_HISTORY);
-      setLoading(false);
-      MOCK_SCORE_HISTORY.forEach((item, i) => {
-        Animated.timing(barAnims[i], {
-          toValue: item.score / 100,
-          duration: 500 + i * 80,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: false,
-        }).start();
-      });
-    }, 600);
-  }, []);
+    if (data.length === 0) return;
+    data.slice(-7).forEach((item, i) => {
+      Animated.timing(barAnims[i], {
+        toValue: item.score / 100,
+        duration: 500 + i * 80,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: false,
+      }).start();
+    });
+  }, [data]);
 
   return (
     <View style={styles.chartCardOuter}>
@@ -252,26 +264,12 @@ function ScoreHistoryChart() {
 
 function IncomeCard() {
   const [income, setIncome] = useState("");
-  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const successScaleAnim = useRef(new Animated.Value(0.5)).current;
 
-  const handleSubmit = async () => {
-    const value = parseFloat(income.replace(",", "."));
-    if (isNaN(value) || value <= 0) {
-      alert("Oops! 🌱 Please enter a valid amount");
-      return;
-    }
-    setLoading(true);
-    try {
-      await fetch(
-        "https://bugetgarden-backend-production-7c3b.up.railway.app/monthly-income",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ income: value }),
-        },
-      );
+  const { mutate: saveIncome, isPending: loading } = useMutation({
+    mutationFn: (value: number) => api.post<void>("/monthly-income", { income: value }),
+    onSuccess: () => {
       setSubmitted(true);
       Animated.timing(successScaleAnim, {
         toValue: 1,
@@ -279,11 +277,17 @@ function IncomeCard() {
         easing: Easing.elastic(1.2),
         useNativeDriver: true,
       }).start();
-    } catch (error) {
-      alert(`Error: ${error instanceof Error ? error.message : String(error)}`);
-    } finally {
-      setLoading(false);
+    },
+    onError: (err) => alert(`Error: ${err instanceof Error ? err.message : String(err)}`),
+  });
+
+  const handleSubmit = () => {
+    const value = parseFloat(income.replace(",", "."));
+    if (isNaN(value) || value <= 0) {
+      alert("Oops! 🌱 Please enter a valid amount");
+      return;
     }
+    saveIncome(value);
   };
 
   return (
@@ -362,28 +366,12 @@ function ExpensesCard() {
     utilities: "",
     other: "",
   });
-  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const successScaleAnim = useRef(new Animated.Value(0.5)).current;
 
-  const handleSubmit = async () => {
-    const parsed = Object.fromEntries(
-      EXPENSE_FIELDS.map(({ key }) => [
-        key,
-        parseFloat(values[key].replace(",", ".")) || 0,
-      ]),
-    );
-
-    setLoading(true);
-    try {
-      await fetch(
-        "https://bugetgarden-backend-production-7c3b.up.railway.app/monthly-expenses",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(parsed),
-        },
-      );
+  const { mutate: saveExpenses, isPending: loading } = useMutation({
+    mutationFn: (parsed: Record<string, number>) => api.post<void>("/monthly-expenses", parsed),
+    onSuccess: () => {
       setSubmitted(true);
       Animated.timing(successScaleAnim, {
         toValue: 1,
@@ -391,11 +379,18 @@ function ExpensesCard() {
         easing: Easing.elastic(1.2),
         useNativeDriver: true,
       }).start();
-    } catch (error) {
-      alert(`Error: ${error instanceof Error ? error.message : String(error)}`);
-    } finally {
-      setLoading(false);
-    }
+    },
+    onError: (err) => alert(`Error: ${err instanceof Error ? err.message : String(err)}`),
+  });
+
+  const handleSubmit = () => {
+    const parsed = Object.fromEntries(
+      EXPENSE_FIELDS.map(({ key }) => [
+        key,
+        parseFloat(values[key].replace(",", ".")) || 0,
+      ]),
+    );
+    saveExpenses(parsed);
   };
 
   return (
@@ -484,6 +479,52 @@ function scoreEmojis(score: number) {
 
 type ScoreKey = keyof ScoreData;
 
+// ─── Score Circle (factored out to eliminate JSX duplication) ────────────────
+
+interface ScoreCircleProps {
+  isPerfect: boolean;
+  color: string;
+  animatedScoreProps: ReturnType<typeof useAnimatedProps>;
+  emojis: string[];
+  rainbowBorder: any;
+  shadowOpacity: any;
+  perfectScale: Animated.Value;
+  rainbowAnim: Animated.Value;
+}
+
+function ScoreCircle({
+  isPerfect, color, animatedScoreProps, emojis,
+  rainbowBorder, shadowOpacity, perfectScale, rainbowAnim,
+}: ScoreCircleProps) {
+  return (
+    <View style={styles.scoreCircleWrapper}>
+      {isPerfect && <SparkleRing rainbowAnim={rainbowAnim} />}
+      <Animated.View style={[
+        styles.scoreCircle,
+        isPerfect && styles.scoreCirclePerfect,
+        { borderColor: isPerfect ? rainbowBorder : color, shadowColor: color, shadowOpacity, transform: [{ scale: perfectScale }] },
+      ]}>
+        {isPerfect ? (
+          <><Text style={styles.scoreNumberPerfect}>100</Text><Text style={styles.scoreTrophy}>🏆</Text></>
+        ) : (
+          <>
+            <AnimatedTextInput
+              style={[styles.scoreNumber, { color, backgroundColor: "transparent" }]}
+              editable={false}
+              selectTextOnFocus={false}
+              animatedProps={animatedScoreProps}
+            />
+            <Text style={[styles.scoreOutOf, { color, textAlign: "center" }]}>/ 100</Text>
+          </>
+        )}
+      </Animated.View>
+      <View style={styles.emojiRing}>
+        {emojis.map((e, i) => <Text key={i} style={styles.emojiRingItem}>{e}</Text>)}
+      </View>
+    </View>
+  );
+}
+
 function ScoreCard({ horizontal = false }: { horizontal?: boolean }) {
   const [scores, setScores] = useState<Omit<ScoreData, "total">>({
     dailyControl: 0,
@@ -497,26 +538,23 @@ function ScoreCard({ horizontal = false }: { horizontal?: boolean }) {
   const color     = scoreColor(total);
   const emojis    = scoreEmojis(total);
 
-  const [displayScore, setDisplayScore] = useState(0);
-  const countAnim    = useRef(new Animated.Value(0)).current;
   const glowAnim     = useRef(new Animated.Value(0.6)).current;
   const rainbowAnim  = useRef(new Animated.Value(0)).current;
   const perfectScale = useRef(new Animated.Value(1)).current;
 
+  // Animarea scorului direct pe UI thread — zero re-rendere JS
+  const scoreValue = useSharedValue(0);
   useEffect(() => {
-    const id = countAnim.addListener(({ value }) => setDisplayScore(Math.round(value)));
-    return () => countAnim.removeListener(id);
-  }, [countAnim]);
-
-  useEffect(() => {
-    countAnim.stopAnimation();
-    Animated.timing(countAnim, {
-      toValue: total,
+    scoreValue.value = withTiming(total, {
       duration: 400,
-      easing: Easing.out(Easing.quad),
-      useNativeDriver: false,
-    }).start();
+      easing: REasing.out(REasing.quad),
+    });
   }, [total]);
+
+  const animatedScoreProps = useAnimatedProps(() => ({
+    text: String(Math.round(scoreValue.value)),
+    defaultValue: String(Math.round(scoreValue.value)),
+  }));
 
   useEffect(() => {
     Animated.loop(
@@ -594,21 +632,7 @@ function ScoreCard({ horizontal = false }: { horizontal?: boolean }) {
                   <Text style={[styles.cardBadgeText, { color }]}>🌿 Budget Score</Text>
                 </View>
               )}
-              <View style={styles.scoreCircleWrapper}>
-                {isPerfect && <SparkleRing rainbowAnim={rainbowAnim} />}
-                <Animated.View style={[styles.scoreCircle, isPerfect && styles.scoreCirclePerfect,
-                  { borderColor: isPerfect ? rainbowBorder : color, shadowColor: color, shadowOpacity, transform: [{ scale: perfectScale }] }
-                ]}>
-                  {isPerfect ? (
-                    <><Text style={styles.scoreNumberPerfect}>100</Text><Text style={styles.scoreTrophy}>🏆</Text></>
-                  ) : (
-                    <><Text style={[styles.scoreNumber, { color }]}>{displayScore}</Text><Text style={[styles.scoreOutOf, { color }]}>/ 100</Text></>
-                  )}
-                </Animated.View>
-                <View style={styles.emojiRing}>
-                  {emojis.map((e, i) => <Text key={i} style={styles.emojiRingItem}>{e}</Text>)}
-                </View>
-              </View>
+              <ScoreCircle {...{ isPerfect, color, animatedScoreProps, emojis, rainbowBorder, shadowOpacity, perfectScale, rainbowAnim }} />
             </View>
 
             {/* Right: last 2 bars */}
@@ -629,21 +653,7 @@ function ScoreCard({ horizontal = false }: { horizontal?: boolean }) {
             <View style={[styles.cardBadge, { backgroundColor: `${color}22`, borderColor: `${color}66`, alignSelf: "center" }]}>
               <Text style={[styles.cardBadgeText, { color }]}>🌿 Budget Health Score</Text>
             </View>
-            <View style={styles.scoreCircleWrapper}>
-              {isPerfect && <SparkleRing rainbowAnim={rainbowAnim} />}
-              <Animated.View style={[styles.scoreCircle, isPerfect && styles.scoreCirclePerfect,
-                { borderColor: isPerfect ? rainbowBorder : color, shadowColor: color, shadowOpacity, transform: [{ scale: perfectScale }] }
-              ]}>
-                {isPerfect ? (
-                  <><Text style={styles.scoreNumberPerfect}>100</Text><Text style={styles.scoreTrophy}>🏆</Text></>
-                ) : (
-                  <><Text style={[styles.scoreNumber, { color }]}>{displayScore}</Text><Text style={[styles.scoreOutOf, { color }]}>/ 100</Text></>
-                )}
-              </Animated.View>
-              <View style={styles.emojiRing}>
-                {emojis.map((e, i) => <Text key={i} style={styles.emojiRingItem}>{e}</Text>)}
-              </View>
-            </View>
+            <ScoreCircle {...{ isPerfect, color, animatedScoreProps, emojis, rainbowBorder, shadowOpacity, perfectScale, rainbowAnim }} />
             <View style={styles.scoreBarsContainer}>
               {SCORE_BARS.map(({ key, emoji, label }) => (
                 <ScoreBar key={key} emoji={emoji} label={label}
@@ -956,33 +966,28 @@ function GardenSeparator({ emojis }: { emojis: string[] }) {
 }
 
 function FloatingEmoji({ emoji, delay }: { emoji: string; delay: number }) {
-  const floatAnim = useRef(new Animated.Value(0)).current;
+  const floatY = useSharedValue(0);
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim, {
-          toValue: -6,
-          duration: 1300 + delay * 0.3,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim, {
-          toValue: 0,
-          duration: 1300 + delay * 0.3,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [floatAnim, delay]);
+    const dur = 1300 + delay * 0.3;
+    floatY.value = withRepeat(
+      withSequence(
+        withTiming(-6, { duration: dur, easing: REasing.inOut(REasing.ease) }),
+        withTiming(0,  { duration: dur, easing: REasing.inOut(REasing.ease) }),
+      ),
+      -1,
+      false,
+    );
+  }, [delay]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: floatY.value }],
+  }));
 
   return (
-    <Animated.Text
-      style={[styles.separatorEmoji, { transform: [{ translateY: floatAnim }] }]}
-    >
+    <Reanimated.Text style={[styles.separatorEmoji, animStyle]}>
       {emoji}
-    </Animated.Text>
+    </Reanimated.Text>
   );
 }
 
@@ -1008,32 +1013,27 @@ function FloatingBug({
 }: {
   emoji: string; top: number; left: number; delay: number;
 }) {
-  const floatAnim = useRef(new Animated.Value(0)).current;
+  const floatY = useSharedValue(0);
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim, {
-          toValue: -12,
-          duration: 1500 + delay * 0.5,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim, {
-          toValue: 0,
-          duration: 1500 + delay * 0.5,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [floatAnim, delay]);
+    const dur = 1500 + delay * 0.5;
+    floatY.value = withRepeat(
+      withSequence(
+        withTiming(-12, { duration: dur, easing: REasing.inOut(REasing.ease) }),
+        withTiming(0,   { duration: dur, easing: REasing.inOut(REasing.ease) }),
+      ),
+      -1,
+      false,
+    );
+  }, [delay]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: floatY.value }],
+  }));
 
   return (
-    <Animated.Text
-      style={[styles.bugEmoji, { top, left, transform: [{ translateY: floatAnim }] }]}
-    >
+    <Reanimated.Text style={[styles.bugEmoji, { top, left }, animStyle]}>
       {emoji}
-    </Animated.Text>
+    </Reanimated.Text>
   );
 }

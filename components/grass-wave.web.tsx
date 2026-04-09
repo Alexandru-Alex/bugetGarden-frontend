@@ -86,7 +86,7 @@ function makeProgram(gl: WebGLRenderingContext) {
 
 export function GrassWave() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -155,12 +155,14 @@ export function GrassWave() {
     const t0 = performance.now();
     function frame() {
       rafRef.current = requestAnimationFrame(frame);
-      if (!ready) return;
+      if (!ready || !gl) return;
       const t = (performance.now() - t0) / 1000;
-      gl.viewport(0, 0, canvas!.width, canvas!.height);
+      const w = canvas!.width;
+      const h = canvas!.height;
+      gl.viewport(0, 0, w, h);
       gl.uniform1f(timeLoc, t);
       gl.uniform1f(imgAspectLoc, imgAspect);
-      gl.uniform1f(canvasAspectLoc, canvas!.width / canvas!.height);
+      gl.uniform1f(canvasAspectLoc, w / h);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
     frame();
