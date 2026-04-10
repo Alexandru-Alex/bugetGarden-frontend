@@ -24,7 +24,19 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.g3d0manz00.bugetGardenfront"
+      "package": "com.g3d0manz00.bugetGardenfront",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "com.googleusercontent.apps.975323074001-qdr2kgv00149gc5ru0106sa9qffuj5nh",
+              "path": "/oauth2redirect"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "output": "static",
@@ -32,6 +44,12 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.975323074001-re455uukp107dpf8l25q75nia9co29td"
+        }
+      ],
       [
         "expo-splash-screen",
         {

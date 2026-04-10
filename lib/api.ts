@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
-export const BASE_URL = "https://bugetgarden-backend-production-7c3b.up.railway.app";
+export const BASE_URL = "http://localhost:8080";
 
 // Cache in-memory — token nu se schimbă în timpul sesiunii
 let _tokenCache: string | null | undefined = undefined;

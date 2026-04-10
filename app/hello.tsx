@@ -45,10 +45,8 @@ export default function HelloScreen() {
     }
     if (Platform.OS === "web") {
       localStorage.setItem("is_new_user", "false");
-      localStorage.setItem("currency", currency);
     } else {
       await SecureStore.setItemAsync("is_new_user", "false");
-      await SecureStore.setItemAsync("currency", currency);
     }
     router.replace("/dashboard");
   };

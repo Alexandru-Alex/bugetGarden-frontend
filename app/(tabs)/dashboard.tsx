@@ -1,6 +1,5 @@
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/tabs/dashboard.styles";
-import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -11,11 +10,6 @@ import Svg, { Circle, G, Text as SvgText } from "react-native-svg";
 type Tab = "expenses" | "income";
 type Period = "Day" | "Week" | "Month" | "Year" | "Period";
 const PERIODS: Period[] = ["Day", "Week", "Month", "Year", "Period"];
-
-interface Account {
-  name: string;
-  currency: string;
-}
 
 const EXPENSE_SEGMENTS = [
   { label: "Rent",      value: 900,  color: "#4E9AF1" },
@@ -30,7 +24,9 @@ const INCOME_SEGMENTS = [
 ];
 
 function currencySymbolFor(currency?: string) {
-  if (currency === "EUR") return "€";
+  const upper = currency?.toUpperCase();
+  if (upper === "EUR") return "€";
+  if (upper === "GBP") return "£";
   return "$";
 }
 
@@ -117,6 +113,7 @@ function DonutChart({ segments, symbol, size = 200, strokeWidth = 30 }: {
 
 export default function DashboardScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
+  const [currency, setCurrency] = useState<string | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<Tab>("expenses");
   const [activePeriod, setActivePeriod] = useState<Period>("Month");
 
@@ -124,17 +121,17 @@ export default function DashboardScreen() {
     getStoredToken().then(setToken);
   }, []);
 
-  const { data: account } = useQuery<Account>({
-    queryKey: ["account"],
-    queryFn: () => api.get<Account>("/accounts"),
-    enabled: !!token,
-    retry: false,
-  });
+  useEffect(() => {
+    if (!token) return;
+    api.get<{ currency: string }>("/accounts")
+      .then((account) => setCurrency(account.currency))
+      .catch(() => {});
+  }, [token]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
 
-  const symbol = currencySymbolFor(account?.currency);
+  const symbol = currencySymbolFor(currency);
   const segments = activeTab === "expenses" ? EXPENSE_SEGMENTS : INCOME_SEGMENTS;
   const total = segments.reduce((s, seg) => s + seg.value, 0);
 

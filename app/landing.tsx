@@ -168,7 +168,6 @@ function AuthModal({ visible, onClose, onSuccess }: {
     redirectUri: makeRedirectUri({ scheme: "bugetgardenfront", path: "auth" }),
   });
 
-
   useEffect(() => {
     if (googleResponse?.type === "success") {
       const { authentication } = googleResponse;
@@ -177,6 +176,33 @@ function AuthModal({ visible, onClose, onSuccess }: {
       }
     }
   }, [googleResponse]);
+
+  useEffect(() => {
+    if (Platform.OS !== "web") {
+      const { GoogleSignin } = require("@react-native-google-signin/google-signin");
+      GoogleSignin.configure({
+        webClientId: GOOGLE_CLIENT_IDS.webClientId,
+        iosClientId: GOOGLE_CLIENT_IDS.iosClientId,
+        offlineAccess: false,
+      });
+    }
+  }, []);
+
+  const handleNativeGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const { GoogleSignin } = require("@react-native-google-signin/google-signin");
+      await GoogleSignin.hasPlayServices();
+      await GoogleSignin.signIn();
+      const tokens = await GoogleSignin.getTokens();
+      await handleGoogleToken(tokens.accessToken);
+    } catch (e: unknown) {
+      console.error("Native Google sign-in error:", e);
+      setError(e instanceof Error ? e.message : "Google sign-in failed. Please try again later.");
+      setLoading(false);
+    }
+  };
 
   const handleGoogleToken = async (accessToken: string) => {
     setLoading(true);
@@ -194,8 +220,9 @@ function AuthModal({ visible, onClose, onSuccess }: {
         await SecureStore.setItemAsync("is_new_user", String(data.newUser));
       }
       onSuccess(data.newUser);
-    } catch {
-      setError("Google sign-in failed. Please try again later.");
+    } catch (e: unknown) {
+      console.error("Backend auth error:", e);
+      setError(e instanceof Error ? e.message : "Google sign-in failed. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -360,8 +387,8 @@ function AuthModal({ visible, onClose, onSuccess }: {
             {/* Google button */}
             <Pressable
               style={({ pressed }) => [auth.googleBtn, pressed && auth.googleBtnPressed]}
-              onPress={() => googlePromptAsync()}
-              disabled={!googleRequest || loading}
+              onPress={() => Platform.OS === "web" ? googlePromptAsync() : handleNativeGoogleSignIn()}
+              disabled={loading || (Platform.OS === "web" && !googleRequest)}
             >
               <GoogleLogo size={20} />
               <Text style={auth.googleText}>Continue with Google</Text>

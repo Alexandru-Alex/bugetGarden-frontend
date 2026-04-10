@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd:*)",
+      "Read(//c/Program Files/Android/**)",
+      "Read(//d//**)",
+      "Bash(powershell.exe:*)",
+      "Bash(npx expo:*)"
+    ]
+  }
+}
