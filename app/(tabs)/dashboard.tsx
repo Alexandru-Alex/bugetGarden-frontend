@@ -1,11 +1,23 @@
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/tabs/dashboard.styles";
+import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Circle, G, Text as SvgText } from "react-native-svg";
+
+export interface AccountDto {
+  email: string;
+  displayName: string;
+  goldCoins: number;
+  totalScore: number;
+  currency: string;
+}
+
+// Importat din orice ecran care face POST /transactions pentru a invalida cache-ul
+export const ACCOUNT_QUERY_KEY = ["account"] as const;
 
 type Tab = "expenses" | "income";
 type Period = "Day" | "Week" | "Month" | "Year" | "Period";
@@ -113,25 +125,31 @@ function DonutChart({ segments, symbol, size = 200, strokeWidth = 30 }: {
 
 export default function DashboardScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
-  const [currency, setCurrency] = useState<string | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<Tab>("expenses");
   const [activePeriod, setActivePeriod] = useState<Period>("Month");
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     getStoredToken().then(setToken);
   }, []);
 
-  useEffect(() => {
-    if (!token) return;
-    api.get<{ currency: string }>("/accounts")
-      .then((account) => setCurrency(account.currency))
-      .catch(() => {});
-  }, [token]);
+  const { data: account, refetch } = useQuery({
+    queryKey: ACCOUNT_QUERY_KEY,
+    queryFn: () => api.get<AccountDto>("/accounts"),
+    enabled: !!token,
+    // staleTime: 30s și gcTime: 5min moștenite din QueryClient global
+  });
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
 
-  const symbol = currencySymbolFor(currency);
+  const symbol = currencySymbolFor(account?.currency);
   const segments = activeTab === "expenses" ? EXPENSE_SEGMENTS : INCOME_SEGMENTS;
   const total = segments.reduce((s, seg) => s + seg.value, 0);
 
@@ -155,6 +173,14 @@ export default function DashboardScreen() {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#346739"
+            colors={["#346739"]}
+          />
+        }
       >
         <View style={styles.card}>
           {/* ── Tabs ── */}
