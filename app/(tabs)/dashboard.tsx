@@ -1,4 +1,5 @@
 import { NavMenu } from "@/components/nav-menu";
+import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/tabs/dashboard.styles";
 import { useQuery } from "@tanstack/react-query";
@@ -163,7 +164,7 @@ export default function DashboardScreen() {
   const total = segments.reduce((s, seg) => s + seg.value, 0);
 
   return (
-    <View style={styles.root}>
+    <PageTransition style={styles.root}>
       <NavMenu />
       {/* ── Green header ── */}
       <LinearGradient
@@ -172,19 +173,22 @@ export default function DashboardScreen() {
       >
         <SafeAreaView edges={["top"]}>
           <View style={styles.totalSection}>
-            <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalAmount}>{symbol}{formatAmount(total)}</Text>
-          </View>
-          <View style={styles.coinRowWrapper}>
-            <View style={styles.coinWidget}>
-              <Image source={require("@/assets/images/coin.png")} style={styles.coinImage} />
-              <View style={styles.coinRow}>
-                <Text style={styles.coinAmount}>{account?.goldCoins ?? 0}</Text>
-                <Pressable style={({ pressed }) => [styles.coinAddBtn, pressed && styles.coinAddBtnPressed]}>
-                  <Text style={styles.coinAddText}>+</Text>
-                </Pressable>
+            <View style={styles.totalLabelRow}>
+              <View style={{ flex: 1 }} />
+              <Text style={styles.totalLabel}>Total</Text>
+              <View style={{ flex: 1, alignItems: "flex-end" }}>
+                <View style={styles.coinWidget}>
+                  <Image source={require("@/assets/images/coin.png")} style={styles.coinImage} />
+                  <View style={styles.coinRow}>
+                    <Text style={styles.coinAmount}>{account?.goldCoins ?? 0}</Text>
+                    <Pressable style={({ pressed }) => [styles.coinAddBtn, pressed && styles.coinAddBtnPressed]}>
+                      <Text style={styles.coinAddText}>+</Text>
+                    </Pressable>
+                  </View>
+                </View>
               </View>
             </View>
+            <Text style={styles.totalAmount}>{symbol}{formatAmount(total)}</Text>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -245,6 +249,6 @@ export default function DashboardScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </View>
+    </PageTransition>
   );
 }

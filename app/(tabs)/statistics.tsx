@@ -1,4 +1,5 @@
 import { NavMenu } from "@/components/nav-menu";
+import { PageTransition } from "@/components/page-transition";
 import { getStoredToken } from "@/lib/api";
 import { Redirect } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -16,13 +17,13 @@ export default function StatisticsScreen() {
   if (!token) return <Redirect href="/landing" />;
 
   return (
-    <View style={styles.root}>
+    <PageTransition style={styles.root}>
       <NavMenu />
       <SafeAreaView style={styles.center} edges={["top"]}>
         <Text style={styles.placeholder}>Statistics</Text>
         <Text style={styles.sub}>Coming soon</Text>
       </SafeAreaView>
-    </View>
+    </PageTransition>
   );
 }
 

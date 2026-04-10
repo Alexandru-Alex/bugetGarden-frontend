@@ -12,14 +12,16 @@ export const styles = StyleSheet.create({
     paddingBottom: 36,
   },
   totalSection: {
-    alignItems: "center",
     paddingTop: 24,
-    paddingBottom: 4,
-  },
-  coinRowWrapper: {
-    alignItems: "flex-end",
-    paddingHorizontal: 16,
     paddingBottom: 8,
+    paddingHorizontal: 16,
+    alignItems: "center",
+  },
+  totalLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 2,
   },
   totalLabel: {
     fontSize: 13,
@@ -39,8 +41,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   coinImage: {
-    width: 52,
-    height: 52,
+    width: 40,
+    height: 40,
     resizeMode: "contain",
     marginRight: -15,
     zIndex: 1,
@@ -48,10 +50,10 @@ export const styles = StyleSheet.create({
   coinRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 1,
     backgroundColor: "rgba(0,0,0,0.22)",
     paddingLeft: 18,
-    paddingRight: 12,
+    paddingRight: 5,
     paddingVertical: 6,
     borderRadius: 16,
   },

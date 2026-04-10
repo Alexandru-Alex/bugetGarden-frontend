@@ -118,7 +118,7 @@ export default function RoadmapScreen() {
         <AnimatedTreesBackground />
 
         <View style={styles.contentWrapper}>
-          <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <Pressable style={styles.backButton} onPress={() => router.replace("/dashboard" as any)}>
             <Text style={styles.backButtonText}>← Back</Text>
           </Pressable>
 

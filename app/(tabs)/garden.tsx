@@ -1,5 +1,6 @@
 import { GrassCube } from "@/components/grass-cube";
 import { NavMenu } from "@/components/nav-menu";
+import { PageTransition } from "@/components/page-transition";
 import { RoseFlower } from "@/components/rose-flower";
 import { getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/tabs/garden.styles";
@@ -106,7 +107,7 @@ export default function GardenScreen() {
   if (!token) return <Redirect href="/landing" />;
 
   return (
-    <View style={styles.container}>
+    <PageTransition style={styles.container}>
       {/* Background verde aprins ca landing */}
       <View style={[StyleSheet.absoluteFill, styles.bgOverlay]} pointerEvents="none" />
       <NavMenu />
@@ -308,7 +309,7 @@ export default function GardenScreen() {
           </View>
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </PageTransition>
   );
 }
 

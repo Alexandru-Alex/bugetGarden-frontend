@@ -21,6 +21,17 @@ export function invalidateTokenCache(): void {
   _tokenCache = undefined;
 }
 
+export async function logout(): Promise<void> {
+  _tokenCache = null;
+  if (Platform.OS === "web") {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("is_new_user");
+  } else {
+    await SecureStore.deleteItemAsync("auth_token");
+    await SecureStore.deleteItemAsync("is_new_user");
+  }
+}
+
 export async function saveToken(token: string): Promise<void> {
   _tokenCache = token;
   if (Platform.OS === "web") {
