@@ -1,4 +1,5 @@
 import { GrassCube } from "@/components/grass-cube";
+import { NavMenu } from "@/components/nav-menu";
 import { RoseFlower } from "@/components/rose-flower";
 import { getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/tabs/garden.styles";
@@ -108,6 +109,7 @@ export default function GardenScreen() {
     <View style={styles.container}>
       {/* Background verde aprins ca landing */}
       <View style={[StyleSheet.absoluteFill, styles.bgOverlay]} pointerEvents="none" />
+      <NavMenu />
 
       <SafeAreaView style={styles.safe} edges={["top"]}>
         <ScrollView

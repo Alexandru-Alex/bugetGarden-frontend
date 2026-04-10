@@ -123,6 +123,23 @@ export const styles = StyleSheet.create({
     maxWidth: 420,
     gap: 20,
   },
+  chartCenter: {
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 2,
+  },
+  chartCenterLabel: {
+    fontSize: 12,
+    fontFamily: "Nunito_700Bold",
+    color: "#79AE6F",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
+  chartCenterAmount: {
+    fontSize: 17,
+    fontFamily: "Nunito_900Black",
+    color: "#1A2A1A",
+  },
 
   // ── Legend ────────────────────────────────────────────────────────────────
 

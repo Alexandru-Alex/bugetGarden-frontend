@@ -1,12 +1,13 @@
+import { NavMenu } from "@/components/nav-menu";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/tabs/dashboard.styles";
 import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
-import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Svg, { Circle, G, Text as SvgText } from "react-native-svg";
+import Svg, { Circle, G } from "react-native-svg";
 
 export interface AccountDto {
   email: string;
@@ -68,39 +69,47 @@ function DonutChart({ segments, symbol, size = 200, strokeWidth = 30 }: {
 
   let cumulative = 0;
 
+  const innerDiameter = (radius - strokeWidth / 2) * 2;
+
   return (
     <View style={styles.chartWrapper}>
-      <Svg width={size} height={size}>
-        <Circle
-          cx={cx} cy={cy} r={radius}
-          fill="none" stroke="#E5E5E5" strokeWidth={strokeWidth}
-        />
-        <G rotation="-90" origin={`${cx}, ${cy}`}>
-          {segments.map((seg, i) => {
-            const length = (seg.value / total) * circumference;
-            const dashOffset = -cumulative;
-            cumulative += length;
-            return (
-              <Circle
-                key={i}
-                cx={cx} cy={cy} r={radius}
-                fill="none"
-                stroke={seg.color}
-                strokeWidth={strokeWidth}
-                strokeDasharray={`${length} ${circumference - length}`}
-                strokeDashoffset={dashOffset}
-                strokeLinecap="butt"
-              />
-            );
-          })}
-        </G>
-        <SvgText x={cx} y={cy - 10} textAnchor="middle" fontSize="12" fontWeight="700" fill="#79AE6F">
-          Total
-        </SvgText>
-        <SvgText x={cx} y={cy + 14} textAnchor="middle" fontSize="17" fontWeight="900" fill="#1A2A1A">
-          {symbol}{formatAmount(total)}
-        </SvgText>
-      </Svg>
+      <View style={{ width: size, height: size }}>
+        <Svg width={size} height={size} style={StyleSheet.absoluteFill}>
+          <Circle
+            cx={cx} cy={cy} r={radius}
+            fill="none" stroke="#E5E5E5" strokeWidth={strokeWidth}
+          />
+          <G rotation="-90" origin={`${cx}, ${cy}`}>
+            {segments.map((seg, i) => {
+              const length = (seg.value / total) * circumference;
+              const dashOffset = -cumulative;
+              cumulative += length;
+              return (
+                <Circle
+                  key={i}
+                  cx={cx} cy={cy} r={radius}
+                  fill="none"
+                  stroke={seg.color}
+                  strokeWidth={strokeWidth}
+                  strokeDasharray={`${length} ${circumference - length}`}
+                  strokeDashoffset={dashOffset}
+                  strokeLinecap="butt"
+                />
+              );
+            })}
+          </G>
+        </Svg>
+        <View style={[StyleSheet.absoluteFill, styles.chartCenter]}>
+          <Text style={styles.chartCenterLabel}>Total</Text>
+          <Text
+            style={[styles.chartCenterAmount, { maxWidth: innerDiameter }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
+            {symbol}{formatAmount(total)}
+          </Text>
+        </View>
+      </View>
 
       <View style={styles.legend}>
         {segments.map((seg) => {
@@ -155,6 +164,7 @@ export default function DashboardScreen() {
 
   return (
     <View style={styles.root}>
+      <NavMenu />
       {/* ── Green header ── */}
       <LinearGradient
         colors={["#2A4A2E", "#346739"]}
