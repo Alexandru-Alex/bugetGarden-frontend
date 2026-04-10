@@ -20,6 +20,7 @@ const BAR_HEIGHT = 56;
 const MENU_ITEMS = [
   { label: "Dashboard",  icon: "home-outline"        as const, path: "/dashboard"  },
   { label: "Garden",     icon: "leaf-outline"        as const, path: "/garden"     },
+  { label: "Score",      icon: "ribbon-outline"      as const, path: "/score"      },
   { label: "Statistics", icon: "stats-chart-outline" as const, path: "/statistics" },
 ];
 
