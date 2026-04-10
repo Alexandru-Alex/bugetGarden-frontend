@@ -15,9 +15,9 @@ const GREEN_DARK = "#346739";
 const BAR_HEIGHT = 56;
 
 const MENU_ITEMS = [
-  { label: "Home",      icon: "home-outline"       as const, path: "/landing"   },
-  { label: "Garden",    icon: "leaf-outline"        as const, path: "/garden"    },
-  { label: "Dashboard", icon: "stats-chart-outline" as const, path: "/dashboard" },
+  { label: "Garden",     icon: "leaf-outline"        as const, path: "/garden"     },
+  { label: "Dashboard",  icon: "home-outline"        as const, path: "/dashboard"  },
+  { label: "Statistics", icon: "stats-chart-outline" as const, path: "/statistics" },
 ];
 
 // ─── Web tab bar ─────────────────────────────────────────────────────────────

@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
-import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Circle, G } from "react-native-svg";
 
@@ -168,12 +168,23 @@ export default function DashboardScreen() {
       {/* ── Green header ── */}
       <LinearGradient
         colors={["#2A4A2E", "#346739"]}
-        style={styles.header}
+        style={[styles.header, Platform.OS === "web" && { paddingTop: 56 }]}
       >
         <SafeAreaView edges={["top"]}>
           <View style={styles.totalSection}>
             <Text style={styles.totalLabel}>Total</Text>
             <Text style={styles.totalAmount}>{symbol}{formatAmount(total)}</Text>
+          </View>
+          <View style={styles.coinRowWrapper}>
+            <View style={styles.coinWidget}>
+              <Image source={require("@/assets/images/coin.png")} style={styles.coinImage} />
+              <View style={styles.coinRow}>
+                <Text style={styles.coinAmount}>{account?.goldCoins ?? 0}</Text>
+                <Pressable style={({ pressed }) => [styles.coinAddBtn, pressed && styles.coinAddBtnPressed]}>
+                  <Text style={styles.coinAddText}>+</Text>
+                </Pressable>
+              </View>
+            </View>
           </View>
         </SafeAreaView>
       </LinearGradient>

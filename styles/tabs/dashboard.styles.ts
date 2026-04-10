@@ -14,20 +14,70 @@ export const styles = StyleSheet.create({
   totalSection: {
     alignItems: "center",
     paddingTop: 24,
+    paddingBottom: 4,
+  },
+  coinRowWrapper: {
+    alignItems: "flex-end",
+    paddingHorizontal: 16,
     paddingBottom: 8,
   },
   totalLabel: {
     fontSize: 13,
     fontFamily: "Nunito_700Bold",
-    color: "rgba(255,255,255,0.65)",
+    color: "rgba(255,255,255,0.85)",
     letterSpacing: 2.5,
     textTransform: "uppercase",
-    marginBottom: 8,
+    marginBottom: 2,
   },
   totalAmount: {
     fontSize: 50,
     fontFamily: "Pacifico_400Regular",
     color: "#FFFFFF",
+  },
+  coinWidget: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  coinImage: {
+    width: 52,
+    height: 52,
+    resizeMode: "contain",
+    marginRight: -15,
+    zIndex: 1,
+  },
+  coinRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "rgba(0,0,0,0.22)",
+    paddingLeft: 18,
+    paddingRight: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  coinAmount: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    color: "#FFE566",
+  },
+  coinAddBtn: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 2,
+  },
+  coinAddBtnPressed: {
+    backgroundColor: "rgba(255,255,255,0.35)",
+  },
+  coinAddText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
+    lineHeight: 18,
+    textAlign: "center",
   },
 
   // ── White content card ────────────────────────────────────────────────────
