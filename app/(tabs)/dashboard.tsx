@@ -1,3 +1,4 @@
+import { AddTransactionModal } from "@/components/add-transaction-modal";
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
@@ -56,11 +57,12 @@ interface Segment {
   color: string;
 }
 
-function DonutChart({ segments, symbol, size = 200, strokeWidth = 30 }: {
+function DonutChart({ segments, symbol, size = 200, strokeWidth = 30, onAdd }: {
   segments: Segment[];
   symbol: string;
   size?: number;
   strokeWidth?: number;
+  onAdd?: () => void;
 }) {
   const radius = (size - strokeWidth) / 2;
   const cx = size / 2;
@@ -74,44 +76,57 @@ function DonutChart({ segments, symbol, size = 200, strokeWidth = 30 }: {
 
   return (
     <View style={styles.chartWrapper}>
-      <View style={{ width: size, height: size }}>
-        <Svg width={size} height={size} style={StyleSheet.absoluteFill}>
-          <Circle
-            cx={cx} cy={cy} r={radius}
-            fill="none" stroke="#E5E5E5" strokeWidth={strokeWidth}
-          />
-          <G rotation="-90" origin={`${cx}, ${cy}`}>
-            {segments.map((seg, i) => {
-              const length = (seg.value / total) * circumference;
-              const dashOffset = -cumulative;
-              cumulative += length;
-              return (
-                <Circle
-                  key={i}
-                  cx={cx} cy={cy} r={radius}
-                  fill="none"
-                  stroke={seg.color}
-                  strokeWidth={strokeWidth}
-                  strokeDasharray={`${length} ${circumference - length}`}
-                  strokeDashoffset={dashOffset}
-                  strokeLinecap="butt"
-                />
-              );
-            })}
-          </G>
-        </Svg>
-        <View style={[StyleSheet.absoluteFill, styles.chartCenter]}>
-          <Text style={styles.chartCenterLabel}>Total</Text>
-          <Text
-            style={[styles.chartCenterAmount, { maxWidth: innerDiameter }]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
+      {/* Cerc centrat, buton + în dreapta */}
+      <View style={styles.chartRow}>
+        <View style={{ flex: 1 }} />
+        <View style={{ width: size, height: size }}>
+          <Svg width={size} height={size} style={StyleSheet.absoluteFill}>
+            <Circle
+              cx={cx} cy={cy} r={radius}
+              fill="none" stroke="#E5E5E5" strokeWidth={strokeWidth}
+            />
+            <G rotation="-90" origin={`${cx}, ${cy}`}>
+              {segments.map((seg, i) => {
+                const length = (seg.value / total) * circumference;
+                const dashOffset = -cumulative;
+                cumulative += length;
+                return (
+                  <Circle
+                    key={i}
+                    cx={cx} cy={cy} r={radius}
+                    fill="none"
+                    stroke={seg.color}
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={`${length} ${circumference - length}`}
+                    strokeDashoffset={dashOffset}
+                    strokeLinecap="butt"
+                  />
+                );
+              })}
+            </G>
+          </Svg>
+          <View style={[StyleSheet.absoluteFill, styles.chartCenter]}>
+            <Text style={styles.chartCenterLabel}>Total</Text>
+            <Text
+              style={[styles.chartCenterAmount, { maxWidth: innerDiameter }]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              {symbol}{formatAmount(total)}
+            </Text>
+          </View>
+        </View>
+        <View style={{ flex: 1, alignSelf: "stretch", alignItems: "flex-start", justifyContent: "flex-end", paddingLeft: 16 }}>
+          <Pressable
+            style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
+            onPress={onAdd}
           >
-            {symbol}{formatAmount(total)}
-          </Text>
+            <Text style={styles.addButtonText}>+</Text>
+          </Pressable>
         </View>
       </View>
 
+      {/* Categorii sub cerc */}
       <View style={styles.legend}>
         {segments.map((seg) => {
           const pct = Math.round((seg.value / total) * 100);
@@ -138,6 +153,7 @@ export default function DashboardScreen() {
   const [activeTab, setActiveTab] = useState<Tab>("expenses");
   const [activePeriod, setActivePeriod] = useState<Period>("Month");
   const [refreshing, setRefreshing] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     getStoredToken().then(setToken);
@@ -238,17 +254,15 @@ export default function DashboardScreen() {
             ))}
           </View>
 
-          {/* ── Donut chart ── */}
-          <DonutChart segments={segments} symbol={symbol} />
-
-          {/* ── Add button ── */}
-          <Pressable
-            style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
-          >
-            <Text style={styles.addButtonText}>+</Text>
-          </Pressable>
+          {/* ── Donut chart + add button ── */}
+          <DonutChart segments={segments} symbol={symbol} onAdd={() => setShowAddModal(true)} />
         </View>
       </ScrollView>
+      <AddTransactionModal
+        visible={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        symbol={symbol}
+      />
     </PageTransition>
   );
 }

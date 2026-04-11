@@ -175,6 +175,11 @@ export const styles = StyleSheet.create({
     maxWidth: 420,
     gap: 20,
   },
+  chartRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+  },
   chartCenter: {
     justifyContent: "center",
     alignItems: "center",
@@ -240,7 +245,6 @@ export const styles = StyleSheet.create({
   // ── Add button ────────────────────────────────────────────────────────────
 
   addButton: {
-    marginTop: 28,
     width: 64,
     height: 64,
     borderRadius: 32,

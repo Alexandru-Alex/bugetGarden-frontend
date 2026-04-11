@@ -204,6 +204,7 @@ export const auth = StyleSheet.create({
     fontSize: 15,
     color: "#346739",
     paddingVertical: 12,
+    ...Platform.select({ web: { outlineStyle: "none" as any, outlineWidth: 0 } }),
   },
   error: {
     fontFamily: "Nunito_700Bold",
