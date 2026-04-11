@@ -1,10 +1,14 @@
+import { api } from "@/lib/api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -17,31 +21,17 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { DatePickerField } from "./date-picker-field";
 
 type ModalTab = "expenses" | "income";
 
-interface Category {
+interface CategoryDto {
   id: string;
-  label: string;
+  name: string;
+  type: "INCOME" | "EXPENSE";
   icon: string;
   color: string;
 }
-
-const EXPENSE_CATEGORIES: Category[] = [
-  { id: "health",    label: "Health",    icon: "heart-pulse",       color: "#F43F5E" },
-  { id: "home",      label: "Home",      icon: "home",              color: "#4E9AF1" },
-  { id: "cafe",      label: "Cafe",      icon: "coffee",            color: "#C4762A" },
-  { id: "gifts",     label: "Gifts",     icon: "gift",              color: "#8B5CF6" },
-  { id: "groceries", label: "Groceries", icon: "cart",              color: "#346739" },
-  { id: "education", label: "Education", icon: "book-open-variant", color: "#0EA5E9" },
-];
-
-const INCOME_CATEGORIES: Category[] = [
-  { id: "paycheck", label: "Paycheck", icon: "cash-multiple",         color: "#346739" },
-  { id: "gift",     label: "Gift",     icon: "gift-outline",          color: "#8B5CF6" },
-  { id: "interest", label: "Interest", icon: "trending-up",           color: "#4E9AF1" },
-  { id: "other",    label: "Other",    icon: "shape-plus",            color: "#E8960A" },
-];
 
 interface Props {
   visible: boolean;
@@ -58,6 +48,32 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
   const [amountFocused, setAmountFocused] = useState(false);
   const [commentFocused, setCommentFocused] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
+  const [dateKey, setDateKey] = useState(0);
+
+  const { data: allCategories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => api.get<CategoryDto[]>("/categories"),
+    enabled: visible,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const addEntry = useMutation({
+    mutationFn: (body: {
+      type: "INCOME" | "EXPENSE";
+      amount: string;
+      note: string;
+      categoryId: string;
+      entryDate: string;
+    }) => api.post("/financial-entries", body),
+    onSuccess: () => {
+      setAmount("");
+      setComment("");
+      setSelectedCategory(null);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 2500);
+    },
+  });
 
   const cardY = useSharedValue(60);
   const cardOpacity = useSharedValue(0);
@@ -72,6 +88,8 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
       setCommentFocused(false);
       setActiveTab("expenses");
       setShowSuccess(false);
+      setSelectedDate(new Date());
+      setDateKey((k) => k + 1);
       cardY.value = withSpring(0, { damping: 18, stiffness: 200 });
       cardOpacity.value = withTiming(1, { duration: 220 });
     } else {
@@ -89,7 +107,8 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
     opacity: cardOpacity.value,
   }));
 
-  const categories = activeTab === "expenses" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+  const activeType = activeTab === "expenses" ? "EXPENSE" : "INCOME";
+  const categories = allCategories.filter((c) => c.type === activeType);
 
   const handleAmountChange = (text: string) => {
     const cleaned = text.replace(/[^0-9.]/g, "");
@@ -124,101 +143,115 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
         )}
 
         <Animated.View style={[s.card, cardStyle]}>
-          <Text style={s.title}>Add Transaction</Text>
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+            <Text style={s.title}>Add Transaction</Text>
 
-          {/* Tabs */}
-          <View style={s.tabRow}>
-            {(["expenses", "income"] as ModalTab[]).map((tab) => (
-              <Pressable
-                key={tab}
-                style={[s.tab, activeTab === tab && s.tabActive]}
-                onPress={() => { setActiveTab(tab); setSelectedCategory(null); }}
-              >
-                <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>
-                  {tab === "expenses" ? "Expenses" : "Income"}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-
-          {/* Amount */}
-          <View style={[s.amountBox, amountFocused && s.inputFocused]}>
-            <Text style={s.currencySymbol}>{symbol}</Text>
-            <TextInput
-              style={s.amountInput}
-              value={amount}
-              onChangeText={handleAmountChange}
-              onFocus={() => setAmountFocused(true)}
-              onBlur={() => setAmountFocused(false)}
-              placeholder="0.00"
-              placeholderTextColor="#B8D4B8"
-              keyboardType="decimal-pad"
-              maxLength={12}
-            />
-          </View>
-
-          {/* Comment */}
-          <View style={[s.commentBox, commentFocused && s.inputFocused]}>
-            <MaterialCommunityIcons name="pencil-outline" size={18} color="#79AE6F" style={s.commentIcon} />
-            <TextInput
-              style={s.commentInput}
-              value={comment}
-              onChangeText={setComment}
-              onFocus={() => setCommentFocused(true)}
-              onBlur={() => setCommentFocused(false)}
-              placeholder="Add a comment..."
-              placeholderTextColor="#B8D4B8"
-              maxLength={120}
-              returnKeyType="done"
-            />
-          </View>
-
-          {/* Categories */}
-          <Text style={s.sectionLabel}>Category</Text>
-          <View style={s.categoriesRow}>
-            {categories.map((cat) => {
-              const selected = selectedCategory === cat.id;
-              return (
+            {/* Tabs */}
+            <View style={s.tabRow}>
+              {(["expenses", "income"] as ModalTab[]).map((tab) => (
                 <Pressable
-                  key={cat.id}
-                  style={s.catItem}
-                  onPress={() => setSelectedCategory(selected ? null : cat.id)}
+                  key={tab}
+                  style={[s.tab, activeTab === tab && s.tabActive]}
+                  onPress={() => { setActiveTab(tab); setSelectedCategory(null); }}
                 >
-                  <View style={[
-                    s.catIcon,
-                    { backgroundColor: cat.color + "18" },
-                    selected && { backgroundColor: cat.color + "30", borderColor: cat.color },
-                  ]}>
-                    <MaterialCommunityIcons name={cat.icon as any} size={26} color={cat.color} />
-                  </View>
-                  <Text style={[s.catLabel, selected && { color: cat.color, fontFamily: "Nunito_800ExtraBold" }]}>
-                    {cat.label}
+                  <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>
+                    {tab === "expenses" ? "Expenses" : "Income"}
                   </Text>
                 </Pressable>
-              );
-            })}
-            <Pressable style={s.catItem}>
-              <View style={[s.catIcon, { backgroundColor: "#EFF4EF" }]}>
-                <MaterialCommunityIcons name="dots-horizontal" size={26} color="#79AE6F" />
-              </View>
-              <Text style={s.catLabel}>More</Text>
-            </Pressable>
-          </View>
+              ))}
+            </View>
 
-          {/* Add button */}
-          <Pressable
-            style={({ pressed }) => [s.addBtn, pressed && s.addBtnPressed, !canAdd && s.addBtnDisabled]}
-            onPress={() => {
-              if (!canAdd) return;
-              setAmount("");
-              setComment("");
-              setSelectedCategory(null);
-              setShowSuccess(true);
-              setTimeout(() => setShowSuccess(false), 2500);
-            }}
-          >
-            <Text style={[s.addBtnText, !canAdd && s.addBtnTextDisabled]}>Add</Text>
-          </Pressable>
+            {/* Amount */}
+            <View style={[s.amountBox, amountFocused && s.inputFocused]}>
+              <Text style={s.currencySymbol}>{symbol}</Text>
+              <TextInput
+                style={s.amountInput}
+                value={amount}
+                onChangeText={handleAmountChange}
+                onFocus={() => setAmountFocused(true)}
+                onBlur={() => setAmountFocused(false)}
+                placeholder="0.00"
+                placeholderTextColor="#B8D4B8"
+                keyboardType="decimal-pad"
+                maxLength={12}
+              />
+            </View>
+
+            {/* Comment */}
+            <View style={[s.commentBox, commentFocused && s.inputFocused]}>
+              <MaterialCommunityIcons name="pencil-outline" size={18} color="#79AE6F" style={s.commentIcon} />
+              <TextInput
+                style={s.commentInput}
+                value={comment}
+                onChangeText={setComment}
+                onFocus={() => setCommentFocused(true)}
+                onBlur={() => setCommentFocused(false)}
+                placeholder="Add a comment..."
+                placeholderTextColor="#B8D4B8"
+                maxLength={120}
+                returnKeyType="done"
+              />
+            </View>
+
+            {/* Date */}
+            <Text style={s.sectionLabel}>Date</Text>
+            <View style={s.datePickerWrap}>
+              <DatePickerField key={dateKey} value={selectedDate} onChange={setSelectedDate} />
+            </View>
+
+            {/* Categories */}
+            <Text style={s.sectionLabel}>Category</Text>
+            {categoriesLoading ? (
+              <View style={s.loadingRow}>
+                <ActivityIndicator size="small" color="#346739" />
+              </View>
+            ) : (
+              <View style={s.categoriesRow}>
+                {categories.map((cat) => {
+                  const selected = selectedCategory === cat.id;
+                  return (
+                    <Pressable
+                      key={cat.id}
+                      style={s.catItem}
+                      onPress={() => setSelectedCategory(selected ? null : cat.id)}
+                    >
+                      <View style={[
+                        s.catIcon,
+                        { backgroundColor: cat.color + "18" },
+                        selected && { backgroundColor: cat.color + "30", borderColor: cat.color },
+                      ]}>
+                        <MaterialCommunityIcons name={cat.icon as any} size={26} color={cat.color} />
+                      </View>
+                      <Text style={[s.catLabel, selected && { color: cat.color, fontFamily: "Nunito_800ExtraBold" }]}>
+                        {cat.name}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            )}
+
+            {/* Add button */}
+            <Pressable
+              style={({ pressed }) => [s.addBtn, pressed && s.addBtnPressed, (!canAdd || addEntry.isPending) && s.addBtnDisabled]}
+              onPress={() => {
+                if (!canAdd || addEntry.isPending) return;
+                addEntry.mutate({
+                  type: activeType,
+                  amount,
+                  note: comment,
+                  categoryId: selectedCategory!,
+                  entryDate: selectedDate.toISOString().split("T")[0],
+                });
+              }}
+            >
+              {addEntry.isPending ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Text style={[s.addBtnText, !canAdd && s.addBtnTextDisabled]}>Add</Text>
+              )}
+            </Pressable>
+          </ScrollView>
         </Animated.View>
       </KeyboardAvoidingView>
     </Modal>
@@ -351,6 +384,15 @@ const s = StyleSheet.create({
     letterSpacing: 1.5,
     textTransform: "uppercase",
     marginBottom: 14,
+  },
+  datePickerWrap: {
+    marginBottom: 20,
+  },
+  loadingRow: {
+    height: 68,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
   },
   categoriesRow: {
     flexDirection: "row",

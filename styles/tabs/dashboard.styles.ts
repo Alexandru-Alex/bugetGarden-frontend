@@ -167,6 +167,28 @@ export const styles = StyleSheet.create({
     color: "#346739",
   },
 
+  // ── Date range (Period) ──────────────────────────────────────────────────
+
+  dateRangeRow: {
+    flexDirection: "row",
+    gap: 12,
+    width: "100%",
+    maxWidth: 420,
+    marginBottom: 24,
+    alignItems: "flex-start",
+  },
+  dateField: {
+    flex: 1,
+  },
+  dateFieldLabel: {
+    fontSize: 11,
+    fontFamily: "Nunito_700Bold",
+    color: "#7AAA7A",
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
+    marginBottom: 8,
+  },
+
   // ── Donut chart ───────────────────────────────────────────────────────────
 
   chartWrapper: {
