@@ -1,9 +1,10 @@
 import { api } from "@/lib/api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -14,13 +15,6 @@ import {
   TextInput,
   View,
 } from "react-native";
-import Animated, {
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
 import { DatePickerField } from "./date-picker-field";
 
 type ModalTab = "expenses" | "income";
@@ -45,8 +39,6 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
   const [amount, setAmount] = useState("");
   const [comment, setComment] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [amountFocused, setAmountFocused] = useState(false);
-  const [commentFocused, setCommentFocused] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [dateKey, setDateKey] = useState(0);
@@ -75,8 +67,8 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
     },
   });
 
-  const cardY = useSharedValue(60);
-  const cardOpacity = useSharedValue(0);
+  const cardY = useRef(new Animated.Value(60)).current;
+  const cardOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
@@ -84,28 +76,30 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
       setAmount("");
       setComment("");
       setSelectedCategory(null);
-      setAmountFocused(false);
-      setCommentFocused(false);
       setActiveTab("expenses");
       setShowSuccess(false);
       setSelectedDate(new Date());
       setDateKey((k) => k + 1);
-      cardY.value = withSpring(0, { damping: 18, stiffness: 200 });
-      cardOpacity.value = withTiming(1, { duration: 220 });
+      cardY.setValue(60);
+      cardOpacity.setValue(0);
+      Animated.parallel([
+        Animated.spring(cardY, { toValue: 0, damping: 18, stiffness: 200, useNativeDriver: true }),
+        Animated.timing(cardOpacity, { toValue: 1, duration: 220, useNativeDriver: true }),
+      ]).start();
     } else {
-      cardY.value = withTiming(60, { duration: 180 });
-      cardOpacity.value = withTiming(
-        0,
-        { duration: 180 },
-        (finished) => { if (finished) runOnJS(setModalVisible)(false); },
-      );
+      Animated.parallel([
+        Animated.timing(cardY, { toValue: 60, duration: 180, useNativeDriver: true }),
+        Animated.timing(cardOpacity, { toValue: 0, duration: 180, useNativeDriver: true }),
+      ]).start(({ finished }) => {
+        if (finished) setModalVisible(false);
+      });
     }
   }, [visible]);
 
-  const cardStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: cardY.value }],
-    opacity: cardOpacity.value,
-  }));
+  const cardStyle = {
+    transform: [{ translateY: cardY }],
+    opacity: cardOpacity,
+  };
 
   const activeType = activeTab === "expenses" ? "EXPENSE" : "INCOME";
   const categories = allCategories.filter((c) => c.type === activeType);
@@ -128,22 +122,25 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
       onRequestClose={onClose}
       statusBarTranslucent
     >
-      <KeyboardAvoidingView
-        style={s.backdrop}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+      <Pressable style={s.backdrop} onPress={onClose}>
+        <KeyboardAvoidingView
+          behavior="padding"
+          enabled={Platform.OS === "ios"}
+          style={s.kavWrapper}
+        >
+          {/* Notification toast */}
+          {showSuccess && (
+            <View style={s.toast}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#FFFFFF" />
+              <Text style={s.toastText}>Transaction added!</Text>
+            </View>
+          )}
 
-        {/* Notification toast */}
-        {showSuccess && (
-          <View style={s.toast}>
-            <MaterialCommunityIcons name="check-circle" size={18} color="#FFFFFF" />
-            <Text style={s.toastText}>Transaction added!</Text>
-          </View>
-        )}
-
-        <Animated.View style={[s.card, cardStyle]}>
-          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          <Animated.View
+            style={[s.card, cardStyle]}
+            {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
+          >
+            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="always">
             <Text style={s.title}>Add Transaction</Text>
 
             {/* Tabs */}
@@ -162,14 +159,12 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
             </View>
 
             {/* Amount */}
-            <View style={[s.amountBox, amountFocused && s.inputFocused]}>
+            <View style={s.amountBox}>
               <Text style={s.currencySymbol}>{symbol}</Text>
               <TextInput
                 style={s.amountInput}
                 value={amount}
                 onChangeText={handleAmountChange}
-                onFocus={() => setAmountFocused(true)}
-                onBlur={() => setAmountFocused(false)}
                 placeholder="0.00"
                 placeholderTextColor="#B8D4B8"
                 keyboardType="decimal-pad"
@@ -178,14 +173,12 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
             </View>
 
             {/* Comment */}
-            <View style={[s.commentBox, commentFocused && s.inputFocused]}>
+            <View style={s.commentBox}>
               <MaterialCommunityIcons name="pencil-outline" size={18} color="#79AE6F" style={s.commentIcon} />
               <TextInput
                 style={s.commentInput}
                 value={comment}
                 onChangeText={setComment}
-                onFocus={() => setCommentFocused(true)}
-                onBlur={() => setCommentFocused(false)}
                 placeholder="Add a comment..."
                 placeholderTextColor="#B8D4B8"
                 maxLength={120}
@@ -251,9 +244,10 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
                 <Text style={[s.addBtnText, !canAdd && s.addBtnTextDisabled]}>Add</Text>
               )}
             </Pressable>
-          </ScrollView>
-        </Animated.View>
-      </KeyboardAvoidingView>
+            </ScrollView>
+          </Animated.View>
+        </KeyboardAvoidingView>
+      </Pressable>
     </Modal>
   );
 }
@@ -264,11 +258,14 @@ const s = StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.45)",
-    justifyContent: "center",
-    paddingHorizontal: 20,
     ...(Platform.OS === "web"
       ? { position: "fixed" as any, top: 0, left: 0, right: 0, bottom: 0 }
       : {}),
+  },
+  kavWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 20,
   },
   card: {
     backgroundColor: "#FFFFFF",
