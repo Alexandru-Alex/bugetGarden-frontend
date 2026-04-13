@@ -4,7 +4,7 @@
     "slug": "bugetGarden-front",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icon.jpg",
     "scheme": "bugetgardenfront",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
@@ -16,9 +16,9 @@
       }
     },
     "android": {
-      "icon": "./assets/images/icon.png",
+      "icon": "./assets/images/icon.jpg",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
+        "foregroundImage": "./assets/images/icon.jpg",
         "backgroundColor": "#C8E87A"
       },
       "edgeToEdgeEnabled": true,
@@ -39,7 +39,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/icon.png"
+      "favicon": "./assets/images/icon.jpg"
     },
     "plugins": [
       "expo-router",
@@ -52,7 +52,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/icon.png",
+          "image": "./assets/images/icon.jpg",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
