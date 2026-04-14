@@ -41,6 +41,15 @@ export async function saveToken(token: string): Promise<void> {
   }
 }
 
+async function extractErrorMessage(res: Response): Promise<string> {
+  const text = await res.text().catch(() => res.statusText);
+  try {
+    const json = JSON.parse(text);
+    if (json?.message) return json.message;
+  } catch {}
+  return text || res.statusText;
+}
+
 async function buildHeaders(
   extra: Record<string, string> = {},
   withAuth = true,
@@ -68,10 +77,7 @@ export const api = {
       body: typeof body === "string" ? body : JSON.stringify(body),
     });
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => res.statusText);
-      throw new Error(`${res.status}: ${text}`);
-    }
+    if (!res.ok) throw new Error(await extractErrorMessage(res));
 
     const text = await res.text();
     if (!text) return undefined as T;
@@ -89,10 +95,7 @@ export const api = {
       headers,
       body: JSON.stringify(body),
     });
-    if (!res.ok) {
-      const text = await res.text().catch(() => res.statusText);
-      throw new Error(`${res.status}: ${text}`);
-    }
+    if (!res.ok) throw new Error(await extractErrorMessage(res));
     const text = await res.text();
     if (!text) return undefined as T;
     try {
@@ -105,7 +108,7 @@ export const api = {
   async get<T = unknown>(path: string): Promise<T> {
     const headers = await buildHeaders();
     const res = await fetch(`${BASE_URL}${path}`, { headers });
-    if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+    if (!res.ok) throw new Error(await extractErrorMessage(res));
     return res.json() as Promise<T>;
   },
 };

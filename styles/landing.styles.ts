@@ -198,6 +198,10 @@ export const auth = StyleSheet.create({
   inputIcon: {
     marginRight: 10,
   },
+  eyeBtn: {
+    padding: 4,
+    marginLeft: 6,
+  },
   input: {
     flex: 1,
     fontFamily: "Nunito_700Bold",

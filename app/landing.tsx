@@ -7,6 +7,7 @@ import { auth, styles } from "@/styles/landing.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { makeRedirectUri } from "expo-auth-session";
 import * as Google from "expo-auth-session/providers/google";
+import * as Crypto from "expo-crypto";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import * as WebBrowser from "expo-web-browser";
@@ -154,12 +155,14 @@ function AuthModal({ visible, onClose, onSuccess }: {
   onSuccess: (newUser: boolean) => void;
 }) {
   const [mode, setMode] = useState<"login" | "signup">("login");
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [nameFocused, setNameFocused] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmFocused, setConfirmFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -249,20 +252,65 @@ function AuthModal({ visible, onClose, onSuccess }: {
   const handleSubmit = async () => {
     setError("");
     if (!email || !password) {
-      setError("Completează toate câmpurile.");
+      setError("Fill in all fields.");
       return;
     }
-    if (mode === "signup" && !name) {
-      setError("Introdu numele tău.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Enter a valid email address.");
       return;
+    }
+    if (mode === "signup") {
+      if (password.length < 6) {
+        setError("Password must be at least 6 characters.");
+        return;
+      }
+      if (!/\d/.test(password)) {
+        setError("Password must contain at least one digit.");
+        return;
+      }
+      if (!/[^a-zA-Z0-9]/.test(password)) {
+        setError("Password must contain at least one special character.");
+        return;
+      }
+      if (!confirmPassword) {
+        setError("Confirm password.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError("The passwords do not match.");
+        return;
+      }
     }
     setLoading(true);
     try {
-      // TODO: înlocuiește cu apelul real de autentificare
-      await new Promise((r) => setTimeout(r, 800));
-      onSuccess(true);
-    } catch {
-      setError("Ceva nu a mers. Încearcă din nou.");
+      const hashedPassword = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        password,
+      );
+      if (mode === "signup") {
+        const data = await api.post<{ token: string; newUser: boolean }>(
+          "/sign-up",
+          { email, password: hashedPassword },
+          { auth: false },
+        );
+        await saveToken(data.token);
+        if (Platform.OS === "web") {
+          localStorage.setItem("is_new_user", String(data.newUser));
+        } else {
+          await SecureStore.setItemAsync("is_new_user", String(data.newUser));
+        }
+        onSuccess(data.newUser);
+      } else {
+        const data = await api.post<{ token: string; newUser: boolean }>(
+          "/sign-in",
+          { email, password: hashedPassword },
+          { auth: false },
+        );
+        await saveToken(data.token);
+        onSuccess(false);
+      }
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Ceva nu a mers. Încearcă din nou.");
     } finally {
       setLoading(false);
     }
@@ -299,7 +347,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
             <View style={auth.tabs}>
               <Pressable
                 style={[auth.tab, mode === "login" && auth.tabActive]}
-                onPress={() => { setMode("login"); setError(""); }}
+                onPress={() => { setMode("login"); setError(""); setConfirmPassword(""); }}
               >
                 <Text style={[auth.tabText, mode === "login" && auth.tabTextActive]}>
                   Sign In
@@ -307,7 +355,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
               </Pressable>
               <Pressable
                 style={[auth.tab, mode === "signup" && auth.tabActive]}
-                onPress={() => { setMode("signup"); setError(""); }}
+                onPress={() => { setMode("signup"); setError(""); setConfirmPassword(""); }}
               >
                 <Text style={[auth.tabText, mode === "signup" && auth.tabTextActive]}>
                   Sign Up
@@ -315,23 +363,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
               </Pressable>
             </View>
 
-            {/* Name field (signup only) */}
-            {mode === "signup" && (
-              <View style={[auth.inputWrap, nameFocused && auth.inputWrapFocused]}>
-                <Ionicons name="person-outline" size={18} color="#79AE6F" style={auth.inputIcon} />
-                <TextInput
-                  style={auth.input}
-                  placeholder="Your name"
-                  placeholderTextColor="#79AE6F"
-                  value={name}
-                  onChangeText={setName}
-                  onFocus={() => setNameFocused(true)}
-                  onBlur={() => setNameFocused(false)}
-                  autoCapitalize="words"
-                />
-              </View>
-            )}
-
+        
             {/* Email field */}
             <View style={[auth.inputWrap, emailFocused && auth.inputWrapFocused]}>
               <Ionicons name="mail-outline" size={18} color="#79AE6F" style={auth.inputIcon} />
@@ -360,10 +392,34 @@ function AuthModal({ visible, onClose, onSuccess }: {
                 onChangeText={setPassword}
                 onFocus={() => setPasswordFocused(true)}
                 onBlur={() => setPasswordFocused(false)}
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
+              <Pressable onPress={() => setShowPassword((v) => !v)} style={auth.eyeBtn}>
+                <Ionicons name={showPassword ? "eye-off-outline" : "eye-outline"} size={18} color="#79AE6F" />
+              </Pressable>
             </View>
+
+            {/* Confirm password field (signup only) */}
+            {mode === "signup" && (
+              <View style={[auth.inputWrap, confirmFocused && auth.inputWrapFocused]}>
+                <Ionicons name="lock-closed-outline" size={18} color="#79AE6F" style={auth.inputIcon} />
+                <TextInput
+                  style={auth.input}
+                  placeholder="Confirm password"
+                  placeholderTextColor="#79AE6F"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  onFocus={() => setConfirmFocused(true)}
+                  onBlur={() => setConfirmFocused(false)}
+                  secureTextEntry={!showConfirm}
+                  autoCapitalize="none"
+                />
+                <Pressable onPress={() => setShowConfirm((v) => !v)} style={auth.eyeBtn}>
+                  <Ionicons name={showConfirm ? "eye-off-outline" : "eye-outline"} size={18} color="#79AE6F" />
+                </Pressable>
+              </View>
+            )}
 
             {error ? <Text style={auth.error}>{error}</Text> : null}
 
