@@ -1,4 +1,5 @@
 import { DatePickerField } from "@/components/date-picker-field";
+import { NavMenu } from "@/components/nav-menu";
 import { api } from "@/lib/api";
 import { formatDateISO } from "@/lib/date";
 import { inputOutline, styles } from "@/styles/edit-entry.styles";
@@ -88,6 +89,7 @@ export default function EditEntryScreen() {
 
   return (
     <View style={styles.root}>
+      <NavMenu />
       <LinearGradient
         colors={["#2A4A2E", "#346739"]}
         style={[
@@ -95,7 +97,7 @@ export default function EditEntryScreen() {
           { paddingTop: Platform.OS === "web" ? 56 : insets.top + 56 },
         ]}
       >
-        <Text style={styles.headerTitle}>Edit Entry</Text>
+        <Text style={styles.headerTitle}>Edit Transaction</Text>
         <View style={styles.headerSubRow}>
           <Pressable
             style={({ pressed }) => [styles.backBtn, pressed && styles.backBtnPressed]}
