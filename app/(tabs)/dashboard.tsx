@@ -3,10 +3,13 @@ import { DatePickerField } from "@/components/date-picker-field";
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
+import { formatDateISO } from "@/lib/date";
+import { NavTransition } from "@/lib/nav-direction";
+import { CategoryDto } from "@/lib/types";
 import { styles } from "@/styles/tabs/dashboard.styles";
 import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
-import { Redirect } from "expo-router";
+import { Redirect, router } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Image, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -74,15 +77,17 @@ interface Segment {
   label: string;
   value: number;
   color: string;
+  categoryId?: string;
 }
 
-function DonutChart({ segments, symbol, isLoading, size = 200, strokeWidth = 30, onAdd }: {
+function DonutChart({ segments, symbol, isLoading, size = 200, strokeWidth = 30, onAdd, onPressSegment }: {
   segments: Segment[];
   symbol: string;
   isLoading?: boolean;
   size?: number;
   strokeWidth?: number;
   onAdd?: () => void;
+  onPressSegment?: (seg: Segment) => void;
 }) {
   const radius = (size - strokeWidth) / 2;
   const cx = size / 2;
@@ -163,14 +168,18 @@ function DonutChart({ segments, symbol, isLoading, size = 200, strokeWidth = 30,
           {segments.map((seg) => {
             const pct = Math.round((seg.value / total) * 100);
             return (
-              <View key={seg.label} style={styles.legendRow}>
+              <Pressable
+                key={seg.label}
+                style={({ pressed }) => [styles.legendRow, pressed && { opacity: 0.75 }]}
+                onPress={() => onPressSegment?.(seg)}
+              >
                 <View style={[styles.legendDot, { backgroundColor: seg.color }]} />
                 <Text style={styles.legendLabel}>{seg.label}</Text>
                 <Text style={styles.legendValue}>
                   {symbol}{formatAmount(seg.value)}
                   {"  "}<Text style={styles.legendPct}>{pct}%</Text>
                 </Text>
-              </View>
+              </Pressable>
             );
           })}
         </View>
@@ -200,14 +209,23 @@ export default function DashboardScreen() {
     enabled: !!token,
   });
 
-  const formatDateISO = (d: Date) =>
-    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-
   const startDate = useMemo(() => startDateObj ? formatDateISO(startDateObj) : "", [startDateObj]);
   const endDate = useMemo(() => endDateObj ? formatDateISO(endDateObj) : "", [endDateObj]);
 
   const expenseSummaryPath = buildSummaryPath("EXPENSE", activePeriod, startDate, endDate);
   const incomeSummaryPath = buildSummaryPath("INCOME", activePeriod, startDate, endDate);
+
+  const { data: allCategories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => api.get<CategoryDto[]>("/categories"),
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const categoryNameToId = useMemo(
+    () => new Map(allCategories.map((c) => [c.name, c.id])),
+    [allCategories],
+  );
 
   const { data: expenseSummaryItems, isLoading: expenseSummaryLoading, refetch: refetchExpenseSummary } = useQuery({
     queryKey: ["summary", "EXPENSE", activePeriod, startDate, endDate],
@@ -226,11 +244,30 @@ export default function DashboardScreen() {
   const summaryItems = activeTab === "expenses" ? expenseSummaryItems : incomeSummaryItems;
   const summaryLoading = activeTab === "expenses" ? expenseSummaryLoading : incomeSummaryLoading;
 
-  const segments: Segment[] = (summaryItems ?? []).map((item) => ({
-    label: item.name,
-    value: Number(item.total),
-    color: item.color,
-  }));
+  const segments = useMemo<Segment[]>(
+    () => (summaryItems ?? []).map((item) => ({
+      label: item.name,
+      value: Number(item.total),
+      color: item.color,
+      categoryId: categoryNameToId.get(item.name),
+    })),
+    [summaryItems, categoryNameToId],
+  );
+
+  const handleSegmentPress = useCallback((seg: Segment) => {
+    if (!seg.categoryId) return;
+    NavTransition.setDirection("/dashboard", "/category-entries");
+    router.push({
+      pathname: "/category-entries",
+      params: {
+        categoryId: seg.categoryId,
+        categoryName: seg.label,
+        color: seg.color,
+        type: activeTab === "expenses" ? "EXPENSE" : "INCOME",
+        symbol: currencySymbolFor(account?.currency),
+      },
+    });
+  }, [activeTab, account]);
 
   const incomeTotal = (incomeSummaryItems ?? []).reduce((s, item) => s + Number(item.total), 0);
   const expenseTotal = (expenseSummaryItems ?? []).reduce((s, item) => s + Number(item.total), 0);
@@ -343,12 +380,17 @@ export default function DashboardScreen() {
             symbol={symbol}
             isLoading={summaryLoading}
             onAdd={() => setShowAddModal(true)}
+            onPressSegment={handleSegmentPress}
           />
         </View>
       </ScrollView>
       <AddTransactionModal
         visible={showAddModal}
         onClose={() => setShowAddModal(false)}
+        onAddMore={() => {
+          setShowAddModal(false);
+          setTimeout(() => router.push("/manage-categories"), 200);
+        }}
         symbol={symbol}
       />
     </PageTransition>

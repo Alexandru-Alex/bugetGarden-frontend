@@ -3,6 +3,7 @@ import { GrassWave } from "@/components/grass-wave";
 import { RoseFlower } from "@/components/rose-flower";
 import { ThemedText } from "@/components/themed-text";
 import { api, saveToken } from "@/lib/api";
+import { useFocusStyle } from "@/lib/use-focus-style";
 import { auth, styles } from "@/styles/landing.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { makeRedirectUri } from "expo-auth-session";
@@ -158,9 +159,9 @@ function AuthModal({ visible, onClose, onSuccess }: {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [emailFocused, setEmailFocused] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
-  const [confirmFocused, setConfirmFocused] = useState(false);
+  const email$    = useFocusStyle();
+  const password$ = useFocusStyle();
+  const confirm$  = useFocusStyle();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -318,11 +319,12 @@ function AuthModal({ visible, onClose, onSuccess }: {
 
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
+      <Pressable style={[StyleSheet.absoluteFill, auth.backdropOverlay]} onPress={onClose} />
       <KeyboardAvoidingView
         style={auth.backdrop}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding"
+        pointerEvents="box-none"
       >
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <Animated.View style={[auth.card, cardStyle]}>
           {/* Garden decoration top */}
           <View style={auth.gardenStrip}>
@@ -365,7 +367,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
 
         
             {/* Email field */}
-            <View style={[auth.inputWrap, emailFocused && auth.inputWrapFocused]}>
+            <Animated.View style={[auth.inputWrap, email$.style]}>
               <Ionicons name="mail-outline" size={18} color="#79AE6F" style={auth.inputIcon} />
               <TextInput
                 style={auth.input}
@@ -373,16 +375,16 @@ function AuthModal({ visible, onClose, onSuccess }: {
                 placeholderTextColor="#79AE6F"
                 value={email}
                 onChangeText={setEmail}
-                onFocus={() => setEmailFocused(true)}
-                onBlur={() => setEmailFocused(false)}
+                onFocus={email$.onFocus}
+                onBlur={email$.onBlur}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
               />
-            </View>
+            </Animated.View>
 
             {/* Password field */}
-            <View style={[auth.inputWrap, passwordFocused && auth.inputWrapFocused]}>
+            <Animated.View style={[auth.inputWrap, password$.style]}>
               <Ionicons name="lock-closed-outline" size={18} color="#79AE6F" style={auth.inputIcon} />
               <TextInput
                 style={auth.input}
@@ -390,19 +392,19 @@ function AuthModal({ visible, onClose, onSuccess }: {
                 placeholderTextColor="#79AE6F"
                 value={password}
                 onChangeText={setPassword}
-                onFocus={() => setPasswordFocused(true)}
-                onBlur={() => setPasswordFocused(false)}
+                onFocus={password$.onFocus}
+                onBlur={password$.onBlur}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
               <Pressable onPress={() => setShowPassword((v) => !v)} style={auth.eyeBtn}>
                 <Ionicons name={showPassword ? "eye-off-outline" : "eye-outline"} size={18} color="#79AE6F" />
               </Pressable>
-            </View>
+            </Animated.View>
 
             {/* Confirm password field (signup only) */}
             {mode === "signup" && (
-              <View style={[auth.inputWrap, confirmFocused && auth.inputWrapFocused]}>
+              <Animated.View style={[auth.inputWrap, confirm$.style]}>
                 <Ionicons name="lock-closed-outline" size={18} color="#79AE6F" style={auth.inputIcon} />
                 <TextInput
                   style={auth.input}
@@ -410,15 +412,15 @@ function AuthModal({ visible, onClose, onSuccess }: {
                   placeholderTextColor="#79AE6F"
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
-                  onFocus={() => setConfirmFocused(true)}
-                  onBlur={() => setConfirmFocused(false)}
+                  onFocus={confirm$.onFocus}
+                  onBlur={confirm$.onBlur}
                   secureTextEntry={!showConfirm}
                   autoCapitalize="none"
                 />
                 <Pressable onPress={() => setShowConfirm((v) => !v)} style={auth.eyeBtn}>
                   <Ionicons name={showConfirm ? "eye-off-outline" : "eye-outline"} size={18} color="#79AE6F" />
                 </Pressable>
-              </View>
+              </Animated.View>
             )}
 
             {error ? <Text style={auth.error}>{error}</Text> : null}

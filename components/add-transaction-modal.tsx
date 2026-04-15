@@ -1,6 +1,8 @@
 import { api } from "@/lib/api";
+import { formatDateISO } from "@/lib/date";
+import { CategoryDto } from "@/lib/types";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -19,21 +21,15 @@ import { DatePickerField } from "./date-picker-field";
 
 type ModalTab = "expenses" | "income";
 
-interface CategoryDto {
-  id: string;
-  name: string;
-  type: "INCOME" | "EXPENSE";
-  icon: string;
-  color: string;
-}
-
 interface Props {
   visible: boolean;
   onClose: () => void;
+  onAddMore?: () => void;
   symbol: string;
 }
 
-export function AddTransactionModal({ visible, onClose, symbol }: Props) {
+export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Props) {
+  const queryClient = useQueryClient();
   const [modalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<ModalTab>("expenses");
   const [amount, setAmount] = useState("");
@@ -59,6 +55,7 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
       entryDate: string;
     }) => api.post("/financial-entries", body),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["summary"] });
       setAmount("");
       setComment("");
       setSelectedCategory(null);
@@ -221,6 +218,12 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
                     </Pressable>
                   );
                 })}
+                <Pressable style={s.catItem} onPress={onAddMore}>
+                  <View style={s.addMoreIcon}>
+                    <MaterialCommunityIcons name="plus" size={26} color="#79AE6F" />
+                  </View>
+                  <Text style={s.catLabel}>Add more</Text>
+                </Pressable>
               </View>
             )}
 
@@ -234,7 +237,7 @@ export function AddTransactionModal({ visible, onClose, symbol }: Props) {
                   amount,
                   note: comment,
                   categoryId: selectedCategory!,
-                  entryDate: selectedDate.toISOString().split("T")[0],
+                  entryDate: formatDateISO(selectedDate),
                 });
               }}
             >
@@ -396,7 +399,7 @@ const s = StyleSheet.create({
     flexWrap: "wrap",
     rowGap: 12,
     columnGap: 8,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   catItem: {
     width: "22%",
@@ -417,6 +420,17 @@ const s = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: "#5A7A5A",
     textAlign: "center",
+  },
+  addMoreIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#C8DFC6",
+    borderStyle: "dashed",
+    backgroundColor: "#F0F8F0",
   },
   addBtn: {
     backgroundColor: "#346739",

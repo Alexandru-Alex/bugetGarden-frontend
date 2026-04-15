@@ -91,9 +91,11 @@ export const styles = StyleSheet.create({
 });
 
 export const auth = StyleSheet.create({
+  backdropOverlay: {
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "center",
     paddingHorizontal: 20,
     ...(Platform.OS === "web"

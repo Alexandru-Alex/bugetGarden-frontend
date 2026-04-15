@@ -1,4 +1,5 @@
 import { api, getStoredToken } from "@/lib/api";
+import { useFocusStyle } from "@/lib/use-focus-style";
 import { styles } from "@/styles/hello.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { Redirect, useRouter } from "expo-router";
@@ -12,6 +13,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import Animated from "react-native-reanimated";
 
 type Currency = "USD" | "EUR";
 
@@ -20,8 +22,8 @@ export default function HelloScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [isNewUser, setIsNewUser] = useState<boolean | undefined>(undefined);
   const [name, setName] = useState("");
-  const [nameFocused, setNameFocused] = useState(false);
   const [currency, setCurrency] = useState<Currency>("USD");
+  const name$ = useFocusStyle();
 
   useEffect(() => {
     getStoredToken().then(setToken);
@@ -63,7 +65,7 @@ export default function HelloScreen() {
         </View>
 
         <View style={styles.card}>
-          <View style={[styles.inputWrap, nameFocused && styles.inputWrapFocused]}>
+          <Animated.View style={[styles.inputWrap, name$.style]}>
             <Ionicons
               name="person-outline"
               size={18}
@@ -76,15 +78,15 @@ export default function HelloScreen() {
               placeholderTextColor="#79AE6F"
               value={name}
               onChangeText={setName}
-              onFocus={() => setNameFocused(true)}
-              onBlur={() => setNameFocused(false)}
+              onFocus={name$.onFocus}
+              onBlur={name$.onBlur}
               autoFocus
               autoCapitalize="words"
               returnKeyType="done"
               onSubmitEditing={handleContinue}
               underlineColorAndroid="transparent"
             />
-          </View>
+          </Animated.View>
 
           <View style={styles.currencySection}>
             <Text style={styles.currencyLabel}>Currency</Text>
