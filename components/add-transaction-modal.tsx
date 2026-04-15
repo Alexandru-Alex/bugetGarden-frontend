@@ -137,97 +137,102 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
             style={[s.card, cardStyle]}
             {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
           >
-            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="always">
-            <Text style={s.title}>Add Transaction</Text>
+            <ScrollView
+              style={s.scrollArea}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="always"
+              contentContainerStyle={s.scrollContent}
+            >
+              <Text style={s.title}>Add Transaction</Text>
 
-            {/* Tabs */}
-            <View style={s.tabRow}>
-              {(["expenses", "income"] as ModalTab[]).map((tab) => (
-                <Pressable
-                  key={tab}
-                  style={[s.tab, activeTab === tab && s.tabActive]}
-                  onPress={() => { setActiveTab(tab); setSelectedCategory(null); }}
-                >
-                  <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>
-                    {tab === "expenses" ? "Expenses" : "Income"}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-
-            {/* Amount */}
-            <View style={s.amountBox}>
-              <Text style={s.currencySymbol}>{symbol}</Text>
-              <TextInput
-                style={s.amountInput}
-                value={amount}
-                onChangeText={handleAmountChange}
-                placeholder="0.00"
-                placeholderTextColor="#B8D4B8"
-                keyboardType="decimal-pad"
-                maxLength={12}
-              />
-            </View>
-
-            {/* Comment */}
-            <View style={s.commentBox}>
-              <MaterialCommunityIcons name="pencil-outline" size={18} color="#79AE6F" style={s.commentIcon} />
-              <TextInput
-                style={s.commentInput}
-                value={comment}
-                onChangeText={setComment}
-                placeholder="Add a comment..."
-                placeholderTextColor="#B8D4B8"
-                maxLength={120}
-                returnKeyType="done"
-              />
-            </View>
-
-            {/* Date */}
-            <Text style={s.sectionLabel}>Date</Text>
-            <View style={s.datePickerWrap}>
-              <DatePickerField key={dateKey} value={selectedDate} onChange={setSelectedDate} />
-            </View>
-
-            {/* Categories */}
-            <Text style={s.sectionLabel}>Category</Text>
-            {categoriesLoading ? (
-              <View style={s.loadingRow}>
-                <ActivityIndicator size="small" color="#346739" />
+              {/* Tabs */}
+              <View style={s.tabRow}>
+                {(["expenses", "income"] as ModalTab[]).map((tab) => (
+                  <Pressable
+                    key={tab}
+                    style={[s.tab, activeTab === tab && s.tabActive]}
+                    onPress={() => { setActiveTab(tab); setSelectedCategory(null); }}
+                  >
+                    <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>
+                      {tab === "expenses" ? "Expenses" : "Income"}
+                    </Text>
+                  </Pressable>
+                ))}
               </View>
-            ) : (
-              <View style={s.categoriesRow}>
-                {categories.map((cat) => {
-                  const selected = selectedCategory === cat.id;
-                  return (
-                    <Pressable
-                      key={cat.id}
-                      style={s.catItem}
-                      onPress={() => setSelectedCategory(selected ? null : cat.id)}
-                    >
-                      <View style={[
-                        s.catIcon,
-                        { backgroundColor: cat.color + "18" },
-                        selected && { backgroundColor: cat.color + "30", borderColor: cat.color },
-                      ]}>
-                        <MaterialCommunityIcons name={cat.icon as any} size={26} color={cat.color} />
-                      </View>
-                      <Text style={[s.catLabel, selected && { color: cat.color, fontFamily: "Nunito_800ExtraBold" }]}>
-                        {cat.name}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-                <Pressable style={s.catItem} onPress={onAddMore}>
-                  <View style={s.addMoreIcon}>
-                    <MaterialCommunityIcons name="plus" size={26} color="#79AE6F" />
-                  </View>
-                  <Text style={s.catLabel}>Add more</Text>
-                </Pressable>
-              </View>
-            )}
 
-            {/* Add button */}
+              {/* Amount */}
+              <View style={s.amountBox}>
+                <Text style={s.currencySymbol}>{symbol}</Text>
+                <TextInput
+                  style={s.amountInput}
+                  value={amount}
+                  onChangeText={handleAmountChange}
+                  placeholder="0.00"
+                  placeholderTextColor="#B8D4B8"
+                  keyboardType="decimal-pad"
+                  maxLength={12}
+                />
+              </View>
+
+              {/* Comment */}
+              <View style={s.commentBox}>
+                <MaterialCommunityIcons name="pencil-outline" size={18} color="#79AE6F" style={s.commentIcon} />
+                <TextInput
+                  style={s.commentInput}
+                  value={comment}
+                  onChangeText={setComment}
+                  placeholder="Add a comment..."
+                  placeholderTextColor="#B8D4B8"
+                  maxLength={120}
+                  returnKeyType="done"
+                />
+              </View>
+
+              {/* Date */}
+              <Text style={s.sectionLabel}>Date</Text>
+              <View style={s.datePickerWrap}>
+                <DatePickerField key={dateKey} value={selectedDate} onChange={setSelectedDate} />
+              </View>
+
+              {/* Categories */}
+              <Text style={s.sectionLabel}>Category</Text>
+              {categoriesLoading ? (
+                <View style={s.loadingRow}>
+                  <ActivityIndicator size="small" color="#346739" />
+                </View>
+              ) : (
+                <View style={s.categoriesRow}>
+                  {categories.map((cat) => {
+                    const selected = selectedCategory === cat.id;
+                    return (
+                      <Pressable
+                        key={cat.id}
+                        style={s.catItem}
+                        onPress={() => setSelectedCategory(selected ? null : cat.id)}
+                      >
+                        <View style={[
+                          s.catIcon,
+                          { backgroundColor: cat.color + "18" },
+                          selected && { backgroundColor: cat.color + "30", borderColor: cat.color },
+                        ]}>
+                          <MaterialCommunityIcons name={cat.icon as any} size={26} color={cat.color} />
+                        </View>
+                        <Text style={[s.catLabel, selected && { color: cat.color, fontFamily: "Nunito_800ExtraBold" }]}>
+                          {cat.name}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                  <Pressable style={s.catItem} onPress={onAddMore}>
+                    <View style={s.addMoreIcon}>
+                      <MaterialCommunityIcons name="plus" size={26} color="#79AE6F" />
+                    </View>
+                    <Text style={s.catLabel}>Add more</Text>
+                  </Pressable>
+                </View>
+              )}
+            </ScrollView>
+
             <Pressable
               style={({ pressed }) => [s.addBtn, pressed && s.addBtnPressed, (!canAdd || addEntry.isPending) && s.addBtnDisabled]}
               onPress={() => {
@@ -247,7 +252,6 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
                 <Text style={[s.addBtnText, !canAdd && s.addBtnTextDisabled]}>Add</Text>
               )}
             </Pressable>
-            </ScrollView>
           </Animated.View>
         </KeyboardAvoidingView>
       </Pressable>
@@ -285,6 +289,13 @@ const s = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 20,
     elevation: 20,
+    overflow: "hidden",
+  },
+  scrollArea: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 16,
   },
   title: {
     fontSize: 20,
@@ -437,6 +448,7 @@ const s = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 18,
     alignItems: "center",
+    marginTop: 12,
   },
   addBtnPressed: {
     backgroundColor: "#2A4A2E",
