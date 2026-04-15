@@ -55,7 +55,7 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
       entryDate: string;
     }) => api.post("/financial-entries", body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["summary"] });
+      queryClient.refetchQueries({ queryKey: ["summary"] });
       setAmount("");
       setComment("");
       setSelectedCategory(null);
