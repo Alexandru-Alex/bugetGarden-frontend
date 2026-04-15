@@ -9,7 +9,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -79,16 +78,9 @@ export default function EditEntryScreen() {
     },
   });
 
-  const handleDelete = () => {
-    Alert.alert("Delete entry?", "This action cannot be undone.", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => deleteMutation.mutate(),
-      },
-    ]);
-  };
+  const handleDelete = () => setConfirmDelete(true);
+
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const canSave = amount.length > 0 && parseFloat(amount) > 0;
   const isBusy = saveMutation.isPending || deleteMutation.isPending;
@@ -191,17 +183,38 @@ export default function EditEntryScreen() {
           </Pressable>
 
           {/* Delete */}
-          <Pressable
-            style={({ pressed }) => [styles.deleteBtn, pressed && styles.deleteBtnPressed]}
-            onPress={handleDelete}
-            disabled={isBusy}
-          >
-            {deleteMutation.isPending ? (
-              <ActivityIndicator size="small" color="#E53935" />
-            ) : (
+          {confirmDelete ? (
+            <View style={styles.confirmBox}>
+              <Text style={styles.confirmText}>Delete this entry?</Text>
+              <View style={styles.confirmRow}>
+                <Pressable
+                  style={({ pressed }) => [styles.confirmCancel, pressed && styles.confirmCancelPressed]}
+                  onPress={() => setConfirmDelete(false)}
+                >
+                  <Text style={styles.confirmCancelText}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [styles.confirmDelete, pressed && styles.confirmDeletePressed]}
+                  onPress={() => deleteMutation.mutate()}
+                  disabled={isBusy}
+                >
+                  {deleteMutation.isPending ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : (
+                    <Text style={styles.confirmDeleteText}>Delete</Text>
+                  )}
+                </Pressable>
+              </View>
+            </View>
+          ) : (
+            <Pressable
+              style={({ pressed }) => [styles.deleteBtn, pressed && styles.deleteBtnPressed]}
+              onPress={handleDelete}
+              disabled={isBusy}
+            >
               <Text style={styles.deleteBtnText}>Delete entry</Text>
-            )}
-          </Pressable>
+            </Pressable>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </View>

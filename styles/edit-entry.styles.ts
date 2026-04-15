@@ -163,6 +163,59 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
 
+  // ── Inline delete confirm ─────────────────────────────────────────────────────
+
+  confirmBox: {
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: "#E53935",
+    backgroundColor: "#FFF5F5",
+    padding: 16,
+    gap: 12,
+  },
+  confirmText: {
+    fontSize: 14,
+    fontFamily: "Nunito_800ExtraBold",
+    color: "#E53935",
+    textAlign: "center",
+  },
+  confirmRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  confirmCancel: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    backgroundColor: "#F0F8F0",
+    borderWidth: 1.5,
+    borderColor: "#C8DFC6",
+  },
+  confirmCancelPressed: {
+    backgroundColor: "#D5E9D2",
+  },
+  confirmCancelText: {
+    fontSize: 14,
+    fontFamily: "Nunito_800ExtraBold",
+    color: "#346739",
+  },
+  confirmDelete: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    backgroundColor: "#E53935",
+  },
+  confirmDeletePressed: {
+    backgroundColor: "#C62828",
+  },
+  confirmDeleteText: {
+    fontSize: 14,
+    fontFamily: "Nunito_800ExtraBold",
+    color: "#FFFFFF",
+  },
+
   // ── Error ─────────────────────────────────────────────────────────────────────
 
   errorText: {
