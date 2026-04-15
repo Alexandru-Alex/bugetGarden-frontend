@@ -187,7 +187,7 @@ export default function EditEntryScreen() {
           {/* Delete */}
           {confirmDelete ? (
             <View style={styles.confirmBox}>
-              <Text style={styles.confirmText}>Delete this entry?</Text>
+              <Text style={styles.confirmText}>Delete this transaction?</Text>
               <View style={styles.confirmRow}>
                 <Pressable
                   style={({ pressed }) => [styles.confirmCancel, pressed && styles.confirmCancelPressed]}
@@ -214,7 +214,7 @@ export default function EditEntryScreen() {
               onPress={handleDelete}
               disabled={isBusy}
             >
-              <Text style={styles.deleteBtnText}>Delete entry</Text>
+              <Text style={styles.deleteBtnText}>Delete transaction</Text>
             </Pressable>
           )}
         </ScrollView>
