@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
-export const BASE_URL = "https://budgetgarden-backend-latest.onrender.com"
+export const BASE_URL = "http://localhost:8080"
 
 // Cache in-memory — token nu se schimbă în timpul sesiunii
 let _tokenCache: string | null | undefined = undefined;
@@ -103,6 +103,29 @@ export const api = {
     } catch {
       return text as T;
     }
+  },
+
+  async put<T = unknown>(path: string, body: unknown): Promise<T> {
+    const headers = await buildHeaders({ "Content-Type": "application/json" });
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error(await extractErrorMessage(res));
+    const text = await res.text();
+    if (!text) return undefined as T;
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      return text as T;
+    }
+  },
+
+  async delete(path: string): Promise<void> {
+    const headers = await buildHeaders();
+    const res = await fetch(`${BASE_URL}${path}`, { method: "DELETE", headers });
+    if (!res.ok) throw new Error(await extractErrorMessage(res));
   },
 
   async get<T = unknown>(path: string): Promise<T> {
