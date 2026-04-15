@@ -67,6 +67,7 @@ export default function EditEntryScreen() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["financial-entries", categoryId] });
+      queryClient.invalidateQueries({ queryKey: ["summary"] });
       router.back();
     },
   });
@@ -75,6 +76,7 @@ export default function EditEntryScreen() {
     mutationFn: () => api.delete(`/financial-entries/${entryId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["financial-entries", categoryId] });
+      queryClient.invalidateQueries({ queryKey: ["summary"] });
       router.back();
     },
   });
