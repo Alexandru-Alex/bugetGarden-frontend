@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
 
   tabsExtension: {
     alignSelf: "center",
-    width: 260,
+    width: 300,
     backgroundColor: "#346739",
     paddingHorizontal: 12,
     paddingTop: 4,
@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
   },
   typeBtnActive: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#79AE6F",
   },
   typeBtnText: {
     fontSize: 13,
@@ -73,7 +73,7 @@ export const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.7)",
   },
   typeBtnTextActive: {
-    color: "#346739",
+    color: "#FFFFFF",
   },
 
   // ── Scroll ───────────────────────────────────────────────────────────────────
