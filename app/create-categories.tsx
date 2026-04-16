@@ -3,6 +3,7 @@ import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/create-categories.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -100,26 +101,30 @@ export default function CreateCategoriesScreen() {
       <NavMenu />
 
       {/* ── Clean white header ── */}
-      <View
+      {/* Green gradient header */}
+      <LinearGradient
+        colors={["#2A4A2E", "#346739"]}
         style={[
           styles.header,
-          { paddingTop: Platform.OS === "web" ? 56 + 12 : insets.top + 56 + 12 },
+          { paddingTop: Platform.OS === "web" ? 56 : insets.top + 56 },
         ]}
       >
-        <View style={styles.headerTitleRow}>
+        <Text style={styles.headerTitle}>
+          {isEdit ? "Edit Category" : "New Category"}
+        </Text>
+        <View style={styles.headerSubRow}>
           <Pressable
             style={({ pressed }) => [styles.backBtn, pressed && styles.backBtnPressed]}
             onPress={() => router.canGoBack() ? router.back() : router.replace("/manage-categories")}
           >
-            <MaterialCommunityIcons name="chevron-left" size={22} color="#346739" />
+            <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
           </Pressable>
-          <Text style={styles.headerTitle}>
-            {isEdit ? "Edit Category" : "New Category"}
-          </Text>
           <View style={styles.headerSpacer} />
         </View>
+      </LinearGradient>
 
-        {/* Expense / Income toggle in header */}
+      {/* Type tabs — extension vizuală a header-ului */}
+      <View style={styles.tabsExtension}>
         <View style={styles.typeRow}>
           {(["EXPENSE", "INCOME"] as CategoryType[]).map((t) => (
             <Pressable

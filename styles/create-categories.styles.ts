@@ -6,55 +6,52 @@ export const styles = StyleSheet.create({
     backgroundColor: "#F5F8F5",
   },
 
-  // ── Header (white, clean) ────────────────────────────────────────────────────
+  // ── Header (green gradient) ──────────────────────────────────────────────────
 
   header: {
-    backgroundColor: "#FFFFFF",
     paddingHorizontal: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EAF3E8",
-    shadowColor: "#346739",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 3,
+    paddingBottom: 12,
   },
-  headerTitleRow: {
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: "Nunito_900Black",
+    color: "#FFFFFF",
+    textAlign: "center",
+    paddingTop: 12,
+    marginBottom: 10,
+  },
+  headerSubRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 14,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontFamily: "Nunito_900Black",
-    color: "#1A2A1A",
-    textAlign: "center",
   },
   backBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#EAF3E8",
+    backgroundColor: "rgba(255,255,255,0.15)",
     justifyContent: "center",
     alignItems: "center",
   },
   backBtnPressed: {
-    backgroundColor: "#D5E9D2",
+    backgroundColor: "rgba(255,255,255,0.28)",
   },
   headerSpacer: {
     width: 32,
   },
 
-  // ── Type toggle (in header) ───────────────────────────────────────────────────
+  // ── Tabs extension (same #346739 bg, visually fused with header) ─────────────
 
+  tabsExtension: {
+    backgroundColor: "#346739",
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
   typeRow: {
     flexDirection: "row",
-    backgroundColor: "#EAF3E8",
+    backgroundColor: "rgba(0,0,0,0.18)",
     borderRadius: 14,
     padding: 4,
-    gap: 0,
   },
   typeBtn: {
     flex: 1,
@@ -63,20 +60,15 @@ export const styles = StyleSheet.create({
     borderRadius: 11,
   },
   typeBtnActive: {
-    backgroundColor: "#346739",
-    shadowColor: "#346739",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
+    backgroundColor: "#FFFFFF",
   },
   typeBtnText: {
     fontSize: 14,
     fontFamily: "Nunito_800ExtraBold",
-    color: "#5A8A5A",
+    color: "rgba(255,255,255,0.7)",
   },
   typeBtnTextActive: {
-    color: "#FFFFFF",
+    color: "#346739",
   },
 
   // ── Scroll ───────────────────────────────────────────────────────────────────
