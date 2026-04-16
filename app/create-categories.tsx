@@ -67,7 +67,7 @@ export default function CreateCategoriesScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [name, setName] = useState(params.name ?? "");
   const [type, setType] = useState<CategoryType>(params.type ?? "EXPENSE");
-  const [selectedIcon, setSelectedIcon] = useState<string>(params.icon ?? ICON_NAMES[0]);
+  const [selectedIcon, setSelectedIcon] = useState<string>(params.icon ?? ICON_ROWS[0][0]);
   const [selectedColor, setSelectedColor] = useState<string>(params.color ?? COLORS[0]);
 
   const insets = useSafeAreaInsets();
