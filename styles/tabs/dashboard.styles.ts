@@ -87,6 +87,7 @@ export const styles = StyleSheet.create({
   scroll: {
     flex: 1,
     marginTop: -24,
+    backgroundColor: "transparent",
   },
   scrollContent: {
     paddingBottom: 48,
@@ -98,6 +99,7 @@ export const styles = StyleSheet.create({
     paddingTop: 28,
     paddingHorizontal: 24,
     alignItems: "center",
+    alignSelf: "stretch",
   },
 
   // ── Tabs ──────────────────────────────────────────────────────────────────

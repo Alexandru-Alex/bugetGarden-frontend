@@ -1,6 +1,7 @@
 import { NavMenu } from "@/components/nav-menu";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/create-categories.styles";
+import { sharedStyles } from "@/styles/shared.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,6 +9,7 @@ import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -60,9 +62,11 @@ export default function CreateCategoriesScreen() {
     type?: CategoryType;
     icon?: string;
     color?: string;
+    isSystem?: string;
   }>();
 
   const isEdit = !!params.categoryId;
+  const canDelete = isEdit && params.isSystem !== "true";
 
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [name, setName] = useState(params.name ?? "");
@@ -77,10 +81,29 @@ export default function CreateCategoriesScreen() {
     getStoredToken().then(setToken);
   }, []);
 
+  const deleteCategory = useMutation({
+    mutationFn: () => api.delete(`/categories/${params.categoryId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      router.canGoBack() ? router.back() : router.replace("/manage-categories");
+    },
+  });
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete Category",
+      `Are you sure you want to delete "${name.trim() || "this category"}"?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: () => deleteCategory.mutate() },
+      ],
+    );
+  };
+
   const save = useMutation({
     mutationFn: () => {
-      const body = { name: name.trim(), type, icon: selectedIcon, color: selectedColor };
-      if (isEdit) return api.patch(`/categories/${params.categoryId}`, body);
+      const body = { categoryName: name.trim(), type, icon: selectedIcon, color: selectedColor };
+      if (isEdit) return api.put("/categories", { ...body, categoryId: params.categoryId });
       return api.post("/categories", body);
     },
     onSuccess: () => {
@@ -100,8 +123,6 @@ export default function CreateCategoriesScreen() {
     <View style={styles.root}>
       <NavMenu />
 
-      {/* ── Clean white header ── */}
-      {/* Green gradient header */}
       <LinearGradient
         colors={["#2A4A2E", "#346739"]}
         style={[
@@ -123,16 +144,15 @@ export default function CreateCategoriesScreen() {
         </View>
       </LinearGradient>
 
-      {/* Type tabs — extension vizuală a header-ului */}
-      <View style={styles.tabsExtension}>
-        <View style={styles.typeRow}>
+      <View style={sharedStyles.tabsExtension}>
+        <View style={sharedStyles.typeRow}>
           {(["EXPENSE", "INCOME"] as CategoryType[]).map((t) => (
             <Pressable
               key={t}
-              style={[styles.typeBtn, type === t && styles.typeBtnActive]}
+              style={[sharedStyles.typeBtn, type === t && sharedStyles.typeBtnActive]}
               onPress={() => setType(t)}
             >
-              <Text style={[styles.typeBtnText, type === t && styles.typeBtnTextActive]}>
+              <Text style={[sharedStyles.typeBtnText, type === t && sharedStyles.typeBtnTextActive]}>
                 {t === "EXPENSE" ? "Expense" : "Income"}
               </Text>
             </Pressable>
@@ -224,7 +244,6 @@ export default function CreateCategoriesScreen() {
               ))}
             </View>
 
-            {/* Save */}
             <Pressable
               style={({ pressed }) => [
                 styles.saveBtn,
@@ -239,6 +258,16 @@ export default function CreateCategoriesScreen() {
                 <Text style={styles.saveBtnText}>{isEdit ? "Save Changes" : "Create Category"}</Text>
               )}
             </Pressable>
+
+            {canDelete && (
+              <Pressable
+                style={({ pressed }) => [styles.deleteBtn, pressed && styles.deleteBtnPressed]}
+                onPress={handleDelete}
+              >
+                <MaterialCommunityIcons name="trash-can-outline" size={18} color="#E05555" />
+                <Text style={styles.deleteBtnText}>Delete Category</Text>
+              </Pressable>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

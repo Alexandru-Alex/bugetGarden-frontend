@@ -40,44 +40,26 @@ export const styles = StyleSheet.create({
   headerSpacer: {
     width: 32,
   },
-
-  // ── Tabs extension — U shape hanging from header ─────────────────────────────
-
-  tabsExtension: {
-    marginHorizontal: 16,
-    maxWidth: 448,
-    alignSelf: "center",
-    width: "100%",
-    backgroundColor: "#346739",
-    paddingHorizontal: 12,
-    paddingTop: 4,
-    paddingBottom: 14,
-    borderBottomLeftRadius: 22,
-    borderBottomRightRadius: 22,
-  },
-  typeRow: {
+  deleteBtn: {
     flexDirection: "row",
-    backgroundColor: "rgba(0,0,0,0.18)",
-    borderRadius: 12,
-    padding: 3,
-  },
-  typeBtn: {
-    flex: 1,
-    paddingVertical: 9,
     alignItems: "center",
-    borderRadius: 10,
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 16,
+    paddingVertical: 16,
+    marginTop: 12,
+    borderWidth: 1.5,
+    borderColor: "#E05555",
   },
-  typeBtnActive: {
-    backgroundColor: "#79AE6F",
+  deleteBtnPressed: {
+    backgroundColor: "#FFF0F0",
   },
-  typeBtnText: {
-    fontSize: 13,
+  deleteBtnText: {
+    fontSize: 16,
     fontFamily: "Nunito_800ExtraBold",
-    color: "rgba(255,255,255,0.7)",
+    color: "#E05555",
   },
-  typeBtnTextActive: {
-    color: "#FFFFFF",
-  },
+
 
   // ── Scroll ───────────────────────────────────────────────────────────────────
 
@@ -114,7 +96,7 @@ export const styles = StyleSheet.create({
   previewName: {
     fontSize: 20,
     fontFamily: "Nunito_900Black",
-    color: "#1A2A1A",
+    color: "#346739",
     maxWidth: 200,
   },
   previewNamePlaceholder: {
@@ -152,7 +134,7 @@ export const styles = StyleSheet.create({
   nameInput: {
     fontSize: 16,
     fontFamily: "Nunito_800ExtraBold",
-    color: "#1A2A1A",
+    color: "#346739",
     padding: 0,
   },
 

@@ -125,14 +125,6 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
           enabled={Platform.OS === "ios"}
           style={s.kavWrapper}
         >
-          {/* Notification toast */}
-          {showSuccess && (
-            <View style={s.toast}>
-              <MaterialCommunityIcons name="check-circle" size={18} color="#FFFFFF" />
-              <Text style={s.toastText}>Transaction added!</Text>
-            </View>
-          )}
-
           <Animated.View
             style={[s.card, cardStyle]}
             {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
@@ -253,6 +245,14 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
               )}
             </Pressable>
           </Animated.View>
+
+          {/* Notification toast — rendered after card to sit on top */}
+          {showSuccess && (
+            <View style={s.toast}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#FFFFFF" />
+              <Text style={s.toastText}>Transaction added!</Text>
+            </View>
+          )}
         </KeyboardAvoidingView>
       </Pressable>
     </Modal>
@@ -480,7 +480,8 @@ const s = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 10,
+    elevation: 30,
+    zIndex: 999,
   },
   toastText: {
     fontSize: 14,

@@ -10,19 +10,21 @@ export const styles = StyleSheet.create({
 
   header: {
     paddingHorizontal: 16,
+    paddingBottom: 28,
+  },
+  headerTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 12,
+    paddingBottom: 10,
   },
   headerTitle: {
+    flex: 1,
     fontSize: 20,
     fontFamily: "Nunito_900Black",
     color: "#FFFFFF",
     textAlign: "center",
-    paddingTop: 12,
-    marginBottom: 12,
-  },
-  headerSubRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
   },
   backBtn: {
     width: 32,
@@ -39,142 +41,77 @@ export const styles = StyleSheet.create({
     width: 32,
   },
 
-  // ── Tabs ────────────────────────────────────────────────────────────────────
 
-  tabRow: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "rgba(0,0,0,0.18)",
-    borderRadius: 14,
-    padding: 4,
-    marginTop: 14,
-    marginBottom: 0,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 11,
-  },
-  tabActive: {
-    backgroundColor: "#FFFFFF",
-  },
-  tabText: {
-    fontSize: 14,
-    fontFamily: "Nunito_800ExtraBold",
-    color: "rgba(255,255,255,0.7)",
-  },
-  tabTextActive: {
-    color: "#346739",
-  },
-
-  // ── List ────────────────────────────────────────────────────────────────────
+  // ── Icon grid ────────────────────────────────────────────────────────────────
 
   list: {
     flex: 1,
   },
   listContent: {
-    paddingTop: 12,
     paddingHorizontal: 16,
+    paddingTop: 12,
     paddingBottom: 100,
   },
-
-  // ── Category card ────────────────────────────────────────────────────────────
-
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    gap: 14,
-    marginBottom: 8,
-    shadowColor: "#346739",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  cardWide: {
-    maxWidth: 480,
+  iconGrid: {
+    gap: 12,
     alignSelf: "center",
-    width: "100%",
   },
-  iconBox: {
-    width: 46,
-    height: 46,
-    borderRadius: 13,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cardName: {
-    flex: 1,
-    fontSize: 15,
-    fontFamily: "Nunito_800ExtraBold",
-    color: "#1A2A1A",
-  },
-  systemBadge: {
+  iconRow: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    backgroundColor: "#F0F8F0",
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    gap: 12,
   },
-  systemBadgeText: {
-    fontSize: 11,
-    fontFamily: "Nunito_700Bold",
-    color: "#79AE6F",
-  },
-  actionRow: {
-    flexDirection: "row",
-    gap: 6,
-  },
-  editBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    backgroundColor: "#EAF3E8",
+  iconTile: {
+    width: 68,
+    height: 68,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-  },
-  editBtnPressed: {
-    backgroundColor: "#D5E9D2",
-  },
-  deleteBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    backgroundColor: "#FFEAEA",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  deleteBtnPressed: {
-    backgroundColor: "#FFCECE",
   },
 
   // ── FAB ─────────────────────────────────────────────────────────────────────
 
   fab: {
-    position: "absolute",
-    bottom: 32,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#346739",
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "#E8960A",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#346739",
+    alignSelf: "center",
+    marginTop: 24,
+    shadowColor: "#E8960A",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
     elevation: 8,
   },
   fabPressed: {
-    backgroundColor: "#2A4A2E",
+    backgroundColor: "#C97A08",
+  },
+
+  // ── Toast ────────────────────────────────────────────────────────────────────
+
+  toast: {
+    position: "absolute",
+    bottom: 120,
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#79AE6F",
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  toastText: {
+    fontSize: 14,
+    fontFamily: "Nunito_700Bold",
+    color: "#FFFFFF",
   },
 
   // ── States ───────────────────────────────────────────────────────────────────
