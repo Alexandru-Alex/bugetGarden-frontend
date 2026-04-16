@@ -109,16 +109,16 @@ export default function CreateCategoriesScreen() {
           { paddingTop: Platform.OS === "web" ? 56 : insets.top + 56 },
         ]}
       >
-        <Text style={styles.headerTitle}>
-          {isEdit ? "Edit Category" : "New Category"}
-        </Text>
-        <View style={styles.headerSubRow}>
+        <View style={styles.headerTitleRow}>
           <Pressable
             style={({ pressed }) => [styles.backBtn, pressed && styles.backBtnPressed]}
             onPress={() => router.canGoBack() ? router.back() : router.replace("/manage-categories")}
           >
             <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
           </Pressable>
+          <Text style={styles.headerTitle}>
+            {isEdit ? "Edit Category" : "New Category"}
+          </Text>
           <View style={styles.headerSpacer} />
         </View>
       </LinearGradient>

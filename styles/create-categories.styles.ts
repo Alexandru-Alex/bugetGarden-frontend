@@ -11,19 +11,19 @@ export const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     paddingBottom: 12,
+    paddingTop: 12,
+  },
+  headerTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   headerTitle: {
+    flex: 1,
     fontSize: 20,
     fontFamily: "Nunito_900Black",
     color: "#FFFFFF",
     textAlign: "center",
-    paddingTop: 12,
-    marginBottom: 10,
-  },
-  headerSubRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
   },
   backBtn: {
     width: 32,
