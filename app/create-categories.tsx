@@ -20,23 +20,23 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type CategoryType = "EXPENSE" | "INCOME";
 
-const ICON_NAMES = [
+const ICON_ROWS = [
   // Food & Drink
-  "food", "coffee", "pizza", "beer", "cake-variant", "tea",
+  ["food", "coffee", "pizza", "beer", "cake-variant", "tea", "glass-wine", "ice-cream"],
   // Transport
-  "car", "airplane", "train", "motorbike", "bicycle", "bus",
+  ["car", "airplane", "train", "motorbike", "bicycle", "bus", "taxi", "fuel"],
   // Home & Living
-  "home", "sofa", "television-play", "washing-machine", "lightbulb", "tools",
+  ["home", "sofa", "television-play", "washing-machine", "lightbulb", "tools", "shower", "bed"],
   // Health & Sport
-  "hospital-box", "pill", "dumbbell", "heart", "soccer", "basketball",
+  ["hospital-box", "pill", "dumbbell", "heart", "soccer", "basketball", "tooth", "shoe-sneaker"],
   // Shopping & Style
-  "cart", "shopping", "gift", "tshirt-crew", "hanger", "shoe-heel",
+  ["cart", "shopping", "gift", "tshirt-crew", "hanger", "shoe-heel", "camera", "sunglasses"],
   // Finance & Work
-  "bank", "wallet", "cash-multiple", "credit-card", "briefcase", "chart-line",
+  ["bank", "wallet", "cash-multiple", "credit-card", "briefcase", "chart-line", "laptop", "phone"],
   // Education & Culture
-  "school", "book-open-variant", "palette", "music", "headphones", "guitar",
+  ["school", "book-open-variant", "palette", "music", "headphones", "guitar", "ticket", "gamepad-variant"],
   // Nature & Pets
-  "leaf", "flower", "paw", "dog", "cat", "tree",
+  ["leaf", "flower", "paw", "dog", "cat", "tree", "fish", "dice-multiple"],
 ] as const;
 
 const COLORS = [
@@ -198,26 +198,30 @@ export default function CreateCategoriesScreen() {
             {/* Icon */}
             <Text style={styles.sectionLabel}>Icon</Text>
             <View style={styles.iconGrid}>
-              {ICON_NAMES.map((icon) => {
-                const selected = selectedIcon === icon;
-                return (
-                  <Pressable
-                    key={icon}
-                    style={[
-                      styles.iconBtn,
-                      selected && styles.iconBtnSelected,
-                      selected && { borderColor: selectedColor, backgroundColor: selectedColor + "15" },
-                    ]}
-                    onPress={() => setSelectedIcon(icon)}
-                  >
-                    <MaterialCommunityIcons
-                      name={icon as any}
-                      size={26}
-                      color={selected ? selectedColor : "#79AE6F"}
-                    />
-                  </Pressable>
-                );
-              })}
+              {ICON_ROWS.map((row, rowIdx) => (
+                <View key={rowIdx} style={styles.iconRow}>
+                  {row.map((icon) => {
+                    const selected = selectedIcon === icon;
+                    return (
+                      <Pressable
+                        key={icon}
+                        style={[
+                          styles.iconBtn,
+                          selected && styles.iconBtnSelected,
+                          selected && { borderColor: selectedColor, backgroundColor: selectedColor + "15" },
+                        ]}
+                        onPress={() => setSelectedIcon(icon)}
+                      >
+                        <MaterialCommunityIcons
+                          name={icon as any}
+                          size={22}
+                          color={selected ? selectedColor : "#79AE6F"}
+                        />
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ))}
             </View>
 
             {/* Save */}

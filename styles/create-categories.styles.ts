@@ -180,15 +180,17 @@ export const styles = StyleSheet.create({
   // ── Icon picker ──────────────────────────────────────────────────────────────
 
   iconGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
+    gap: 6,
     marginBottom: 32,
   },
+  iconRow: {
+    flexDirection: "row",
+    gap: 6,
+  },
   iconBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
+    flex: 1,
+    aspectRatio: 1,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
