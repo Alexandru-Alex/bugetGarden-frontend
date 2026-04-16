@@ -43,8 +43,10 @@ export const styles = StyleSheet.create({
   // ── Tabs extension — U shape hanging from header ─────────────────────────────
 
   tabsExtension: {
+    marginHorizontal: 16,
+    maxWidth: 448,
     alignSelf: "center",
-    width: 300,
+    width: "100%",
     backgroundColor: "#346739",
     paddingHorizontal: 12,
     paddingTop: 4,
