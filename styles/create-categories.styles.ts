@@ -6,38 +6,77 @@ export const styles = StyleSheet.create({
     backgroundColor: "#F5F8F5",
   },
 
-  // ── Header ──────────────────────────────────────────────────────────────────
+  // ── Header (white, clean) ────────────────────────────────────────────────────
 
   header: {
+    backgroundColor: "#FFFFFF",
     paddingHorizontal: 16,
-    paddingBottom: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EAF3E8",
+    shadowColor: "#346739",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  headerTitle: {
-    fontSize: 20,
-    fontFamily: "Nunito_900Black",
-    color: "#FFFFFF",
-    textAlign: "center",
-    paddingTop: 12,
-    marginBottom: 10,
-  },
-  headerSubRow: {
+  headerTitleRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: 14,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: "Nunito_900Black",
+    color: "#1A2A1A",
+    textAlign: "center",
   },
   backBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.15)",
+    backgroundColor: "#EAF3E8",
     justifyContent: "center",
     alignItems: "center",
   },
   backBtnPressed: {
-    backgroundColor: "rgba(255,255,255,0.28)",
+    backgroundColor: "#D5E9D2",
   },
   headerSpacer: {
     width: 32,
+  },
+
+  // ── Type toggle (in header) ───────────────────────────────────────────────────
+
+  typeRow: {
+    flexDirection: "row",
+    backgroundColor: "#EAF3E8",
+    borderRadius: 14,
+    padding: 4,
+    gap: 0,
+  },
+  typeBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 11,
+  },
+  typeBtnActive: {
+    backgroundColor: "#346739",
+    shadowColor: "#346739",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  typeBtnText: {
+    fontSize: 14,
+    fontFamily: "Nunito_800ExtraBold",
+    color: "#5A8A5A",
+  },
+  typeBtnTextActive: {
+    color: "#FFFFFF",
   },
 
   // ── Scroll ───────────────────────────────────────────────────────────────────
@@ -117,47 +156,20 @@ export const styles = StyleSheet.create({
     padding: 0,
   },
 
-  // ── Type selector ────────────────────────────────────────────────────────────
-
-  typeRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginBottom: 24,
-  },
-  typeBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: "center",
-    borderRadius: 14,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1.5,
-    borderColor: "#C8DFC6",
-  },
-  typeBtnActive: {
-    backgroundColor: "#346739",
-    borderColor: "#346739",
-  },
-  typeBtnText: {
-    fontSize: 14,
-    fontFamily: "Nunito_800ExtraBold",
-    color: "#79AE6F",
-  },
-  typeBtnTextActive: {
-    color: "#FFFFFF",
-  },
-
   // ── Color picker ─────────────────────────────────────────────────────────────
 
   colorGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
     gap: 10,
     marginBottom: 24,
   },
+  colorRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   colorSwatch: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     borderWidth: 2.5,
     borderColor: "transparent",
   },

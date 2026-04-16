@@ -3,7 +3,6 @@ import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/create-categories.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -21,20 +20,36 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 type CategoryType = "EXPENSE" | "INCOME";
 
 const ICON_NAMES = [
-  "food-outline", "cart-outline", "car-outline", "home-outline",
-  "hospital-outline", "school-outline", "airplane-outline", "dumbbell",
-  "music-note-outline", "phone-outline", "television-play", "wifi",
-  "book-open-outline", "baby-outline", "paw-outline", "gift-outline",
-  "coffee-outline", "gamepad-variant-outline", "tshirt-crew-outline", "tools",
-  "train", "motorbike", "receipt-outline", "cash-multiple",
-  "bank-outline", "wallet-outline", "chart-line", "briefcase-outline",
-  "leaf-outline", "heart-outline", "fuel", "shopping-outline",
+  // Food & Drink
+  "food", "coffee", "pizza", "beer", "cake-variant", "tea",
+  // Transport
+  "car", "airplane", "train", "motorbike", "bicycle", "bus",
+  // Home & Living
+  "home", "sofa", "television-play", "washing-machine", "lightbulb", "tools",
+  // Health & Sport
+  "hospital-box", "pill", "dumbbell", "heart", "soccer", "basketball",
+  // Shopping & Style
+  "cart", "shopping", "gift", "tshirt-crew", "hanger", "shoe-heel",
+  // Finance & Work
+  "bank", "wallet", "cash-multiple", "credit-card", "briefcase", "chart-line",
+  // Education & Culture
+  "school", "book-open-variant", "palette", "music", "headphones", "guitar",
+  // Nature & Pets
+  "leaf", "flower", "paw", "dog", "cat", "tree",
 ] as const;
 
 const COLORS = [
-  "#E05555", "#E07B35", "#D4A017", "#5BAD6F",
-  "#346739", "#3A8FBF", "#5B6EAE", "#9B59B6",
-  "#E91E8C", "#795548", "#607D8B", "#546E7A",
+  "#E05555", "#FF7043", "#E07B35", "#F4A623", "#F9C74F",
+  "#5BAD6F", "#43AA8B", "#346739", "#2D9CDB", "#3A8FBF",
+  "#5B6EAE", "#9B59B6", "#E91E8C", "#6C63FF", "#546E7A",
+  "#795548", "#8D6E63", "#607D8B", "#37474F", "#455A64",
+];
+
+const COLOR_ROWS = [
+  COLORS.slice(0, 5),
+  COLORS.slice(5, 10),
+  COLORS.slice(10, 15),
+  COLORS.slice(15, 20),
 ];
 
 export default function CreateCategoriesScreen() {
@@ -83,26 +98,42 @@ export default function CreateCategoriesScreen() {
   return (
     <View style={styles.root}>
       <NavMenu />
-      <LinearGradient
-        colors={["#2A4A2E", "#346739"]}
+
+      {/* ── Clean white header ── */}
+      <View
         style={[
           styles.header,
-          { paddingTop: Platform.OS === "web" ? 56 : insets.top + 56 },
+          { paddingTop: Platform.OS === "web" ? 56 + 12 : insets.top + 56 + 12 },
         ]}
       >
-        <Text style={styles.headerTitle}>
-          {isEdit ? "Edit Category" : "New Category"}
-        </Text>
-        <View style={styles.headerSubRow}>
+        <View style={styles.headerTitleRow}>
           <Pressable
             style={({ pressed }) => [styles.backBtn, pressed && styles.backBtnPressed]}
             onPress={() => router.canGoBack() ? router.back() : router.replace("/manage-categories")}
           >
-            <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
+            <MaterialCommunityIcons name="chevron-left" size={22} color="#346739" />
           </Pressable>
+          <Text style={styles.headerTitle}>
+            {isEdit ? "Edit Category" : "New Category"}
+          </Text>
           <View style={styles.headerSpacer} />
         </View>
-      </LinearGradient>
+
+        {/* Expense / Income toggle in header */}
+        <View style={styles.typeRow}>
+          {(["EXPENSE", "INCOME"] as CategoryType[]).map((t) => (
+            <Pressable
+              key={t}
+              style={[styles.typeBtn, type === t && styles.typeBtnActive]}
+              onPress={() => setType(t)}
+            >
+              <Text style={[styles.typeBtnText, type === t && styles.typeBtnTextActive]}>
+                {t === "EXPENSE" ? "Expense" : "Income"}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView
@@ -139,35 +170,23 @@ export default function CreateCategoriesScreen() {
               />
             </View>
 
-            {/* Type */}
-            <Text style={styles.sectionLabel}>Type</Text>
-            <View style={styles.typeRow}>
-              {(["EXPENSE", "INCOME"] as CategoryType[]).map((t) => (
-                <Pressable
-                  key={t}
-                  style={[styles.typeBtn, type === t && styles.typeBtnActive]}
-                  onPress={() => setType(t)}
-                >
-                  <Text style={[styles.typeBtnText, type === t && styles.typeBtnTextActive]}>
-                    {t === "EXPENSE" ? "Expense" : "Income"}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-
             {/* Color */}
             <Text style={styles.sectionLabel}>Color</Text>
             <View style={styles.colorGrid}>
-              {COLORS.map((c) => (
-                <Pressable
-                  key={c}
-                  style={[
-                    styles.colorSwatch,
-                    { backgroundColor: c },
-                    selectedColor === c && styles.colorSwatchSelected,
-                  ]}
-                  onPress={() => setSelectedColor(c)}
-                />
+              {COLOR_ROWS.map((row, rowIdx) => (
+                <View key={rowIdx} style={styles.colorRow}>
+                  {row.map((c) => (
+                    <Pressable
+                      key={c}
+                      style={[
+                        styles.colorSwatch,
+                        { backgroundColor: c },
+                        selectedColor === c && styles.colorSwatchSelected,
+                      ]}
+                      onPress={() => setSelectedColor(c)}
+                    />
+                  ))}
+                </View>
               ))}
             </View>
 
