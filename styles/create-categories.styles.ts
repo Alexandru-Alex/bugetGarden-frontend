@@ -40,30 +40,35 @@ export const styles = StyleSheet.create({
     width: 32,
   },
 
-  // ── Tabs extension (same #346739 bg, visually fused with header) ─────────────
+  // ── Tabs extension — U shape hanging from header ─────────────────────────────
 
   tabsExtension: {
+    alignSelf: "center",
+    width: 260,
     backgroundColor: "#346739",
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingHorizontal: 12,
+    paddingTop: 4,
+    paddingBottom: 14,
+    borderBottomLeftRadius: 22,
+    borderBottomRightRadius: 22,
   },
   typeRow: {
     flexDirection: "row",
     backgroundColor: "rgba(0,0,0,0.18)",
-    borderRadius: 14,
-    padding: 4,
+    borderRadius: 12,
+    padding: 3,
   },
   typeBtn: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 9,
     alignItems: "center",
-    borderRadius: 11,
+    borderRadius: 10,
   },
   typeBtnActive: {
     backgroundColor: "#FFFFFF",
   },
   typeBtnText: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Nunito_800ExtraBold",
     color: "rgba(255,255,255,0.7)",
   },
