@@ -10,13 +10,14 @@ export const styles = StyleSheet.create({
 
   header: {
     paddingHorizontal: 16,
-    paddingBottom: 12,
+    paddingBottom: 20,
     paddingTop: 12,
   },
   headerTitleRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingVertical: 16,
   },
   headerTitle: {
     flex: 1,
