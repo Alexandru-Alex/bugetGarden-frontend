@@ -389,7 +389,7 @@ export default function DashboardScreen() {
         onClose={() => setShowAddModal(false)}
         onAddMore={() => {
           setShowAddModal(false);
-          setTimeout(() => router.push("/manage-categories"), 200);
+          setTimeout(() => router.push("/create-categories"), 200);
         }}
         symbol={symbol}
       />

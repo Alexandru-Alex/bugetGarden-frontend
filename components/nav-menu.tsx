@@ -27,7 +27,7 @@ const MENU_ITEMS = [
 const SECONDARY_ITEMS = [
   { label: "Achievements", icon: "trophy-outline"     as const, path: "" },
   { label: "Store",        icon: "storefront-outline" as const, path: ""        },
-  { label: "Categories",   icon: "pricetag-outline"   as const, path: ""         },
+  { label: "Categories",   icon: "pricetag-outline"   as const, path: "/manage-categories" },
   { label: "Settings",     icon: "settings-outline"   as const, path: ""     },
 ];
 
