@@ -131,6 +131,7 @@ export default function BudgetsScreen() {
         colors={["#2A4A2E", "#346739"]}
         style={[styles.header, { paddingTop: Platform.OS === "web" ? 56 : insets.top + 56 }]}
       >
+        <View style={styles.headerInner}>
         <Text style={styles.headerTitle}>Budgets</Text>
         <View style={styles.monthSelector}>
           <Pressable style={styles.monthArrow} onPress={prevMonth}>
@@ -140,6 +141,7 @@ export default function BudgetsScreen() {
           <Pressable style={styles.monthArrow} onPress={nextMonth}>
             <MaterialCommunityIcons name="chevron-right" size={22} color="#fff" />
           </Pressable>
+        </View>
         </View>
       </LinearGradient>
 

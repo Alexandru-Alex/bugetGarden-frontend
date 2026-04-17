@@ -12,6 +12,11 @@ export const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingBottom: 24,
+    alignItems: "center",
+  },
+  headerInner: {
+    width: "100%",
+    maxWidth: 480,
   },
   headerTitle: {
     fontFamily: "Nunito_900Black",
@@ -47,6 +52,9 @@ export const styles = StyleSheet.create({
   listContent: {
     padding: 16,
     paddingBottom: 48,
+    maxWidth: 480,
+    width: "100%",
+    alignSelf: "center",
   },
   summaryRow: {
     flexDirection: "row",
