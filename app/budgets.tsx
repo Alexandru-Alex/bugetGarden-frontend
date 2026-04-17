@@ -85,15 +85,19 @@ export default function BudgetsScreen() {
     getStoredToken().then(setToken);
   }, []);
 
-  const now = new Date();
-  const [period, setPeriod] = useState({ month: now.getMonth() + 1, year: now.getFullYear() });
+  const [period, setPeriod] = useState(() => {
+    const d = new Date();
+    return { month: d.getMonth() + 1, year: d.getFullYear() };
+  });
   const [budgeted, setBudgeted] = useState<BudgetItem[]>(MOCK_BUDGETED);
   const [notBudgeted, setNotBudgeted] = useState<UnbudgetedCategory[]>(MOCK_NOT_BUDGETED);
   const [modalCategory, setModalCategory] = useState<UnbudgetedCategory | null>(null);
   const [budgetInput, setBudgetInput] = useState("");
 
-  if (token === undefined) return null;
-  if (!token) return <Redirect href="/landing" />;
+  const { totalBudget, totalSpent } = useMemo(() => ({
+    totalBudget: budgeted.reduce((s, b) => s + b.limit, 0),
+    totalSpent: budgeted.reduce((s, b) => s + b.spent, 0),
+  }), [budgeted]);
 
   const prevMonth = () =>
     setPeriod(p => p.month === 1 ? { month: 12, year: p.year - 1 } : { ...p, month: p.month - 1 });
@@ -103,10 +107,8 @@ export default function BudgetsScreen() {
 
   const periodLabel = `${MONTH_NAMES[period.month - 1]} ${period.year}`;
 
-  const { totalBudget, totalSpent } = useMemo(() => ({
-    totalBudget: budgeted.reduce((s, b) => s + b.limit, 0),
-    totalSpent: budgeted.reduce((s, b) => s + b.spent, 0),
-  }), [budgeted]);
+  if (token === undefined) return null;
+  if (!token) return <Redirect href="/landing" />;
 
   const handleSaveBudget = () => {
     if (!modalCategory) return;
