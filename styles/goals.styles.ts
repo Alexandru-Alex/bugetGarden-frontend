@@ -114,12 +114,12 @@ export const styles = StyleSheet.create({
     color: "#333",
   },
   amountTarget: {
-    fontFamily: "Nunito_600SemiBold",
+    fontFamily: "Nunito_700Bold",
     fontSize: 13,
     color: "#999",
   },
   deadline: {
-    fontFamily: "Nunito_600SemiBold",
+    fontFamily: "Nunito_700Bold",
     fontSize: 12,
     color: "#bbb",
     marginBottom: 8,
@@ -184,7 +184,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    fontFamily: "Nunito_600SemiBold",
+    fontFamily: "Nunito_700Bold",
     fontSize: 15,
     color: "#333",
     marginBottom: 14,
@@ -279,7 +279,7 @@ export const styles = StyleSheet.create({
     color: "#E74C3C",
   },
   emptyText: {
-    fontFamily: "Nunito_600SemiBold",
+    fontFamily: "Nunito_700Bold",
     fontSize: 15,
     color: "#bbb",
     textAlign: "center",
