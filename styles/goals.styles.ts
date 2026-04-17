@@ -61,6 +61,32 @@ export const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
   },
+  // Sort bar
+  sortRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 16,
+  },
+  sortBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: "#E0E0E0",
+    backgroundColor: "#fff",
+  },
+  sortBtnActive: {
+    backgroundColor: GREEN_DARK,
+    borderColor: GREEN_DARK,
+  },
+  sortBtnText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+    color: "#888",
+  },
+  sortBtnTextActive: {
+    color: "#fff",
+  },
   // Goal card
   card: {
     backgroundColor: "#fff",

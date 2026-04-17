@@ -383,6 +383,7 @@ export default function GoalsScreen() {
   const [menuGoal, setMenuGoal] = useState<GoalDto | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [addFundsGoal, setAddFundsGoal] = useState<GoalDto | null>(null);
+  const [sortBy, setSortBy] = useState<"deadline" | "target" | null>(null);
 
   useEffect(() => {
     getStoredToken().then(setToken);
@@ -401,6 +402,21 @@ export default function GoalsScreen() {
     totalSaved: goals.reduce((s, g) => s + g.savedAmount, 0),
     totalTarget: goals.reduce((s, g) => s + g.targetAmount, 0),
   }), [goals]);
+
+  const sortedGoals = useMemo(() => {
+    if (sortBy === "deadline") {
+      return [...goals].sort((a, b) => {
+        if (!a.deadline && !b.deadline) return 0;
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return a.deadline.localeCompare(b.deadline);
+      });
+    }
+    if (sortBy === "target") {
+      return [...goals].sort((a, b) => b.targetAmount - a.targetAmount);
+    }
+    return goals;
+  }, [goals, sortBy]);
 
   const handleCreate = (goal: GoalDto) => {
     setGoals(prev => [...prev, goal]);
@@ -453,10 +469,28 @@ export default function GoalsScreen() {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       >
-        {goals.length === 0 && (
+        <View style={styles.sortRow}>
+          <Pressable
+            style={[styles.sortBtn, sortBy === "deadline" && styles.sortBtnActive]}
+            onPress={() => setSortBy(s => s === "deadline" ? null : "deadline")}
+          >
+            <Text style={[styles.sortBtnText, sortBy === "deadline" && styles.sortBtnTextActive]}>
+              Deadline
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[styles.sortBtn, sortBy === "target" && styles.sortBtnActive]}
+            onPress={() => setSortBy(s => s === "target" ? null : "target")}
+          >
+            <Text style={[styles.sortBtnText, sortBy === "target" && styles.sortBtnTextActive]}>
+              Target amount
+            </Text>
+          </Pressable>
+        </View>
+        {sortedGoals.length === 0 && (
           <Text style={styles.emptyText}>No goals yet. Tap + to create one.</Text>
         )}
-        {goals.map(goal => (
+        {sortedGoals.map(goal => (
           <GoalCard key={goal.id} goal={goal} symbol={symbol} onMenu={setMenuGoal} />
         ))}
       </ScrollView>
