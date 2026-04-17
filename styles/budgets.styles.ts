@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
   sectionHeader: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 15,
-    color: "#333",
+    color: GREEN_DARK,
     marginBottom: 8,
   },
   categoryRow: {
@@ -103,7 +103,7 @@ export const styles = StyleSheet.create({
   categoryName: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
-    color: "#222",
+    color: GREEN_DARK,
     marginBottom: 2,
   },
   categoryMeta: {
@@ -115,7 +115,7 @@ export const styles = StyleSheet.create({
   categoryMetaText: {
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
-    color: "#777",
+    color: GREEN_MED,
   },
   progressTrack: {
     height: 6,
@@ -137,7 +137,7 @@ export const styles = StyleSheet.create({
   notBudgetedName: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
-    color: "#222",
+    color: GREEN_DARK,
     flex: 1,
   },
   setButton: {
@@ -170,7 +170,7 @@ export const styles = StyleSheet.create({
   modalTitle: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 17,
-    color: "#222",
+    color: GREEN_DARK,
     textAlign: "center",
     marginBottom: 2,
   },
@@ -188,7 +188,7 @@ export const styles = StyleSheet.create({
     padding: 12,
     fontFamily: "Nunito_700Bold",
     fontSize: 24,
-    color: "#222",
+    color: GREEN_DARK,
     textAlign: "center",
     width: "100%",
     marginBottom: 20,

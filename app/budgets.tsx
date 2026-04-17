@@ -1,9 +1,11 @@
 import { NavMenu } from "@/components/nav-menu";
-import { getStoredToken } from "@/lib/api";
+import { api, getStoredToken } from "@/lib/api";
+import { CategoryDto } from "@/lib/types";
 import { styles } from "@/styles/budgets.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Keyboard,
@@ -32,25 +34,12 @@ interface BudgetItem {
   remaining: number;
 }
 
-interface UnbudgetedCategory {
-  id: string;
-  name: string;
-  icon: string;
-  color: string;
-}
-
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
 const MOCK_BUDGETED: BudgetItem[] = [
   { id: "1", name: "Food", icon: "food", color: "#E67E22", limit: 500, spent: 320, remaining: 180 },
   { id: "2", name: "Transport", icon: "car", color: "#3498DB", limit: 200, spent: 170, remaining: 30 },
   { id: "3", name: "Entertainment", icon: "movie", color: "#9B59B6", limit: 150, spent: 40, remaining: 110 },
-];
-
-const MOCK_NOT_BUDGETED: UnbudgetedCategory[] = [
-  { id: "4", name: "Health", icon: "hospital-box", color: "#E74C3C" },
-  { id: "5", name: "Shopping", icon: "shopping", color: "#1ABC9C" },
-  { id: "6", name: "Education", icon: "book-open-variant", color: "#F39C12" },
 ];
 
 const MONTH_NAMES = [
@@ -90,14 +79,25 @@ export default function BudgetsScreen() {
     return { month: d.getMonth() + 1, year: d.getFullYear() };
   });
   const [budgeted, setBudgeted] = useState<BudgetItem[]>(MOCK_BUDGETED);
-  const [notBudgeted, setNotBudgeted] = useState<UnbudgetedCategory[]>(MOCK_NOT_BUDGETED);
-  const [modalCategory, setModalCategory] = useState<UnbudgetedCategory | null>(null);
+  const [modalCategory, setModalCategory] = useState<CategoryDto | null>(null);
   const [budgetInput, setBudgetInput] = useState("");
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => api.get<CategoryDto[]>("/categories"),
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const { totalBudget, totalSpent } = useMemo(() => ({
     totalBudget: budgeted.reduce((s, b) => s + b.limit, 0),
     totalSpent: budgeted.reduce((s, b) => s + b.spent, 0),
   }), [budgeted]);
+
+  const notBudgeted = useMemo(
+    () => categories.filter(c => c.type === "EXPENSE" && !budgeted.some(b => b.id === c.id)),
+    [categories, budgeted],
+  );
 
   const prevMonth = () =>
     setPeriod(p => p.month === 1 ? { month: 12, year: p.year - 1 } : { ...p, month: p.month - 1 });
@@ -115,7 +115,6 @@ export default function BudgetsScreen() {
     const limit = parseFloat(budgetInput.replace(",", "."));
     if (isNaN(limit) || limit <= 0) return;
     setBudgeted(prev => [...prev, { ...modalCategory, limit, spent: 0, remaining: limit }]);
-    setNotBudgeted(prev => prev.filter(c => c.id !== modalCategory.id));
     setModalCategory(null);
     setBudgetInput("");
   };
