@@ -39,7 +39,7 @@ interface BudgetItem {
 const MOCK_BUDGETED: BudgetItem[] = [
   { id: "1", name: "Food", icon: "food", color: "#E67E22", limit: 500, spent: 320, remaining: 180 },
   { id: "2", name: "Transport", icon: "car", color: "#3498DB", limit: 200, spent: 170, remaining: 30 },
-  { id: "3", name: "Entertainment", icon: "movie", color: "#9B59B6", limit: 150, spent: 40, remaining: 110 },
+  { id: "3", name: "Entertainment", icon: "ticket", color: "#9B59B6", limit: 150, spent: 40, remaining: 110 },
 ];
 
 const MONTH_NAMES = [
