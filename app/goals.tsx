@@ -90,7 +90,7 @@ interface GoalCardProps {
 }
 
 function GoalCard({ goal, symbol, onMenu }: GoalCardProps) {
-  const pct = Math.min(goal.savedAmount / goal.targetAmount, 1);
+  const pct = goal.targetAmount > 0 ? Math.min(goal.savedAmount / goal.targetAmount, 1) : 0;
   const isCompleted = goal.savedAmount >= goal.targetAmount;
 
   const progress = useSharedValue(0);
@@ -201,11 +201,19 @@ function CreateGoalModal({ visible, onClose, onCreate }: CreateGoalModalProps) {
     onClose();
   };
 
+  const handleClose = () => {
+    setName("");
+    setTargetInput("");
+    setDeadlineInput("");
+    setSelectedColor(COLORS[8]);
+    onClose();
+  };
+
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.backdrop}>
-          <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} />
+          <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <View
               style={styles.modalCard}
@@ -248,7 +256,7 @@ function CreateGoalModal({ visible, onClose, onCreate }: CreateGoalModalProps) {
                 onChangeText={setDeadlineInput}
                 placeholder="e.g. 12/2026"
                 placeholderTextColor="#bbb"
-                keyboardType="number-pad"
+                keyboardType="default"
               />
 
               <Text style={styles.fieldLabel}>Color</Text>
@@ -267,7 +275,7 @@ function CreateGoalModal({ visible, onClose, onCreate }: CreateGoalModalProps) {
               </View>
 
               <View style={styles.modalButtons}>
-                <Pressable style={styles.cancelBtn} onPress={onClose}>
+                <Pressable style={styles.cancelBtn} onPress={handleClose}>
                   <Text style={styles.cancelText}>Cancel</Text>
                 </Pressable>
                 <Pressable style={styles.saveBtn} onPress={handleCreate}>
@@ -296,7 +304,12 @@ function AddFundsModal({ goal, symbol, onClose, onAdd }: AddFundsModalProps) {
 
   if (!goal) return null;
 
-  const pct = Math.min(goal.savedAmount / goal.targetAmount, 1);
+  const handleClose = () => {
+    setAmountInput("");
+    onClose();
+  };
+
+  const pct = goal.targetAmount > 0 ? Math.min(goal.savedAmount / goal.targetAmount, 1) : 0;
 
   const handleAdd = () => {
     const amount = parseFloat(amountInput);
@@ -307,10 +320,10 @@ function AddFundsModal({ goal, symbol, onClose, onAdd }: AddFundsModalProps) {
   };
 
   return (
-    <Modal visible={!!goal} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={!!goal} transparent animationType="fade" onRequestClose={handleClose}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.backdrop}>
-          <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} />
+          <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <View
               style={styles.modalCard}
@@ -346,7 +359,7 @@ function AddFundsModal({ goal, symbol, onClose, onAdd }: AddFundsModalProps) {
               />
 
               <View style={styles.modalButtons}>
-                <Pressable style={styles.cancelBtn} onPress={onClose}>
+                <Pressable style={styles.cancelBtn} onPress={handleClose}>
                   <Text style={styles.cancelText}>Cancel</Text>
                 </Pressable>
                 <Pressable style={styles.saveBtn} onPress={handleAdd}>

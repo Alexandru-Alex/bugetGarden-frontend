@@ -1,7 +1,6 @@
 import { StyleSheet } from "react-native";
 
 export const GREEN_DARK = "#346739";
-export const GREEN_MED = "#79AE6F";
 
 export const styles = StyleSheet.create({
   root: {
