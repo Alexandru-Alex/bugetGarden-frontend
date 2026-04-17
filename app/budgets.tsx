@@ -167,8 +167,8 @@ export default function BudgetsScreen() {
         {budgeted.map((item, idx) => (
           <React.Fragment key={item.id}>
             <View style={styles.categoryRow}>
-              <View style={[styles.categoryIcon, { backgroundColor: item.color }]}>
-                <MaterialCommunityIcons name={item.icon as any} size={22} color="#fff" />
+              <View style={[styles.categoryIcon, { backgroundColor: item.color + "18" }]}>
+                <MaterialCommunityIcons name={item.icon as any} size={22} color={item.color} />
               </View>
               <View style={styles.categoryInfo}>
                 <Text style={styles.categoryName}>{item.name}</Text>
@@ -203,8 +203,8 @@ export default function BudgetsScreen() {
         {notBudgeted.map((cat, idx) => (
           <React.Fragment key={cat.id}>
             <View style={styles.categoryRow}>
-              <View style={[styles.categoryIcon, { backgroundColor: cat.color }]}>
-                <MaterialCommunityIcons name={cat.icon as any} size={22} color="#fff" />
+              <View style={[styles.categoryIcon, { backgroundColor: cat.color + "18" }]}>
+                <MaterialCommunityIcons name={cat.icon as any} size={22} color={cat.color} />
               </View>
               <Text style={styles.notBudgetedName}>{cat.name}</Text>
               <Pressable style={styles.setButton} onPress={() => setModalCategory(cat)}>

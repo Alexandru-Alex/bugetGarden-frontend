@@ -99,9 +99,9 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   categoryIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
   },
