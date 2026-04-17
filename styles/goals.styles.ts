@@ -64,28 +64,26 @@ export const styles = StyleSheet.create({
   // Sort bar
   sortRow: {
     flexDirection: "row",
-    gap: 8,
-    marginBottom: 16,
+    justifyContent: "flex-end",
+    marginBottom: 12,
   },
   sortBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 20,
-    borderWidth: 1.5,
-    borderColor: "#E0E0E0",
-    backgroundColor: "#fff",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    backgroundColor: "#EAF3E8",
   },
-  sortBtnActive: {
-    backgroundColor: GREEN_DARK,
-    borderColor: GREEN_DARK,
+  sortBtnPressed: {
+    backgroundColor: "#D5E9D2",
   },
   sortBtnText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 13,
-    color: "#888",
-  },
-  sortBtnTextActive: {
-    color: "#fff",
+    fontSize: 11,
+    fontFamily: "Nunito_800ExtraBold",
+    color: "#79AE6F",
+    letterSpacing: 0.5,
   },
   // Goal card
   card: {

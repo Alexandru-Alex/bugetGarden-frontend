@@ -471,19 +471,16 @@ export default function GoalsScreen() {
       >
         <View style={styles.sortRow}>
           <Pressable
-            style={[styles.sortBtn, sortBy === "deadline" && styles.sortBtnActive]}
-            onPress={() => setSortBy(s => s === "deadline" ? null : "deadline")}
+            style={({ pressed }) => [styles.sortBtn, pressed && styles.sortBtnPressed]}
+            onPress={() => setSortBy(s => s === null ? "deadline" : s === "deadline" ? "target" : null)}
           >
-            <Text style={[styles.sortBtnText, sortBy === "deadline" && styles.sortBtnTextActive]}>
-              Deadline
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[styles.sortBtn, sortBy === "target" && styles.sortBtnActive]}
-            onPress={() => setSortBy(s => s === "target" ? null : "target")}
-          >
-            <Text style={[styles.sortBtnText, sortBy === "target" && styles.sortBtnTextActive]}>
-              Target amount
+            <MaterialCommunityIcons
+              name={sortBy === "deadline" ? "sort-calendar-ascending" : sortBy === "target" ? "sort-numeric-descending" : "sort-variant"}
+              size={14}
+              color="#79AE6F"
+            />
+            <Text style={styles.sortBtnText}>
+              {sortBy === "deadline" ? "Deadline" : sortBy === "target" ? "Target" : "Sort"}
             </Text>
           </Pressable>
         </View>
