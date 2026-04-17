@@ -1,12 +1,12 @@
 import { NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
-import { api } from "@/lib/api";
+import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/goals.styles";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Modal,
   Platform,
@@ -23,7 +23,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { getStoredToken } from "@/lib/api";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -161,8 +160,10 @@ export default function GoalsScreen() {
 
   const symbol = currencySymbolFor(account?.currency);
 
-  const totalSaved = goals.reduce((s, g) => s + g.savedAmount, 0);
-  const totalTarget = goals.reduce((s, g) => s + g.targetAmount, 0);
+  const { totalSaved, totalTarget } = useMemo(() => ({
+    totalSaved: goals.reduce((s, g) => s + g.savedAmount, 0),
+    totalTarget: goals.reduce((s, g) => s + g.targetAmount, 0),
+  }), [goals]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;

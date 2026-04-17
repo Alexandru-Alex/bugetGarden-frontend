@@ -152,7 +152,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
-  // Modals shared
+  // ─── Modals shared (backdrop + Create Goal / Add Funds — Task 4) ──────────────
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.45)",
