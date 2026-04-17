@@ -11,12 +11,15 @@ export const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingBottom: 0,
     alignItems: "center",
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
   },
   headerInner: {
     width: "100%",
     maxWidth: 480,
+    paddingBottom: 24,
   },
   headerTitle: {
     fontFamily: "Nunito_900Black",
@@ -59,20 +62,17 @@ export const styles = StyleSheet.create({
   summaryRow: {
     flexDirection: "row",
     gap: 12,
-    marginBottom: 28,
+    marginTop: 16,
   },
   summaryCard: {
     flex: 1,
     borderRadius: 14,
     padding: 16,
     alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.12)",
   },
-  summaryCardBudget: {
-    backgroundColor: GREEN_DARK,
-  },
-  summaryCardSpent: {
-    backgroundColor: GREEN_MED,
-  },
+  summaryCardBudget: {},
+  summaryCardSpent: {},
   summaryCardLabel: {
     fontFamily: "Nunito_700Bold",
     fontSize: 11,

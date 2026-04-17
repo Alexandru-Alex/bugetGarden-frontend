@@ -132,16 +132,26 @@ export default function BudgetsScreen() {
         style={[styles.header, { paddingTop: Platform.OS === "web" ? 56 : insets.top + 56 }]}
       >
         <View style={styles.headerInner}>
-        <Text style={styles.headerTitle}>Budgets</Text>
-        <View style={styles.monthSelector}>
-          <Pressable style={styles.monthArrow} onPress={prevMonth}>
-            <MaterialCommunityIcons name="chevron-left" size={22} color="#fff" />
-          </Pressable>
-          <Text style={styles.monthLabel}>{periodLabel}</Text>
-          <Pressable style={styles.monthArrow} onPress={nextMonth}>
-            <MaterialCommunityIcons name="chevron-right" size={22} color="#fff" />
-          </Pressable>
-        </View>
+          <Text style={styles.headerTitle}>Budgets</Text>
+          <View style={styles.monthSelector}>
+            <Pressable style={styles.monthArrow} onPress={prevMonth}>
+              <MaterialCommunityIcons name="chevron-left" size={22} color="#fff" />
+            </Pressable>
+            <Text style={styles.monthLabel}>{periodLabel}</Text>
+            <Pressable style={styles.monthArrow} onPress={nextMonth}>
+              <MaterialCommunityIcons name="chevron-right" size={22} color="#fff" />
+            </Pressable>
+          </View>
+          <View style={styles.summaryRow}>
+            <View style={[styles.summaryCard, styles.summaryCardBudget]}>
+              <Text style={styles.summaryCardLabel}>Total Budget</Text>
+              <Text style={styles.summaryCardAmount}>${formatAmount(totalBudget)}</Text>
+            </View>
+            <View style={[styles.summaryCard, styles.summaryCardSpent]}>
+              <Text style={styles.summaryCardLabel}>Total Spent</Text>
+              <Text style={styles.summaryCardAmount}>${formatAmount(totalSpent)}</Text>
+            </View>
+          </View>
         </View>
       </LinearGradient>
 
@@ -150,18 +160,6 @@ export default function BudgetsScreen() {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Summary cards */}
-        <View style={styles.summaryRow}>
-          <View style={[styles.summaryCard, styles.summaryCardBudget]}>
-            <Text style={styles.summaryCardLabel}>Total Budget</Text>
-            <Text style={styles.summaryCardAmount}>${formatAmount(totalBudget)}</Text>
-          </View>
-          <View style={[styles.summaryCard, styles.summaryCardSpent]}>
-            <Text style={styles.summaryCardLabel}>Total Spent</Text>
-            <Text style={styles.summaryCardAmount}>${formatAmount(totalSpent)}</Text>
-          </View>
-        </View>
-
         {/* Budgeted categories */}
         <Text style={styles.sectionHeader}>Budget categories: {periodLabel}</Text>
         {budgeted.map((item, idx) => (
