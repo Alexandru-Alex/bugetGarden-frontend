@@ -8,11 +8,16 @@ import { Redirect } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import {
+  Keyboard,
+  KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
   ScrollView,
+  StyleSheet,
   Text,
+  TextInput,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import Animated, {
@@ -24,6 +29,15 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+// ─── Constants ─────────────────────────────────────────────────────────────────
+
+const COLORS = [
+  "#E05555", "#FF7043", "#E07B35", "#F4A623", "#F9C74F",
+  "#5BAD6F", "#43AA8B", "#346739", "#2D9CDB", "#3A8FBF",
+  "#5B6EAE", "#9B59B6", "#E91E8C", "#6C63FF", "#546E7A",
+  "#795548", "#8D6E63", "#607D8B", "#37474F", "#455A64",
+];
+
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface GoalDto {
@@ -32,7 +46,7 @@ interface GoalDto {
   targetAmount: number;
   savedAmount: number;
   color: string;
-  deadline?: string; // "YYYY-MM-DD"
+  deadline?: string;
 }
 
 // ─── Mock data ─────────────────────────────────────────────────────────────────
@@ -61,6 +75,10 @@ function formatDeadline(iso?: string): string | null {
   if (!iso) return null;
   const d = new Date(iso);
   return `by ${d.toLocaleString("en-US", { month: "short", year: "numeric" })}`;
+}
+
+function newId(): string {
+  return Math.random().toString(36).slice(2);
 }
 
 // ─── GoalCard ──────────────────────────────────────────────────────────────────
@@ -139,6 +157,210 @@ function GoalCard({ goal, symbol, onMenu }: GoalCardProps) {
   );
 }
 
+// ─── CreateGoalModal ───────────────────────────────────────────────────────────
+
+interface CreateGoalModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onCreate: (goal: GoalDto) => void;
+}
+
+function CreateGoalModal({ visible, onClose, onCreate }: CreateGoalModalProps) {
+  const [name, setName] = useState("");
+  const [targetInput, setTargetInput] = useState("");
+  const [deadlineInput, setDeadlineInput] = useState("");
+  const [selectedColor, setSelectedColor] = useState(COLORS[8]);
+
+  const handleCreate = () => {
+    const target = parseFloat(targetInput);
+    if (!name.trim() || isNaN(target) || target <= 0) return;
+
+    let deadline: string | undefined;
+    if (deadlineInput.trim()) {
+      const [month, year] = deadlineInput.split("/");
+      const m = parseInt(month, 10);
+      const y = parseInt(year, 10);
+      if (!isNaN(m) && !isNaN(y) && m >= 1 && m <= 12) {
+        deadline = `${y}-${String(m).padStart(2, "0")}-01`;
+      }
+    }
+
+    onCreate({
+      id: newId(),
+      name: name.trim(),
+      targetAmount: target,
+      savedAmount: 0,
+      color: selectedColor,
+      deadline,
+    });
+
+    setName("");
+    setTargetInput("");
+    setDeadlineInput("");
+    setSelectedColor(COLORS[8]);
+    onClose();
+  };
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.backdrop}>
+          <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} />
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <View
+              style={styles.modalCard}
+              {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
+            >
+              <Text style={styles.modalTitle}>New Goal</Text>
+
+              <Text style={styles.fieldLabel}>Name</Text>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                ]}
+                value={name}
+                onChangeText={setName}
+                placeholder="e.g. Emergency Fund"
+                placeholderTextColor="#bbb"
+              />
+
+              <Text style={styles.fieldLabel}>Target amount</Text>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                ]}
+                value={targetInput}
+                onChangeText={v => setTargetInput(v.replace(/[^0-9.]/g, ""))}
+                keyboardType="number-pad"
+                placeholder="0.00"
+                placeholderTextColor="#bbb"
+              />
+
+              <Text style={styles.fieldLabel}>Deadline (optional, MM/YYYY)</Text>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                ]}
+                value={deadlineInput}
+                onChangeText={setDeadlineInput}
+                placeholder="e.g. 12/2026"
+                placeholderTextColor="#bbb"
+                keyboardType="number-pad"
+              />
+
+              <Text style={styles.fieldLabel}>Color</Text>
+              <View style={styles.colorGrid}>
+                {COLORS.map(color => (
+                  <Pressable
+                    key={color}
+                    style={[styles.colorSwatch, { backgroundColor: color }]}
+                    onPress={() => setSelectedColor(color)}
+                  >
+                    {selectedColor === color && (
+                      <MaterialCommunityIcons name="check" size={16} color="#fff" />
+                    )}
+                  </Pressable>
+                ))}
+              </View>
+
+              <View style={styles.modalButtons}>
+                <Pressable style={styles.cancelBtn} onPress={onClose}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </Pressable>
+                <Pressable style={styles.saveBtn} onPress={handleCreate}>
+                  <Text style={styles.saveText}>Create</Text>
+                </Pressable>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+}
+
+// ─── AddFundsModal ─────────────────────────────────────────────────────────────
+
+interface AddFundsModalProps {
+  goal: GoalDto | null;
+  symbol: string;
+  onClose: () => void;
+  onAdd: (goalId: string, amount: number) => void;
+}
+
+function AddFundsModal({ goal, symbol, onClose, onAdd }: AddFundsModalProps) {
+  const [amountInput, setAmountInput] = useState("");
+
+  if (!goal) return null;
+
+  const pct = Math.min(goal.savedAmount / goal.targetAmount, 1);
+
+  const handleAdd = () => {
+    const amount = parseFloat(amountInput);
+    if (isNaN(amount) || amount <= 0) return;
+    onAdd(goal.id, amount);
+    setAmountInput("");
+    onClose();
+  };
+
+  return (
+    <Modal visible={!!goal} transparent animationType="fade" onRequestClose={onClose}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.backdrop}>
+          <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} />
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <View
+              style={styles.modalCard}
+              {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
+            >
+              <Text style={styles.modalTitle}>{goal.name}</Text>
+
+              <View style={styles.amountsRow}>
+                <Text style={styles.amountSaved}>{symbol}{formatAmount(goal.savedAmount)}</Text>
+                <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount)}</Text>
+              </View>
+              <View style={[styles.progressTrack, { marginBottom: 20 }]}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    { backgroundColor: goal.color, width: `${pct * 100}%` as any },
+                  ]}
+                />
+              </View>
+
+              <Text style={styles.fieldLabel}>Amount to add</Text>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                ]}
+                value={amountInput}
+                onChangeText={v => setAmountInput(v.replace(/[^0-9.]/g, ""))}
+                keyboardType="number-pad"
+                placeholder="0.00"
+                placeholderTextColor="#bbb"
+                autoFocus
+              />
+
+              <View style={styles.modalButtons}>
+                <Pressable style={styles.cancelBtn} onPress={onClose}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </Pressable>
+                <Pressable style={styles.saveBtn} onPress={handleAdd}>
+                  <Text style={styles.saveText}>Add</Text>
+                </Pressable>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+}
+
 // ─── Screen ────────────────────────────────────────────────────────────────────
 
 export default function GoalsScreen() {
@@ -146,6 +368,8 @@ export default function GoalsScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [goals, setGoals] = useState<GoalDto[]>(MOCK_GOALS);
   const [menuGoal, setMenuGoal] = useState<GoalDto | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [addFundsGoal, setAddFundsGoal] = useState<GoalDto | null>(null);
 
   useEffect(() => {
     getStoredToken().then(setToken);
@@ -164,6 +388,26 @@ export default function GoalsScreen() {
     totalSaved: goals.reduce((s, g) => s + g.savedAmount, 0),
     totalTarget: goals.reduce((s, g) => s + g.targetAmount, 0),
   }), [goals]);
+
+  const handleCreate = (goal: GoalDto) => {
+    setGoals(prev => [...prev, goal]);
+  };
+
+  const handleAddFunds = (goalId: string, amount: number) => {
+    setGoals(prev =>
+      prev.map(g => g.id === goalId ? { ...g, savedAmount: g.savedAmount + amount } : g)
+    );
+  };
+
+  const handleDelete = (goal: GoalDto) => {
+    setGoals(prev => prev.filter(g => g.id !== goal.id));
+    setMenuGoal(null);
+  };
+
+  const handleOpenAddFunds = (goal: GoalDto) => {
+    setMenuGoal(null);
+    setAddFundsGoal(goal);
+  };
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
@@ -204,12 +448,11 @@ export default function GoalsScreen() {
         ))}
       </ScrollView>
 
-      {/* FAB — wired in Task 4 */}
-      <Pressable style={styles.fab} onPress={() => {}}>
+      <Pressable style={styles.fab} onPress={() => setCreateOpen(true)}>
         <Ionicons name="add" size={28} color="#fff" />
       </Pressable>
 
-      {/* Action menu modal */}
+      {/* Action menu */}
       <Modal
         visible={!!menuGoal}
         transparent
@@ -223,21 +466,16 @@ export default function GoalsScreen() {
           >
             <Text style={styles.actionCardTitle} numberOfLines={1}>{menuGoal?.name}</Text>
             <View style={styles.actionDivider} />
-            {/* Add Funds — wired in Task 4 */}
             <Pressable
               style={({ pressed }) => [styles.actionItem, pressed && styles.actionItemPressed]}
-              onPress={() => setMenuGoal(null)}
+              onPress={() => menuGoal && handleOpenAddFunds(menuGoal)}
             >
               <MaterialCommunityIcons name="plus-circle-outline" size={18} color="#346739" />
               <Text style={styles.actionItemText}>Add funds</Text>
             </Pressable>
             <Pressable
               style={({ pressed }) => [styles.actionItem, pressed && styles.actionItemPressed]}
-              onPress={() => {
-                if (!menuGoal) return;
-                setGoals(prev => prev.filter(g => g.id !== menuGoal.id));
-                setMenuGoal(null);
-              }}
+              onPress={() => menuGoal && handleDelete(menuGoal)}
             >
               <MaterialCommunityIcons name="trash-can-outline" size={18} color="#E74C3C" />
               <Text style={[styles.actionItemText, styles.actionItemTextDanger]}>Delete goal</Text>
@@ -245,6 +483,19 @@ export default function GoalsScreen() {
           </View>
         </Pressable>
       </Modal>
+
+      <CreateGoalModal
+        visible={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreate={handleCreate}
+      />
+
+      <AddFundsModal
+        goal={addFundsGoal}
+        symbol={symbol}
+        onClose={() => setAddFundsGoal(null)}
+        onAdd={handleAddFunds}
+      />
     </View>
   );
 }
