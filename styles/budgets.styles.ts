@@ -176,17 +176,43 @@ export const styles = StyleSheet.create({
     elevation: 10,
   },
   modalTitle: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 17,
+    fontFamily: "Nunito_900Black",
+    fontSize: 19,
     color: GREEN_DARK,
     textAlign: "center",
-    marginBottom: 2,
+    marginBottom: 16,
   },
-  modalSubtitle: {
-    fontFamily: "Nunito_900Black",
+  modalCategoryRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    marginBottom: 20,
+  },
+  modalCategoryIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalCategoryName: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 16,
+    color: GREEN_DARK,
+  },
+  modalFieldLabel: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: GREEN_MED,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 6,
+  },
+  modalMonthValue: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 15,
     color: GREEN_DARK,
-    textAlign: "center",
     marginBottom: 20,
   },
   modalInput: {
@@ -199,7 +225,7 @@ export const styles = StyleSheet.create({
     color: GREEN_DARK,
     textAlign: "center",
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 24,
   },
   modalButtons: {
     flexDirection: "row",

@@ -231,8 +231,14 @@ export default function BudgetsScreen() {
                 style={[styles.modalCard, { maxWidth: 300, width: "90%" }]}
                 {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
               >
-                <Text style={styles.modalTitle}>Set budget for</Text>
-                <Text style={styles.modalSubtitle}>{modalCategory?.name}</Text>
+                <Text style={styles.modalTitle}>Set budget</Text>
+                <View style={styles.modalCategoryRow}>
+                  <View style={[styles.modalCategoryIcon, { backgroundColor: (modalCategory?.color ?? "#ccc") + "18" }]}>
+                    <MaterialCommunityIcons name={(modalCategory?.icon ?? "tag") as any} size={22} color={modalCategory?.color ?? "#ccc"} />
+                  </View>
+                  <Text style={styles.modalCategoryName}>{modalCategory?.name}</Text>
+                </View>
+                <Text style={styles.modalFieldLabel}>Limit</Text>
                 <TextInput
                   style={[
                     styles.modalInput,
@@ -244,12 +250,14 @@ export default function BudgetsScreen() {
                   placeholder="0.00"
                   placeholderTextColor="#bbb"
                 />
+                <Text style={styles.modalFieldLabel}>Month</Text>
+                <Text style={styles.modalMonthValue}>{periodLabel}</Text>
                 <View style={styles.modalButtons}>
                   <Pressable style={styles.modalCancelBtn} onPress={handleCloseModal}>
                     <Text style={styles.modalCancelText}>Cancel</Text>
                   </Pressable>
                   <Pressable style={styles.modalSaveBtn} onPress={handleSaveBudget}>
-                    <Text style={styles.modalSaveText}>Save</Text>
+                    <Text style={styles.modalSaveText}>Set</Text>
                   </Pressable>
                 </View>
               </View>
