@@ -28,6 +28,7 @@ const SECONDARY_ITEMS = [
   { label: "Achievements", icon: "trophy-outline"     as const, path: "" },
   { label: "Store",        icon: "storefront-outline" as const, path: ""        },
   { label: "Categories",   icon: "pricetag-outline"   as const, path: "/manage-categories" },
+  { label: "Budgets",      icon: "wallet-outline"     as const, path: "/budgets" },
   { label: "Settings",     icon: "settings-outline"   as const, path: ""     },
 ];
 

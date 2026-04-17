@@ -58,6 +58,7 @@ export default function RootLayout() {
             <Stack.Screen name="manage-categories" options={{ headerShown: false }} />
             <Stack.Screen name="edit-entry" options={{ headerShown: false }} />
             <Stack.Screen name="create-categories" options={{ headerShown: false }} />
+            <Stack.Screen name="budgets" options={{ headerShown: false }} />
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>
