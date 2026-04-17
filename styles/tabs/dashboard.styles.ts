@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
   },
   totalAmount: {
     fontSize: 50,
-    fontFamily: "Pacifico_400Regular",
+    fontFamily: "Nunito_900Black",
     color: "#FFFFFF",
   },
   coinWidget: {

@@ -129,6 +129,7 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
             style={[s.card, cardStyle]}
             {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
           >
+            {/* Form fields scroll — flexShrink so it compresses on small screens */}
             <ScrollView
               style={s.scrollArea}
               showsVerticalScrollIndicator={false}
@@ -185,45 +186,51 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
               <View style={s.datePickerWrap}>
                 <DatePickerField key={dateKey} value={selectedDate} onChange={setSelectedDate} />
               </View>
-
-              {/* Categories */}
-              <Text style={s.sectionLabel}>Category</Text>
-              {categoriesLoading ? (
-                <View style={s.loadingRow}>
-                  <ActivityIndicator size="small" color="#346739" />
-                </View>
-              ) : (
-                <View style={s.categoriesRow}>
-                  {categories.map((cat) => {
-                    const selected = selectedCategory === cat.id;
-                    return (
-                      <Pressable
-                        key={cat.id}
-                        style={s.catItem}
-                        onPress={() => setSelectedCategory(selected ? null : cat.id)}
-                      >
-                        <View style={[
-                          s.catIcon,
-                          { backgroundColor: cat.color + "18" },
-                          selected && { backgroundColor: cat.color + "30", borderColor: cat.color },
-                        ]}>
-                          <MaterialCommunityIcons name={cat.icon as any} size={26} color={cat.color} />
-                        </View>
-                        <Text style={[s.catLabel, selected && { color: cat.color, fontFamily: "Nunito_800ExtraBold" }]}>
-                          {cat.name}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                  <Pressable style={s.catItem} onPress={onAddMore}>
-                    <View style={s.addMoreIcon}>
-                      <MaterialCommunityIcons name="plus" size={26} color="#79AE6F" />
-                    </View>
-                    <Text style={s.catLabel}>Add more</Text>
-                  </Pressable>
-                </View>
-              )}
             </ScrollView>
+
+            {/* Categories — sibling of outer scroll, not nested inside it */}
+            <Text style={s.sectionLabel}>Category</Text>
+            {categoriesLoading ? (
+              <View style={s.loadingRow}>
+                <ActivityIndicator size="small" color="#346739" />
+              </View>
+            ) : (
+              <ScrollView
+                style={s.categoriesScroll}
+                contentContainerStyle={s.categoriesRow}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="always"
+                nestedScrollEnabled
+              >
+                {categories.map((cat) => {
+                  const selected = selectedCategory === cat.id;
+                  return (
+                    <Pressable
+                      key={cat.id}
+                      style={s.catItem}
+                      onPress={() => setSelectedCategory(selected ? null : cat.id)}
+                    >
+                      <View style={[
+                        s.catIcon,
+                        { backgroundColor: cat.color + "18" },
+                        selected && { backgroundColor: cat.color + "30", borderColor: cat.color },
+                      ]}>
+                        <MaterialCommunityIcons name={cat.icon as any} size={26} color={cat.color} />
+                      </View>
+                      <Text style={[s.catLabel, selected && { color: cat.color, fontFamily: "Nunito_800ExtraBold" }]}>
+                        {cat.name}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+                <Pressable style={s.catItem} onPress={onAddMore}>
+                  <View style={s.addMoreIcon}>
+                    <MaterialCommunityIcons name="plus" size={26} color="#79AE6F" />
+                  </View>
+                  <Text style={s.catLabel}>Add more</Text>
+                </Pressable>
+              </ScrollView>
+            )}
 
             <Pressable
               style={({ pressed }) => [s.addBtn, pressed && s.addBtnPressed, (!canAdd || addEntry.isPending) && s.addBtnDisabled]}
@@ -246,7 +253,6 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
             </Pressable>
           </Animated.View>
 
-          {/* Notification toast — rendered after card to sit on top */}
           {showSuccess && (
             <View style={s.toast}>
               <MaterialCommunityIcons name="check-circle" size={18} color="#FFFFFF" />
@@ -292,10 +298,10 @@ const s = StyleSheet.create({
     overflow: "hidden",
   },
   scrollArea: {
-    flex: 1,
+    flexShrink: 1,
   },
   scrollContent: {
-    paddingBottom: 16,
+    paddingBottom: 8,
   },
   title: {
     fontSize: 20,
@@ -403,14 +409,17 @@ const s = StyleSheet.create({
     height: 68,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 20,
+  },
+  categoriesScroll: {
+    height: 164,
+    marginBottom: 20,
   },
   categoriesRow: {
     flexDirection: "row",
     flexWrap: "wrap",
     rowGap: 12,
     columnGap: 8,
-    marginBottom: 20,
   },
   catItem: {
     width: "22%",
