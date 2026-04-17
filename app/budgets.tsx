@@ -234,9 +234,10 @@ export default function BudgetsScreen() {
                 <Text style={styles.modalTitle}>Set budget</Text>
                 <View style={styles.modalCategoryRow}>
                   <View style={[styles.modalCategoryIcon, { backgroundColor: (modalCategory?.color ?? "#ccc") + "18" }]}>
-                    <MaterialCommunityIcons name={(modalCategory?.icon ?? "tag") as any} size={22} color={modalCategory?.color ?? "#ccc"} />
+                    <MaterialCommunityIcons name={(modalCategory?.icon ?? "tag") as any} size={26} color={modalCategory?.color ?? "#ccc"} />
                   </View>
                   <Text style={styles.modalCategoryName}>{modalCategory?.name}</Text>
+                  <View style={styles.modalCategoryIconSpacer} />
                 </View>
                 <Text style={styles.modalFieldLabel}>Limit</Text>
                 <TextInput

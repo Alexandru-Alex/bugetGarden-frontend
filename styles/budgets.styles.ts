@@ -185,21 +185,24 @@ export const styles = StyleSheet.create({
   modalCategoryRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
     marginBottom: 20,
   },
   modalCategoryIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 52,
+    height: 52,
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
   },
+  modalCategoryIconSpacer: {
+    width: 52,
+  },
   modalCategoryName: {
+    flex: 1,
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 16,
     color: GREEN_DARK,
+    textAlign: "center",
   },
   modalFieldLabel: {
     fontFamily: "Nunito_700Bold",
@@ -210,9 +213,9 @@ export const styles = StyleSheet.create({
     marginBottom: 6,
   },
   modalMonthValue: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 15,
-    color: GREEN_DARK,
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "rgba(52,103,57,0.45)",
     marginBottom: 20,
   },
   modalInput: {
