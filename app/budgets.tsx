@@ -112,7 +112,7 @@ export default function BudgetsScreen() {
 
   const handleSaveBudget = () => {
     if (!modalCategory) return;
-    const limit = parseFloat(budgetInput.replace(",", "."));
+    const limit = parseInt(budgetInput, 10);
     if (isNaN(limit) || limit <= 0) return;
     setBudgeted(prev => [...prev, { ...modalCategory, limit, spent: 0, remaining: limit }]);
     setModalCategory(null);
@@ -246,8 +246,11 @@ export default function BudgetsScreen() {
                     Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
                   ]}
                   value={budgetInput}
-                  onChangeText={setBudgetInput}
-                  keyboardType="decimal-pad"
+                  onChangeText={v => {
+                    const cleaned = v.replace(/[^0-9]/g, "");
+                    setBudgetInput(cleaned);
+                  }}
+                  keyboardType="number-pad"
                   placeholder="0.00"
                   placeholderTextColor="#bbb"
                 />
