@@ -183,6 +183,31 @@ export const styles = StyleSheet.create({
     borderWidth: 2.5,
   },
 
+  // ── Toast ────────────────────────────────────────────────────────────────────
+
+  toast: {
+    position: "absolute",
+    top: 120,
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#C0392B",
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  toastText: {
+    fontSize: 14,
+    fontFamily: "Nunito_700Bold",
+    color: "#FFFFFF",
+  },
+
   // ── Save button ───────────────────────────────────────────────────────────────
 
   saveBtn: {

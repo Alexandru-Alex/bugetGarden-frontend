@@ -1,7 +1,9 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
+
 export const BASE_URL = "https://budgetgarden-backend-latest.onrender.com"   
+
 
 // Cache in-memory — token nu se schimbă în timpul sesiunii
 let _tokenCache: string | null | undefined = undefined;

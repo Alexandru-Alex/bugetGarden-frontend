@@ -92,6 +92,13 @@ export const styles = StyleSheet.create({
     color: GREEN_DARK,
     marginBottom: 8,
   },
+  emptyText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+    color: GREEN_MED,
+    textAlign: "center",
+    paddingVertical: 20,
+  },
   categoryRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -134,6 +141,13 @@ export const styles = StyleSheet.create({
   progressFill: {
     height: 6,
     borderRadius: 3,
+  },
+  limitExceededText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 10,
+    color: "#E74C3C",
+    marginTop: 2,
+    textAlign: "right",
   },
   divider: {
     height: 1,
@@ -209,6 +223,27 @@ export const styles = StyleSheet.create({
   },
   actionItemTextDanger: {
     color: "#E74C3C",
+  },
+  actionItemDisabled: {
+    opacity: 0.4,
+  },
+  actionItemTextDisabled: {
+    color: "#bbb",
+  },
+  restrictedToast: {
+    position: "absolute",
+    top: 120,
+    alignSelf: "center",
+    backgroundColor: "#333",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    zIndex: 999,
+  },
+  restrictedToastText: {
+    color: "#fff",
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,

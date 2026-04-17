@@ -1,11 +1,12 @@
 import { NavMenu } from "@/components/nav-menu";
+import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
 import { CategoryDto } from "@/lib/types";
 import { styles } from "@/styles/budgets.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Keyboard,
@@ -24,23 +25,18 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface BudgetItem {
-  id: string;
+interface BudgetDto {
+  categoryId: string;
   name: string;
   icon: string;
   color: string;
+  budgetId: string;
   limit: number;
   spent: number;
   remaining: number;
 }
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const MOCK_BUDGETED: BudgetItem[] = [
-  { id: "1", name: "Food", icon: "food", color: "#E67E22", limit: 500, spent: 320, remaining: 180 },
-  { id: "2", name: "Transport", icon: "car", color: "#3498DB", limit: 200, spent: 170, remaining: 30 },
-  { id: "3", name: "Entertainment", icon: "ticket", color: "#9B59B6", limit: 150, spent: 40, remaining: 110 },
-];
+type BudgetItem = BudgetDto;
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -64,10 +60,18 @@ function formatAmount(n: number): string {
   return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+function currencySymbolFor(currency?: string): string {
+  const upper = currency?.toUpperCase();
+  if (upper === "EUR") return "€";
+  if (upper === "GBP") return "£";
+  return "$";
+}
+
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function BudgetsScreen() {
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
   const [token, setToken] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
@@ -78,18 +82,67 @@ export default function BudgetsScreen() {
     const d = new Date();
     return { month: d.getMonth() + 1, year: d.getFullYear() };
   });
-  const [budgeted, setBudgeted] = useState<BudgetItem[]>(MOCK_BUDGETED);
+
+  const now = new Date();
+  const isCurrentMonth = period.month === now.getMonth() + 1 && period.year === now.getFullYear();
+
+  const [restrictedToast, setRestrictedToast] = useState(false);
+  const showRestrictedToast = () => {
+    setRestrictedToast(true);
+    setTimeout(() => setRestrictedToast(false), 3000);
+  };
+
   const [modalCategory, setModalCategory] = useState<CategoryDto | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingBudgetId, setEditingBudgetId] = useState<string | null>(null);
   const [budgetInput, setBudgetInput] = useState("");
   const [menuItem, setMenuItem] = useState<BudgetItem | null>(null);
+
+  const budgetsKey = ["budgets", period.month, period.year];
+
+  const createBudget = useMutation({
+    mutationFn: (vars: { categoryId: string; limit: number }) =>
+      api.post<BudgetDto>("/budgets", {
+        year: period.year,
+        month: period.month,
+        limit: vars.limit,
+        categoryId: vars.categoryId,
+      }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: budgetsKey }),
+  });
+
+  const updateBudget = useMutation({
+    mutationFn: (vars: { budgetId: string; amount: number }) =>
+      api.put<BudgetDto>("/budgets", { budgetId: vars.budgetId, amount: vars.amount }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: budgetsKey }),
+  });
+
+  const deleteBudget = useMutation({
+    mutationFn: (budgetId: string) => api.delete(`/budgets?budgetId=${budgetId}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: budgetsKey }),
+  });
+
+  const { data: budgeted = [] } = useQuery({
+    queryKey: budgetsKey,
+    queryFn: () => api.get<BudgetDto[]>(`/budgets?month=${period.month}&year=${period.year}`),
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: () => api.get<CategoryDto[]>("/categories"),
-    enabled: !!token,
+    enabled: !!token && isCurrentMonth,
     staleTime: 5 * 60 * 1000,
   });
+
+  const { data: account } = useQuery<AccountDto>({
+    queryKey: ACCOUNT_QUERY_KEY,
+    queryFn: () => api.get<AccountDto>("/accounts"),
+    enabled: !!token,
+    staleTime: Infinity,
+  });
+
+  const symbol = currencySymbolFor(account?.currency);
 
   const { totalBudget, totalSpent } = useMemo(() => ({
     totalBudget: budgeted.reduce((s, b) => s + b.limit, 0),
@@ -97,7 +150,7 @@ export default function BudgetsScreen() {
   }), [budgeted]);
 
   const notBudgeted = useMemo(
-    () => categories.filter(c => c.type === "EXPENSE" && !budgeted.some(b => b.id === c.id)),
+    () => categories.filter(c => c.type === "EXPENSE" && !budgeted.some(b => b.categoryId === c.id)),
     [categories, budgeted],
   );
 
@@ -116,11 +169,11 @@ export default function BudgetsScreen() {
     if (!modalCategory) return;
     const limit = parseInt(budgetInput, 10);
     if (isNaN(limit) || limit <= 0) return;
-    if (editingId) {
-      setBudgeted(prev => prev.map(b => b.id === editingId ? { ...b, limit, remaining: limit - b.spent } : b));
-      setEditingId(null);
+    if (editingBudgetId) {
+      updateBudget.mutate({ budgetId: editingBudgetId, amount: limit });
+      setEditingBudgetId(null);
     } else {
-      setBudgeted(prev => [...prev, { ...modalCategory, limit, spent: 0, remaining: limit }]);
+      createBudget.mutate({ categoryId: modalCategory.id, limit });
     }
     setModalCategory(null);
     setBudgetInput("");
@@ -128,20 +181,20 @@ export default function BudgetsScreen() {
 
   const handleCloseModal = () => {
     setModalCategory(null);
-    setEditingId(null);
+    setEditingBudgetId(null);
     setBudgetInput("");
   };
 
   const handleChangeLimit = (item: BudgetItem) => {
     setMenuItem(null);
-    setEditingId(item.id);
-    setModalCategory({ id: item.id, name: item.name, icon: item.icon, color: item.color, type: "EXPENSE", system: false });
+    setEditingBudgetId(item.budgetId);
+    setModalCategory({ id: item.categoryId, name: item.name, icon: item.icon, color: item.color, type: "EXPENSE", system: false });
     setBudgetInput(String(item.limit));
   };
 
   const handleDeleteBudget = (item: BudgetItem) => {
     setMenuItem(null);
-    setBudgeted(prev => prev.filter(b => b.id !== item.id));
+    deleteBudget.mutate(item.budgetId);
   };
 
   return (
@@ -165,11 +218,11 @@ export default function BudgetsScreen() {
           <View style={styles.summaryRow}>
             <View style={[styles.summaryCard, styles.summaryCardBudget]}>
               <Text style={styles.summaryCardLabel}>Total Budget</Text>
-              <Text style={styles.summaryCardAmount}>${formatAmount(totalBudget)}</Text>
+              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalBudget)}</Text>
             </View>
             <View style={[styles.summaryCard, styles.summaryCardSpent]}>
               <Text style={styles.summaryCardLabel}>Total Spent</Text>
-              <Text style={styles.summaryCardAmount}>${formatAmount(totalSpent)}</Text>
+              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalSpent)}</Text>
             </View>
           </View>
         </View>
@@ -182,8 +235,11 @@ export default function BudgetsScreen() {
       >
         {/* Budgeted categories */}
         <Text style={styles.sectionHeader}>Budget categories: {periodLabel}</Text>
+        {budgeted.length === 0 && (
+          <Text style={styles.emptyText}>You haven't set any budgets for this month</Text>
+        )}
         {budgeted.map((item, idx) => (
-          <React.Fragment key={item.id}>
+          <React.Fragment key={item.budgetId}>
             <View style={styles.categoryRow}>
               <View style={[styles.categoryIcon, { backgroundColor: item.color + "18" }]}>
                 <MaterialCommunityIcons name={item.icon as any} size={22} color={item.color} />
@@ -191,11 +247,13 @@ export default function BudgetsScreen() {
               <View style={styles.categoryInfo}>
                 <Text style={styles.categoryName}>{item.name}</Text>
                 <View style={styles.categoryMeta}>
-                  <Text style={styles.categoryMetaText}>Limit: ${formatAmount(item.limit)}</Text>
+                  <Text style={styles.categoryMetaText}>Limit: {symbol}{formatAmount(item.limit)}</Text>
                   <Text style={styles.categoryMetaText}>·</Text>
-                  <Text style={styles.categoryMetaText}>Spent: ${formatAmount(item.spent)}</Text>
+                  <Text style={[styles.categoryMetaText, item.spent > item.limit && { color: "#E74C3C" }]}>Spent: {symbol}{formatAmount(item.spent)}</Text>
                   <Text style={styles.categoryMetaText}>·</Text>
-                  <Text style={styles.categoryMetaText}>Remaining: ${formatAmount(item.remaining)}</Text>
+                  <Text style={[styles.categoryMetaText, item.spent > item.limit && { color: "#E74C3C" }]}>
+                    Remaining: {symbol}{formatAmount(item.spent > item.limit ? 0 : item.remaining)}
+                  </Text>
                 </View>
                 <View style={styles.progressTrack}>
                   <View
@@ -208,6 +266,9 @@ export default function BudgetsScreen() {
                     ]}
                   />
                 </View>
+                {item.spent > item.limit && (
+                  <Text style={styles.limitExceededText}>*Limit exceeded</Text>
+                )}
               </View>
               <Pressable style={styles.menuBtn} onPress={() => setMenuItem(item)} hitSlop={8}>
                 <MaterialCommunityIcons name="dots-vertical" size={20} color="#9FCB98" />
@@ -217,24 +278,26 @@ export default function BudgetsScreen() {
           </React.Fragment>
         ))}
 
-        <View style={styles.sectionSpacer} />
-
-        {/* Not budgeted */}
-        <Text style={styles.sectionHeader}>Not budgeted this month</Text>
-        {notBudgeted.map((cat, idx) => (
-          <React.Fragment key={cat.id}>
-            <View style={styles.categoryRow}>
-              <View style={[styles.categoryIcon, { backgroundColor: cat.color + "18" }]}>
-                <MaterialCommunityIcons name={cat.icon as any} size={22} color={cat.color} />
-              </View>
-              <Text style={styles.notBudgetedName}>{cat.name}</Text>
-              <Pressable style={styles.setButton} onPress={() => setModalCategory(cat)}>
-                <Text style={styles.setButtonText}>Set budget</Text>
-              </Pressable>
-            </View>
-            {idx < notBudgeted.length - 1 && <View style={styles.divider} />}
-          </React.Fragment>
-        ))}
+        {isCurrentMonth && (
+          <>
+            <View style={styles.sectionSpacer} />
+            <Text style={styles.sectionHeader}>Not budgeted this month</Text>
+            {notBudgeted.map((cat, idx) => (
+              <React.Fragment key={cat.id}>
+                <View style={styles.categoryRow}>
+                  <View style={[styles.categoryIcon, { backgroundColor: cat.color + "18" }]}>
+                    <MaterialCommunityIcons name={cat.icon as any} size={22} color={cat.color} />
+                  </View>
+                  <Text style={styles.notBudgetedName}>{cat.name}</Text>
+                  <Pressable style={styles.setButton} onPress={() => setModalCategory(cat)}>
+                    <Text style={styles.setButtonText}>Set budget</Text>
+                  </Pressable>
+                </View>
+                {idx < notBudgeted.length - 1 && <View style={styles.divider} />}
+              </React.Fragment>
+            ))}
+          </>
+        )}
       </ScrollView>
 
       {/* Action menu modal */}
@@ -257,22 +320,48 @@ export default function BudgetsScreen() {
             </View>
             <View style={styles.actionDivider} />
             <Pressable
-              style={({ pressed }) => [styles.actionItem, pressed && styles.actionItemPressed]}
-              onPress={() => menuItem && handleChangeLimit(menuItem)}
+              style={({ pressed }) => [
+                styles.actionItem,
+                pressed && isCurrentMonth && styles.actionItemPressed,
+                !isCurrentMonth && styles.actionItemDisabled,
+              ]}
+              onPress={() => {
+                if (!isCurrentMonth) { showRestrictedToast(); return; }
+                menuItem && handleChangeLimit(menuItem);
+              }}
             >
-              <MaterialCommunityIcons name="pencil-outline" size={18} color="#346739" />
-              <Text style={styles.actionItemText}>Change limit</Text>
+              <MaterialCommunityIcons name="pencil-outline" size={18} color={isCurrentMonth ? "#346739" : "#bbb"} />
+              <Text style={[styles.actionItemText, !isCurrentMonth && styles.actionItemTextDisabled]}>
+                Change limit
+              </Text>
             </Pressable>
             <Pressable
-              style={({ pressed }) => [styles.actionItem, pressed && styles.actionItemPressed]}
-              onPress={() => menuItem && handleDeleteBudget(menuItem)}
+              style={({ pressed }) => [
+                styles.actionItem,
+                pressed && isCurrentMonth && styles.actionItemPressed,
+                !isCurrentMonth && styles.actionItemDisabled,
+              ]}
+              onPress={() => {
+                if (!isCurrentMonth) { showRestrictedToast(); return; }
+                menuItem && handleDeleteBudget(menuItem);
+              }}
             >
-              <MaterialCommunityIcons name="trash-can-outline" size={18} color="#E74C3C" />
-              <Text style={[styles.actionItemText, styles.actionItemTextDanger]}>Delete budget</Text>
+              <MaterialCommunityIcons name="trash-can-outline" size={18} color={isCurrentMonth ? "#E74C3C" : "#bbb"} />
+              <Text style={[styles.actionItemText, isCurrentMonth ? styles.actionItemTextDanger : styles.actionItemTextDisabled]}>
+                Delete budget
+              </Text>
             </Pressable>
           </View>
         </Pressable>
       </Modal>
+
+      {restrictedToast && (
+        <View style={styles.restrictedToast} pointerEvents="none">
+          <Text style={styles.restrictedToastText}>
+            You can only set budgets for the current month
+          </Text>
+        </View>
+      )}
 
       {/* Set budget modal */}
       <Modal

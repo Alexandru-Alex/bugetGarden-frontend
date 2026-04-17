@@ -9,7 +9,6 @@ import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -73,6 +72,7 @@ export default function CreateCategoriesScreen() {
   const [type, setType] = useState<CategoryType>(params.type ?? "EXPENSE");
   const [selectedIcon, setSelectedIcon] = useState<string>(params.icon ?? ICON_ROWS[0][0]);
   const [selectedColor, setSelectedColor] = useState<string>(params.color ?? COLORS[0]);
+  const [errorToast, setErrorToast] = useState<string | null>(null);
 
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
@@ -85,20 +85,16 @@ export default function CreateCategoriesScreen() {
     mutationFn: () => api.delete(`/categories/${params.categoryId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
-      router.canGoBack() ? router.back() : router.replace("/manage-categories");
+      router.replace({ pathname: "/manage-categories", params: { deleted: "true" } });
+    },
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : "Could not delete category.";
+      setErrorToast(msg);
+      setTimeout(() => setErrorToast(null), 3000);
     },
   });
 
-  const handleDelete = () => {
-    Alert.alert(
-      "Delete Category",
-      `Are you sure you want to delete "${name.trim() || "this category"}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Delete", style: "destructive", onPress: () => deleteCategory.mutate() },
-      ],
-    );
-  };
+  const handleDelete = () => deleteCategory.mutate();
 
   const save = useMutation({
     mutationFn: () => {
@@ -271,6 +267,13 @@ export default function CreateCategoriesScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {errorToast && (
+        <View style={styles.toast}>
+          <MaterialCommunityIcons name="alert-circle-outline" size={18} color="#FFFFFF" />
+          <Text style={styles.toastText}>{errorToast}</Text>
+        </View>
+      )}
     </View>
   );
 }

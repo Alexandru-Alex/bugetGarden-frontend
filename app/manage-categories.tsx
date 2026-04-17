@@ -6,7 +6,7 @@ import { sharedStyles } from "@/styles/shared.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
-import { Redirect, router } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -24,14 +24,24 @@ type Tab = "expenses" | "income";
 const COLS = 4;
 
 export default function ManageCategoriesScreen() {
+  const { deleted } = useLocalSearchParams<{ deleted?: string }>();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<Tab>("expenses");
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
     getStoredToken().then(setToken);
   }, []);
+
+  useEffect(() => {
+    if (deleted === "true") {
+      setToastMessage("Category deleted");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+    }
+  }, [deleted]);
 
   const { data: categories = [], isLoading, isError, refetch, isRefetching } = useQuery({
     queryKey: ["categories"],
@@ -50,6 +60,7 @@ export default function ManageCategoriesScreen() {
 
   const handlePress = (cat: CategoryDto) => {
     if (cat.system) {
+      setToastMessage("System category — cannot be edited");
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2500);
       return;
@@ -159,8 +170,12 @@ export default function ManageCategoriesScreen() {
       )}
       {showToast && (
         <View style={styles.toast}>
-          <MaterialCommunityIcons name="lock-outline" size={18} color="#FFFFFF" />
-          <Text style={styles.toastText}>System category — cannot be edited</Text>
+          <MaterialCommunityIcons
+            name={toastMessage === "Category deleted" ? "check-circle-outline" : "lock-outline"}
+            size={18}
+            color="#FFFFFF"
+          />
+          <Text style={styles.toastText}>{toastMessage}</Text>
         </View>
       )}
     </View>
