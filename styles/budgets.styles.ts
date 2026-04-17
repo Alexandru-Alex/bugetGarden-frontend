@@ -159,6 +159,57 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: "#fff",
   },
+  menuBtn: {
+    padding: 4,
+  },
+  actionCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    paddingVertical: 8,
+    width: 220,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  actionCategoryRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  actionCategoryName: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    color: GREEN_DARK,
+  },
+  actionDivider: {
+    height: 1,
+    backgroundColor: "rgba(0,0,0,0.06)",
+    marginBottom: 4,
+  },
+  actionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    borderRadius: 10,
+    marginHorizontal: 4,
+  },
+  actionItemPressed: {
+    backgroundColor: "rgba(52,103,57,0.06)",
+  },
+  actionItemText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: GREEN_DARK,
+  },
+  actionItemTextDanger: {
+    color: "#E74C3C",
+  },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.45)",

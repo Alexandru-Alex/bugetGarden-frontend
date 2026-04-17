@@ -80,7 +80,9 @@ export default function BudgetsScreen() {
   });
   const [budgeted, setBudgeted] = useState<BudgetItem[]>(MOCK_BUDGETED);
   const [modalCategory, setModalCategory] = useState<CategoryDto | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [budgetInput, setBudgetInput] = useState("");
+  const [menuItem, setMenuItem] = useState<BudgetItem | null>(null);
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
@@ -114,14 +116,32 @@ export default function BudgetsScreen() {
     if (!modalCategory) return;
     const limit = parseInt(budgetInput, 10);
     if (isNaN(limit) || limit <= 0) return;
-    setBudgeted(prev => [...prev, { ...modalCategory, limit, spent: 0, remaining: limit }]);
+    if (editingId) {
+      setBudgeted(prev => prev.map(b => b.id === editingId ? { ...b, limit, remaining: limit - b.spent } : b));
+      setEditingId(null);
+    } else {
+      setBudgeted(prev => [...prev, { ...modalCategory, limit, spent: 0, remaining: limit }]);
+    }
     setModalCategory(null);
     setBudgetInput("");
   };
 
   const handleCloseModal = () => {
     setModalCategory(null);
+    setEditingId(null);
     setBudgetInput("");
+  };
+
+  const handleChangeLimit = (item: BudgetItem) => {
+    setMenuItem(null);
+    setEditingId(item.id);
+    setModalCategory({ id: item.id, name: item.name, icon: item.icon, color: item.color, type: "EXPENSE", system: false });
+    setBudgetInput(String(item.limit));
+  };
+
+  const handleDeleteBudget = (item: BudgetItem) => {
+    setMenuItem(null);
+    setBudgeted(prev => prev.filter(b => b.id !== item.id));
   };
 
   return (
@@ -189,6 +209,9 @@ export default function BudgetsScreen() {
                   />
                 </View>
               </View>
+              <Pressable style={styles.menuBtn} onPress={() => setMenuItem(item)} hitSlop={8}>
+                <MaterialCommunityIcons name="dots-vertical" size={20} color="#9FCB98" />
+              </Pressable>
             </View>
             {idx < budgeted.length - 1 && <View style={styles.divider} />}
           </React.Fragment>
@@ -213,6 +236,43 @@ export default function BudgetsScreen() {
           </React.Fragment>
         ))}
       </ScrollView>
+
+      {/* Action menu modal */}
+      <Modal
+        visible={!!menuItem}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMenuItem(null)}
+      >
+        <Pressable style={styles.backdrop} onPress={() => setMenuItem(null)}>
+          <View
+            style={styles.actionCard}
+            {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
+          >
+            <View style={styles.actionCategoryRow}>
+              <View style={[styles.categoryIcon, { backgroundColor: (menuItem?.color ?? "#ccc") + "18" }]}>
+                <MaterialCommunityIcons name={(menuItem?.icon ?? "tag") as any} size={20} color={menuItem?.color ?? "#ccc"} />
+              </View>
+              <Text style={styles.actionCategoryName}>{menuItem?.name}</Text>
+            </View>
+            <View style={styles.actionDivider} />
+            <Pressable
+              style={({ pressed }) => [styles.actionItem, pressed && styles.actionItemPressed]}
+              onPress={() => menuItem && handleChangeLimit(menuItem)}
+            >
+              <MaterialCommunityIcons name="pencil-outline" size={18} color="#346739" />
+              <Text style={styles.actionItemText}>Change limit</Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [styles.actionItem, pressed && styles.actionItemPressed]}
+              onPress={() => menuItem && handleDeleteBudget(menuItem)}
+            >
+              <MaterialCommunityIcons name="trash-can-outline" size={18} color="#E74C3C" />
+              <Text style={[styles.actionItemText, styles.actionItemTextDanger]}>Delete budget</Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Modal>
 
       {/* Set budget modal */}
       <Modal
