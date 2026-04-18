@@ -191,13 +191,34 @@ function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalMo
   const [name, setName] = useState("");
   const [targetInput, setTargetInput] = useState("");
   const [deadlineInput, setDeadlineInput] = useState("");
+  const [deadlineError, setDeadlineError] = useState("");
+  const [toast, setToast] = useState("");
   const [selectedColor, setSelectedColor] = useState(COLORS[8]);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 3000);
+  };
 
   const resetForm = () => {
     setName("");
     setTargetInput("");
     setDeadlineInput("");
+    setDeadlineError("");
     setSelectedColor(COLORS[8]);
+  };
+
+  const parseDeadline = (raw: string): { deadline: string } | { error: string } | null => {
+    if (!raw.trim()) return null;
+    const [month, year] = raw.split("/");
+    const m = parseInt(month, 10);
+    const y = parseInt(year, 10);
+    if (isNaN(m) || isNaN(y) || m < 1 || m > 12) return { error: "Use MM/YYYY format" };
+    const now = new Date();
+    if (y < now.getFullYear() || (y === now.getFullYear() && m < now.getMonth() + 1)) {
+      return { error: "Deadline can't be in the past" };
+    }
+    return { deadline: `${y}-${String(m).padStart(2, "0")}-01` };
   };
 
   const handleCreate = () => {
@@ -206,12 +227,13 @@ function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalMo
 
     let deadline: string | undefined;
     if (deadlineInput.trim()) {
-      const [month, year] = deadlineInput.split("/");
-      const m = parseInt(month, 10);
-      const y = parseInt(year, 10);
-      if (!isNaN(m) && !isNaN(y) && m >= 1 && m <= 12) {
-        deadline = `${y}-${String(m).padStart(2, "0")}-01`;
+      const result = parseDeadline(deadlineInput);
+      if (result && "error" in result) {
+        setDeadlineError(result.error);
+        showToast(result.error);
+        return;
       }
+      if (result && "deadline" in result) deadline = result.deadline;
     }
 
     onCreate({ name: name.trim(), targetAmount: target, color: selectedColor, deadline });
@@ -227,85 +249,95 @@ function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalMo
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.backdrop}>
-          <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
-          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <View
-              style={styles.modalCard}
-              {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
-            >
-              <Text style={styles.modalTitle}>New Goal</Text>
+      <View style={{ flex: 1 }}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.backdrop}>
+            <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
+            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+              <View
+                style={styles.modalCard}
+                {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
+              >
+                <Text style={styles.modalTitle}>New Goal</Text>
 
-              <Text style={styles.fieldLabel}>Name</Text>
-              <TextInput
-                style={[
-                  styles.textInput,
-                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
-                ]}
-                value={name}
-                onChangeText={setName}
-                placeholder="e.g. Emergency Fund"
-                placeholderTextColor="#bbb"
-              />
+                <Text style={styles.fieldLabel}>Name</Text>
+                <TextInput
+                  style={[
+                    styles.textInput,
+                    Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                  ]}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="e.g. Emergency Fund"
+                  placeholderTextColor="#bbb"
+                />
 
-              <Text style={styles.fieldLabel}>Target amount</Text>
-              <TextInput
-                style={[
-                  styles.textInput,
-                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
-                ]}
-                value={targetInput}
-                onChangeText={v => setTargetInput(v.replace(/[^0-9.]/g, ""))}
-                keyboardType="number-pad"
-                placeholder="0.00"
-                placeholderTextColor="#bbb"
-              />
+                <Text style={styles.fieldLabel}>Target amount</Text>
+                <TextInput
+                  style={[
+                    styles.textInput,
+                    Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                  ]}
+                  value={targetInput}
+                  onChangeText={v => setTargetInput(v.replace(/[^0-9.]/g, ""))}
+                  keyboardType="number-pad"
+                  placeholder="0.00"
+                  placeholderTextColor="#bbb"
+                />
 
-              <Text style={styles.fieldLabel}>Deadline (optional, MM/YYYY)</Text>
-              <TextInput
-                style={[
-                  styles.textInput,
-                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
-                ]}
-                value={deadlineInput}
-                onChangeText={setDeadlineInput}
-                placeholder="e.g. 12/2026"
-                placeholderTextColor="#bbb"
-                keyboardType="default"
-              />
+                <Text style={styles.fieldLabel}>Deadline (optional, MM/YYYY)</Text>
+                <TextInput
+                  style={[
+                    styles.textInput,
+                    Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                  ]}
+                  value={deadlineInput}
+                  onChangeText={v => { setDeadlineInput(v); setDeadlineError(""); }}
+                  placeholder="e.g. 12/2026"
+                  placeholderTextColor="#bbb"
+                  keyboardType="default"
+                />
+                {!!deadlineError && (
+                  <Text style={styles.fieldError}>{deadlineError}</Text>
+                )}
 
-              <Text style={styles.fieldLabel}>Color</Text>
-              <View style={styles.colorGrid}>
-                {COLORS.map(color => (
-                  <Pressable
-                    key={color}
-                    style={[styles.colorSwatch, { backgroundColor: color }]}
-                    onPress={() => setSelectedColor(color)}
-                  >
-                    {selectedColor === color && (
-                      <MaterialCommunityIcons name="check" size={16} color="#fff" />
-                    )}
+                <Text style={styles.fieldLabel}>Color</Text>
+                <View style={styles.colorGrid}>
+                  {COLORS.map(color => (
+                    <Pressable
+                      key={color}
+                      style={[styles.colorSwatch, { backgroundColor: color }]}
+                      onPress={() => setSelectedColor(color)}
+                    >
+                      {selectedColor === color && (
+                        <MaterialCommunityIcons name="check" size={16} color="#fff" />
+                      )}
+                    </Pressable>
+                  ))}
+                </View>
+
+                <View style={styles.modalButtons}>
+                  <Pressable style={styles.cancelBtn} onPress={handleClose}>
+                    <Text style={styles.cancelText}>Cancel</Text>
                   </Pressable>
-                ))}
+                  <Pressable
+                    style={[styles.saveBtn, isPending && { opacity: 0.6 }]}
+                    onPress={handleCreate}
+                    disabled={isPending}
+                  >
+                    <Text style={styles.saveText}>{isPending ? "Saving…" : "Create"}</Text>
+                  </Pressable>
+                </View>
               </View>
-
-              <View style={styles.modalButtons}>
-                <Pressable style={styles.cancelBtn} onPress={handleClose}>
-                  <Text style={styles.cancelText}>Cancel</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.saveBtn, isPending && { opacity: 0.6 }]}
-                  onPress={handleCreate}
-                  disabled={isPending}
-                >
-                  <Text style={styles.saveText}>{isPending ? "Saving…" : "Create"}</Text>
-                </Pressable>
-              </View>
-            </View>
-          </KeyboardAvoidingView>
-        </View>
-      </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
+          </View>
+        </TouchableWithoutFeedback>
+        {!!toast && (
+          <View style={styles.toast} pointerEvents="none">
+            <Text style={styles.toastText}>{toast}</Text>
+          </View>
+        )}
+      </View>
     </Modal>
   );
 }
