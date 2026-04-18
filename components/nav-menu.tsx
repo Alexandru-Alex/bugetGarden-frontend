@@ -15,7 +15,7 @@ import { NavTransition } from "../lib/nav-direction";
 
 const DRAWER_WIDTH = 200;
 const GREEN_DARK = "#346739";
-const BAR_HEIGHT = 56;
+export const BAR_HEIGHT = 56;
 
 const MENU_ITEMS = [
   { label: "Dashboard",  icon: "home-outline"        as const, path: "/dashboard"  },

@@ -1,4 +1,4 @@
-import { NavMenu } from "@/components/nav-menu";
+import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/store.styles";
@@ -33,22 +33,20 @@ interface FlowerDef {
   name: string;
   Component: React.FC<SvgProps>;
   price: number;
+  description: string;
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const FLOWERS: FlowerDef[] = [
-  { id: "rose",     name: "Rose",     Component: RoseSvg,     price: 120 },
-  { id: "tulip",    name: "Tulip",    Component: TulipSvg,    price: 80  },
-  { id: "lavender", name: "Lavender", Component: LavenderSvg, price: 60  },
-  { id: "peony",    name: "Peony",    Component: PeonySvg,    price: 150 },
-  { id: "bluebell", name: "Bluebell", Component: BluebellSvg, price: 50  },
-  { id: "marigold", name: "Marigold", Component: MarigoldSvg, price: 70  },
-  { id: "daisy",    name: "Daisy",    Component: DaisySvg,    price: 40  },
+  { id: "rose",     name: "Rose",     Component: RoseSvg,     price: 120, description: "A timeless symbol of love and beauty. Its velvety petals and rich fragrance make it the crown jewel of any garden." },
+  { id: "tulip",    name: "Tulip",    Component: TulipSvg,    price: 80,  description: "Elegant and cheerful, tulips bring a burst of spring color. Available in every shade, they brighten even the gloomiest day." },
+  { id: "lavender", name: "Lavender", Component: LavenderSvg, price: 60,  description: "Soothing and fragrant, lavender calms the senses and attracts pollinators. A must-have for any peaceful garden corner." },
+  { id: "peony",    name: "Peony",    Component: PeonySvg,    price: 150, description: "Lush and romantic, peonies bloom in spectacular clouds of petals. Their sweet scent and full blooms are truly show-stopping." },
+  { id: "bluebell", name: "Bluebell", Component: BluebellSvg, price: 50,  description: "Delicate woodland charmers that carpet the ground in a sea of blue. They bring a magical, fairy-tale feel to shaded spots." },
+  { id: "marigold", name: "Marigold", Component: MarigoldSvg, price: 70,  description: "Vibrant and hardy, marigolds glow like little suns. They naturally repel pests and keep your garden healthy and bright." },
+  { id: "daisy",    name: "Daisy",    Component: DaisySvg,    price: 40,  description: "Simple, cheerful, and beloved by all. Daisies symbolize innocence and new beginnings — perfect for a fresh garden start." },
 ];
-
-const FLOWER_DESCRIPTION =
-  "A beautiful flower that brightens any garden. Perfect for adding color and life to your collection.";
 
 // ─── Flower Card ──────────────────────────────────────────────────────────────
 
@@ -82,7 +80,7 @@ function FlowerModal({ flower, onClose }: { flower: FlowerDef; onClose: () => vo
         >
           <Component width={140} height={140} />
           <Text style={styles.modalName}>{flower.name}</Text>
-          <Text style={styles.modalDescription}>{FLOWER_DESCRIPTION}</Text>
+          <Text style={styles.modalDescription}>{flower.description}</Text>
           <Pressable
             style={({ pressed }) => [styles.buyBtn, pressed && styles.buyBtnPressed]}
             onPress={onClose}
@@ -114,8 +112,9 @@ export default function StoreScreen() {
     staleTime: Infinity,
   });
 
-  const navBarHeight = Platform.OS === "web" ? 56 : 0;
+  const navBarHeight = Platform.OS === "web" ? BAR_HEIGHT : 0;
 
+  if (token === undefined) return null;
   if (token === null) return <Redirect href="/landing" />;
 
   return (
@@ -128,7 +127,7 @@ export default function StoreScreen() {
             <Text style={styles.headerTitle}>Store</Text>
             <View style={styles.coinWidget}>
               <Image source={require("@/assets/images/coin.png")} style={styles.coinImage} />
-              <View style={styles.coinRow}>
+              <View style={styles.coinBadge}>
                 <Text style={styles.coinAmount}>{account?.goldCoins ?? 0}</Text>
               </View>
             </View>

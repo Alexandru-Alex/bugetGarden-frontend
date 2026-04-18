@@ -47,10 +47,9 @@ export const styles = StyleSheet.create({
     marginRight: -15,
     zIndex: 1,
   },
-  coinRow: {
+  coinBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 1,
     backgroundColor: "rgba(0,0,0,0.25)",
     paddingLeft: 20,
     paddingRight: 10,
