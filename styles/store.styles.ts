@@ -69,13 +69,18 @@ export const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 12,
   },
-  card: {
+  cardWrapper: {
     flex: 1,
+    alignItems: "center",
+    gap: 6,
+  },
+  card: {
+    width: "100%",
     backgroundColor: "#fff",
     borderRadius: 16,
-    padding: 16,
+    padding: 8,
     alignItems: "center",
-    gap: 8,
+    gap: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
@@ -87,7 +92,7 @@ export const styles = StyleSheet.create({
   },
   cardName: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 15,
+    fontSize: 14,
     color: "#333",
   },
   cardPriceRow: {

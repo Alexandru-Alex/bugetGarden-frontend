@@ -45,11 +45,13 @@ const FLOWERS: FlowerDef[] = [
 function FlowerCard({ flower, onPress }: { flower: FlowerDef; onPress: () => void }) {
   return (
     <Pressable
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      style={({ pressed }) => [styles.cardWrapper, pressed && styles.cardPressed]}
       onPress={onPress}
     >
-      <Image source={flower.image} style={{ width: 100, height: 100 }} contentFit="contain" />
-      <Text style={styles.cardName}>{flower.name}</Text>
+      <View style={styles.card}>
+        <Image source={flower.image} style={{ width: 100, height: 100 }} contentFit="contain" />
+        <Text style={styles.cardName}>{flower.name}</Text>
+      </View>
       <View style={styles.cardPriceRow}>
         <RNImage source={require("@/assets/images/coin.png")} style={styles.cardPriceCoin} />
         <Text style={styles.cardPrice}>{flower.price}</Text>
@@ -128,6 +130,7 @@ export default function StoreScreen() {
           data={FLOWERS}
           keyExtractor={(item) => item.id}
           numColumns={2}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
           columnWrapperStyle={styles.columnWrapper}
           renderItem={({ item }) => (
