@@ -185,9 +185,10 @@ export const styles = StyleSheet.create({
   modalCard: {
     backgroundColor: "#fff",
     borderRadius: 20,
-    padding: 24,
-    width: "90%",
-    maxWidth: 320,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+    width: "97%",
+    maxWidth: 480,
   },
   modalTitle: {
     fontFamily: "Nunito_900Black",
@@ -308,5 +309,41 @@ export const styles = StyleSheet.create({
     color: "#bbb",
     textAlign: "center",
     marginTop: 48,
+  },
+  // Tabs
+  tabRow: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 4,
+    gap: 8,
+    maxWidth: 480,
+    width: "100%",
+    alignSelf: "center",
+  },
+  tabPill: {
+    paddingVertical: 7,
+    paddingHorizontal: 18,
+    borderRadius: 20,
+    backgroundColor: "#F5F5F5",
+  },
+  tabPillActive: {
+    backgroundColor: "#EAF3E8",
+  },
+  tabPillText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: "#bbb",
+  },
+  tabPillTextActive: {
+    color: "#346739",
+  },
+  typeRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 16,
+  },
+  datePickerWrapper: {
+    marginBottom: 14,
   },
 });

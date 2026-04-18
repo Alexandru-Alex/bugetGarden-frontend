@@ -144,7 +144,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     paddingHorizontal: 14,
-    paddingVertical: 9,
+    paddingVertical: 6,
     borderRadius: 20,
     backgroundColor: "#F0F8F0",
     borderWidth: 1.5,

@@ -1,11 +1,13 @@
 import { NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
+import { formatDateISO } from "@/lib/date";
+import { DatePickerField } from "@/components/date-picker-field";
 import { styles } from "@/styles/goals.styles";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Keyboard,
@@ -38,25 +40,36 @@ const COLORS = [
   "#795548", "#8D6E63", "#607D8B", "#37474F", "#455A64",
 ];
 
+const ACTIVE_GOALS_KEY = ["goals", "active"];
+const ARCHIVED_GOALS_KEY = ["goals", "archived"];
+
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface GoalDto {
   id: string;
   name: string;
   targetAmount: number;
-  savedAmount: number;
+  currentAmount: number;
+  icon?: string;
   color: string;
   deadline?: string;
+  status: "active" | "completed" | "cancelled";
+  completedAt?: string;
+  deletedAt?: string;
 }
 
-// ─── Mock data ─────────────────────────────────────────────────────────────────
+interface PageDto<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+}
 
-const MOCK_GOALS: GoalDto[] = [
-  { id: "1", name: "Emergency Fund",  targetAmount: 5000, savedAmount: 3200, color: "#4A90D9" },
-  { id: "2", name: "Vacation",        targetAmount: 2000, savedAmount: 2000, color: "#E67E22", deadline: "2026-07-01" },
-  { id: "3", name: "New Laptop",      targetAmount: 1500, savedAmount: 400,  color: "#9B59B6", deadline: "2026-12-01" },
-  { id: "4", name: "Car Repair Fund", targetAmount: 800,  savedAmount: 120,  color: "#E74C3C" },
-];
+interface CreateGoalRequest {
+  name: string;
+  targetAmount: number;
+  deadline?: string;
+  color: string;
+}
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -77,8 +90,8 @@ function formatDeadline(iso?: string): string | null {
   return `by ${d.toLocaleString("en-US", { month: "short", year: "numeric" })}`;
 }
 
-function newId(): string {
-  return Math.random().toString(36).slice(2);
+function goalProgress(goal: GoalDto): number {
+  return goal.targetAmount > 0 ? Math.min(goal.currentAmount / goal.targetAmount, 1) : 0;
 }
 
 // ─── GoalCard ──────────────────────────────────────────────────────────────────
@@ -90,8 +103,9 @@ interface GoalCardProps {
 }
 
 function GoalCard({ goal, symbol, onMenu }: GoalCardProps) {
-  const pct = goal.targetAmount > 0 ? Math.min(goal.savedAmount / goal.targetAmount, 1) : 0;
-  const isCompleted = goal.savedAmount >= goal.targetAmount;
+  const pct = goalProgress(goal);
+  const isCompleted = goal.status === "completed";
+  const isCancelled = goal.status === "cancelled";
 
   const progress = useSharedValue(0);
   const pulseOpacity = useSharedValue(1);
@@ -128,15 +142,22 @@ function GoalCard({ goal, symbol, onMenu }: GoalCardProps) {
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={[styles.colorDot, { backgroundColor: goal.color }]} />
-        <Text style={styles.cardName} numberOfLines={1}>{goal.name}</Text>
+        <Text style={[styles.cardName, (isCompleted || isCancelled) && { color: "#aaa" }]} numberOfLines={1}>{goal.name}</Text>
         {isCompleted && (
           <Text style={[styles.completedBadge, { backgroundColor: goal.color }]}>
             Completed
           </Text>
         )}
-        <Pressable style={styles.menuBtn} onPress={() => onMenu(goal)} hitSlop={8}>
-          <MaterialCommunityIcons name="dots-vertical" size={20} color="#bbb" />
-        </Pressable>
+        {isCancelled && (
+          <Text style={[styles.completedBadge, { backgroundColor: "#9E9E9E" }]}>
+            Cancelled
+          </Text>
+        )}
+        {goal.status === "active" && (
+          <Pressable style={styles.menuBtn} onPress={() => onMenu(goal)} hitSlop={8}>
+            <MaterialCommunityIcons name="dots-vertical" size={20} color="#bbb" />
+          </Pressable>
+        )}
       </View>
 
       {deadlineLabel && (
@@ -144,7 +165,7 @@ function GoalCard({ goal, symbol, onMenu }: GoalCardProps) {
       )}
 
       <View style={styles.amountsRow}>
-        <Text style={styles.amountSaved}>{symbol}{formatAmount(goal.savedAmount)}</Text>
+        <Text style={[styles.amountSaved, (isCompleted || isCancelled) && { color: "#aaa" }]}>{symbol}{formatAmount(goal.currentAmount)}</Text>
         <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount)}</Text>
       </View>
 
@@ -161,15 +182,23 @@ function GoalCard({ goal, symbol, onMenu }: GoalCardProps) {
 
 interface CreateGoalModalProps {
   visible: boolean;
+  isPending: boolean;
   onClose: () => void;
-  onCreate: (goal: GoalDto) => void;
+  onCreate: (req: CreateGoalRequest) => void;
 }
 
-function CreateGoalModal({ visible, onClose, onCreate }: CreateGoalModalProps) {
+function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalModalProps) {
   const [name, setName] = useState("");
   const [targetInput, setTargetInput] = useState("");
   const [deadlineInput, setDeadlineInput] = useState("");
   const [selectedColor, setSelectedColor] = useState(COLORS[8]);
+
+  const resetForm = () => {
+    setName("");
+    setTargetInput("");
+    setDeadlineInput("");
+    setSelectedColor(COLORS[8]);
+  };
 
   const handleCreate = () => {
     const target = parseFloat(targetInput);
@@ -185,27 +214,14 @@ function CreateGoalModal({ visible, onClose, onCreate }: CreateGoalModalProps) {
       }
     }
 
-    onCreate({
-      id: newId(),
-      name: name.trim(),
-      targetAmount: target,
-      savedAmount: 0,
-      color: selectedColor,
-      deadline,
-    });
+    onCreate({ name: name.trim(), targetAmount: target, color: selectedColor, deadline });
 
-    setName("");
-    setTargetInput("");
-    setDeadlineInput("");
-    setSelectedColor(COLORS[8]);
+    resetForm();
     onClose();
   };
 
   const handleClose = () => {
-    setName("");
-    setTargetInput("");
-    setDeadlineInput("");
-    setSelectedColor(COLORS[8]);
+    resetForm();
     onClose();
   };
 
@@ -278,8 +294,12 @@ function CreateGoalModal({ visible, onClose, onCreate }: CreateGoalModalProps) {
                 <Pressable style={styles.cancelBtn} onPress={handleClose}>
                   <Text style={styles.cancelText}>Cancel</Text>
                 </Pressable>
-                <Pressable style={styles.saveBtn} onPress={handleCreate}>
-                  <Text style={styles.saveText}>Create</Text>
+                <Pressable
+                  style={[styles.saveBtn, isPending && { opacity: 0.6 }]}
+                  onPress={handleCreate}
+                  disabled={isPending}
+                >
+                  <Text style={styles.saveText}>{isPending ? "Saving…" : "Create"}</Text>
                 </Pressable>
               </View>
             </View>
@@ -290,86 +310,144 @@ function CreateGoalModal({ visible, onClose, onCreate }: CreateGoalModalProps) {
   );
 }
 
-// ─── AddFundsModal ─────────────────────────────────────────────────────────────
+// ─── AddTransactionModal ───────────────────────────────────────────────────────
 
-interface AddFundsModalProps {
+type GoalTransactionType = "DEPOSIT" | "WITHDRAW";
+
+interface AddTransactionModalProps {
   goal: GoalDto | null;
   symbol: string;
+  isPending: boolean;
   onClose: () => void;
-  onAdd: (goalId: string, amount: number) => void;
+  onAdd: (goalId: string, amount: number, type: GoalTransactionType, date: string, note?: string) => void;
 }
 
-function AddFundsModal({ goal, symbol, onClose, onAdd }: AddFundsModalProps) {
+function AddTransactionModal({ goal, symbol, isPending, onClose, onAdd }: AddTransactionModalProps) {
   const [amountInput, setAmountInput] = useState("");
+  const [txType, setTxType] = useState<GoalTransactionType>("DEPOSIT");
+  const [txDate, setTxDate] = useState(new Date());
+  const [note, setNote] = useState("");
 
   if (!goal) return null;
 
-  const handleClose = () => {
+  const resetForm = () => {
     setAmountInput("");
+    setTxType("DEPOSIT");
+    setTxDate(new Date());
+    setNote("");
+  };
+
+  const handleClose = () => {
+    resetForm();
     onClose();
   };
 
-  const pct = goal.targetAmount > 0 ? Math.min(goal.savedAmount / goal.targetAmount, 1) : 0;
+  const pct = goalProgress(goal);
 
-  const handleAdd = () => {
+  const handleConfirm = () => {
     const amount = parseFloat(amountInput);
     if (isNaN(amount) || amount <= 0) return;
-    onAdd(goal.id, amount);
-    setAmountInput("");
+    const dateStr = formatDateISO(txDate);
+    onAdd(goal.id, amount, txType, dateStr, note.trim() || undefined);
+    resetForm();
     onClose();
   };
 
   return (
     <Modal visible={!!goal} transparent animationType="fade" onRequestClose={handleClose}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.backdrop}>
-          <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
-          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <View
-              style={styles.modalCard}
-              {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
-            >
-              <Text style={styles.modalTitle}>{goal.name}</Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.backdrop}>
+            <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
+            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+              <View
+                style={styles.modalCard}
+                {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
+              >
+                <Text style={styles.modalTitle}>{goal.name}</Text>
 
-              <View style={styles.amountsRow}>
-                <Text style={styles.amountSaved}>{symbol}{formatAmount(goal.savedAmount)}</Text>
-                <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount)}</Text>
-              </View>
-              <View style={[styles.progressTrack, { marginBottom: 20 }]}>
-                <View
+                <View style={styles.amountsRow}>
+                  <Text style={styles.amountSaved}>{symbol}{formatAmount(goal.currentAmount)}</Text>
+                  <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount)}</Text>
+                </View>
+                <View style={[styles.progressTrack, { marginBottom: 20 }]}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { backgroundColor: goal.color, width: `${pct * 100}%` as any },
+                    ]}
+                  />
+                </View>
+
+                <View style={styles.typeRow}>
+                  <Pressable
+                    style={[styles.tabPill, txType === "DEPOSIT" && styles.tabPillActive]}
+                    onPress={() => setTxType("DEPOSIT")}
+                  >
+                    <Text style={[styles.tabPillText, txType === "DEPOSIT" && styles.tabPillTextActive]}>
+                      Deposit
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.tabPill, txType === "WITHDRAW" && styles.tabPillActive]}
+                    onPress={() => setTxType("WITHDRAW")}
+                  >
+                    <Text style={[styles.tabPillText, txType === "WITHDRAW" && styles.tabPillTextActive]}>
+                      Withdraw
+                    </Text>
+                  </Pressable>
+                </View>
+
+                <Text style={styles.fieldLabel}>Amount</Text>
+                <TextInput
                   style={[
-                    styles.progressFill,
-                    { backgroundColor: goal.color, width: `${pct * 100}%` as any },
+                    styles.textInput,
+                    { color: "#346739" },
+                    Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
                   ]}
+                  value={amountInput}
+                  onChangeText={v => setAmountInput(v.replace(/[^0-9.]/g, ""))}
+                  keyboardType="number-pad"
+                  placeholder="0.00"
+                  placeholderTextColor="#bbb"
+                  autoFocus
                 />
-              </View>
 
-              <Text style={styles.fieldLabel}>Amount to add</Text>
-              <TextInput
-                style={[
-                  styles.textInput,
-                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
-                ]}
-                value={amountInput}
-                onChangeText={v => setAmountInput(v.replace(/[^0-9.]/g, ""))}
-                keyboardType="number-pad"
-                placeholder="0.00"
-                placeholderTextColor="#bbb"
-                autoFocus
-              />
+                <Text style={styles.fieldLabel}>Date</Text>
+                <View style={styles.datePickerWrapper}>
+                  <DatePickerField value={txDate} onChange={setTxDate} />
+                </View>
 
-              <View style={styles.modalButtons}>
-                <Pressable style={styles.cancelBtn} onPress={handleClose}>
-                  <Text style={styles.cancelText}>Cancel</Text>
-                </Pressable>
-                <Pressable style={styles.saveBtn} onPress={handleAdd}>
-                  <Text style={styles.saveText}>Add</Text>
-                </Pressable>
+                <Text style={styles.fieldLabel}>Note (optional)</Text>
+                <TextInput
+                  style={[
+                    styles.textInput,
+                    { color: "#346739" },
+                    Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                  ]}
+                  value={note}
+                  onChangeText={setNote}
+                  placeholder="e.g. Monthly savings"
+                  placeholderTextColor="#bbb"
+                />
+
+                <View style={styles.modalButtons}>
+                  <Pressable style={styles.cancelBtn} onPress={handleClose}>
+                    <Text style={styles.cancelText}>Cancel</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.saveBtn, isPending && { opacity: 0.6 }]}
+                    onPress={handleConfirm}
+                    disabled={isPending}
+                  >
+                    <Text style={styles.saveText}>
+                      {isPending ? "Saving…" : txType === "DEPOSIT" ? "Deposit" : "Withdraw"}
+                    </Text>
+                  </Pressable>
+                </View>
               </View>
-            </View>
-          </KeyboardAvoidingView>
-        </View>
-      </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
+          </View>
+        </TouchableWithoutFeedback>
     </Modal>
   );
 }
@@ -378,8 +456,10 @@ function AddFundsModal({ goal, symbol, onClose, onAdd }: AddFundsModalProps) {
 
 export default function GoalsScreen() {
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
   const [token, setToken] = useState<string | null | undefined>(undefined);
-  const [goals, setGoals] = useState<GoalDto[]>(MOCK_GOALS);
+  const [activeTab, setActiveTab] = useState<"active" | "archived">("active");
+  const [archivedEverOpened, setArchivedEverOpened] = useState(false);
   const [menuGoal, setMenuGoal] = useState<GoalDto | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [addFundsGoal, setAddFundsGoal] = useState<GoalDto | null>(null);
@@ -396,16 +476,42 @@ export default function GoalsScreen() {
     staleTime: Infinity,
   });
 
+  const { data: activeGoals = [], isLoading: activeLoading } = useQuery<GoalDto[]>({
+    queryKey: ACTIVE_GOALS_KEY,
+    queryFn: async () => {
+      const page = await api.get<PageDto<GoalDto>>("/goals?page=0&size=20&status=active");
+      return page.content;
+    },
+    enabled: !!token,
+    staleTime: Infinity,
+  });
+
+  const { data: archivedGoals = [], isLoading: archivedLoading } = useQuery<GoalDto[]>({
+    queryKey: ARCHIVED_GOALS_KEY,
+    queryFn: async () => {
+      const [completed, cancelled] = await Promise.all([
+        api.get<PageDto<GoalDto>>("/goals?page=0&size=20&status=completed"),
+        api.get<PageDto<GoalDto>>("/goals?page=0&size=20&status=cancelled"),
+      ]);
+      return [...completed.content, ...cancelled.content];
+    },
+    enabled: !!token && archivedEverOpened,
+    staleTime: Infinity,
+  });
+
   const symbol = currencySymbolFor(account?.currency);
 
   const { totalSaved, totalTarget } = useMemo(() => ({
-    totalSaved: goals.reduce((s, g) => s + g.savedAmount, 0),
-    totalTarget: goals.reduce((s, g) => s + g.targetAmount, 0),
-  }), [goals]);
+    totalSaved: activeGoals.reduce((s, g) => s + g.currentAmount, 0),
+    totalTarget: activeGoals.reduce((s, g) => s + g.targetAmount, 0),
+  }), [activeGoals]);
+
+  const isLoading = activeTab === "active" ? activeLoading : archivedLoading;
 
   const sortedGoals = useMemo(() => {
+    const base = activeTab === "active" ? activeGoals : archivedGoals;
     if (sortBy === "deadline") {
-      return [...goals].sort((a, b) => {
+      return [...base].sort((a, b) => {
         if (!a.deadline && !b.deadline) return 0;
         if (!a.deadline) return 1;
         if (!b.deadline) return -1;
@@ -413,24 +519,61 @@ export default function GoalsScreen() {
       });
     }
     if (sortBy === "target") {
-      return [...goals].sort((a, b) => b.targetAmount - a.targetAmount);
+      return [...base].sort((a, b) => b.targetAmount - a.targetAmount);
     }
-    return goals;
-  }, [goals, sortBy]);
+    return base;
+  }, [activeTab, activeGoals, archivedGoals, sortBy]);
 
-  const handleCreate = (goal: GoalDto) => {
-    setGoals(prev => [...prev, goal]);
+  const handleTabChange = (tab: "active" | "archived") => {
+    setActiveTab(tab);
+    if (tab === "archived" && !archivedEverOpened) {
+      setArchivedEverOpened(true);
+    }
   };
 
-  const handleAddFunds = (goalId: string, amount: number) => {
-    setGoals(prev =>
-      prev.map(g => g.id === goalId ? { ...g, savedAmount: g.savedAmount + amount } : g)
-    );
+  const createMutation = useMutation({
+    mutationFn: (req: CreateGoalRequest) => api.post<GoalDto>("/goals", req),
+    onSuccess: (newGoal) => {
+      if (newGoal) {
+        queryClient.setQueryData<GoalDto[]>(ACTIVE_GOALS_KEY, prev => [...(prev ?? []), newGoal]);
+      } else {
+        queryClient.invalidateQueries({ queryKey: ACTIVE_GOALS_KEY });
+      }
+    },
+  });
+
+  const updateFundsMutation = useMutation({
+    mutationFn: (req: { goalId: string; amount: number; type: GoalTransactionType; date: string; note?: string }) =>
+      api.put<GoalDto>("/goals", req),
+    onSuccess: (updatedGoal, { goalId, amount, type }) => {
+      queryClient.setQueryData<GoalDto[]>(ACTIVE_GOALS_KEY, prev =>
+        (prev ?? []).map(g => {
+          if (g.id !== goalId) return g;
+          if (updatedGoal) return updatedGoal;
+          const delta = type === "DEPOSIT" ? amount : -amount;
+          return { ...g, currentAmount: g.currentAmount + delta };
+        })
+      );
+    },
+  });
+
+  const handleAddFunds = (goalId: string, amount: number, type: GoalTransactionType, date: string, note?: string) => {
+    updateFundsMutation.mutate({ goalId, amount, type, date, note });
   };
+
+  const deleteMutation = useMutation({
+    mutationFn: (goal: GoalDto) => api.delete(`/goals?goalId=${goal.id}`),
+    onSuccess: (_, goal) => {
+      const key = goal.status === "active" ? ACTIVE_GOALS_KEY : ARCHIVED_GOALS_KEY;
+      queryClient.setQueryData<GoalDto[]>(key, prev =>
+        (prev ?? []).filter(g => g.id !== goal.id)
+      );
+    },
+  });
 
   const handleDelete = (goal: GoalDto) => {
-    setGoals(prev => prev.filter(g => g.id !== goal.id));
     setMenuGoal(null);
+    deleteMutation.mutate(goal);
   };
 
   const handleOpenAddFunds = (goal: GoalDto) => {
@@ -464,6 +607,25 @@ export default function GoalsScreen() {
         </View>
       </LinearGradient>
 
+      <View style={styles.tabRow}>
+        <Pressable
+          style={[styles.tabPill, activeTab === "active" && styles.tabPillActive]}
+          onPress={() => handleTabChange("active")}
+        >
+          <Text style={[styles.tabPillText, activeTab === "active" && styles.tabPillTextActive]}>
+            Active
+          </Text>
+        </Pressable>
+        <Pressable
+          style={[styles.tabPill, activeTab === "archived" && styles.tabPillActive]}
+          onPress={() => handleTabChange("archived")}
+        >
+          <Text style={[styles.tabPillText, activeTab === "archived" && styles.tabPillTextActive]}>
+            Archived
+          </Text>
+        </Pressable>
+      </View>
+
       <ScrollView
         style={styles.list}
         contentContainerStyle={styles.listContent}
@@ -484,19 +646,26 @@ export default function GoalsScreen() {
             </Text>
           </Pressable>
         </View>
-        {sortedGoals.length === 0 && (
-          <Text style={styles.emptyText}>No goals yet. Tap + to create one.</Text>
+
+        {isLoading && (
+          <Text style={styles.emptyText}>Loading...</Text>
         )}
-        {sortedGoals.map(goal => (
+        {!isLoading && sortedGoals.length === 0 && (
+          <Text style={styles.emptyText}>
+            {activeTab === "active" ? "No goals yet. Tap + to create one." : "No archived goals."}
+          </Text>
+        )}
+        {!isLoading && sortedGoals.map(goal => (
           <GoalCard key={goal.id} goal={goal} symbol={symbol} onMenu={setMenuGoal} />
         ))}
       </ScrollView>
 
-      <Pressable style={styles.fab} onPress={() => setCreateOpen(true)}>
-        <Ionicons name="add" size={28} color="#fff" />
-      </Pressable>
+      {activeTab === "active" && (
+        <Pressable style={styles.fab} onPress={() => setCreateOpen(true)}>
+          <Ionicons name="add" size={28} color="#fff" />
+        </Pressable>
+      )}
 
-      {/* Action menu */}
       <Modal
         visible={!!menuGoal}
         transparent
@@ -510,13 +679,15 @@ export default function GoalsScreen() {
           >
             <Text style={styles.actionCardTitle} numberOfLines={1}>{menuGoal?.name}</Text>
             <View style={styles.actionDivider} />
-            <Pressable
-              style={({ pressed }) => [styles.actionItem, pressed && styles.actionItemPressed]}
-              onPress={() => menuGoal && handleOpenAddFunds(menuGoal)}
-            >
-              <MaterialCommunityIcons name="plus-circle-outline" size={18} color="#346739" />
-              <Text style={styles.actionItemText}>Add funds</Text>
-            </Pressable>
+            {activeTab === "active" && (
+              <Pressable
+                style={({ pressed }) => [styles.actionItem, pressed && styles.actionItemPressed]}
+                onPress={() => menuGoal && handleOpenAddFunds(menuGoal)}
+              >
+                <MaterialCommunityIcons name="plus-circle-outline" size={18} color="#346739" />
+                <Text style={styles.actionItemText}>Add transaction</Text>
+              </Pressable>
+            )}
             <Pressable
               style={({ pressed }) => [styles.actionItem, pressed && styles.actionItemPressed]}
               onPress={() => menuGoal && handleDelete(menuGoal)}
@@ -530,13 +701,15 @@ export default function GoalsScreen() {
 
       <CreateGoalModal
         visible={createOpen}
+        isPending={createMutation.isPending}
         onClose={() => setCreateOpen(false)}
-        onCreate={handleCreate}
+        onCreate={createMutation.mutate}
       />
 
-      <AddFundsModal
+      <AddTransactionModal
         goal={addFundsGoal}
         symbol={symbol}
+        isPending={updateFundsMutation.isPending}
         onClose={() => setAddFundsGoal(null)}
         onAdd={handleAddFunds}
       />
