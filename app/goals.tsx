@@ -1,8 +1,9 @@
 import { NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
-import { formatDateISO } from "@/lib/date";
+import { formatDateISO, formatMonthISO } from "@/lib/date";
 import { DatePickerField } from "@/components/date-picker-field";
+import { MonthPickerField } from "@/components/month-picker-field";
 import { styles } from "@/styles/goals.styles";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -190,8 +191,7 @@ interface CreateGoalModalProps {
 function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalModalProps) {
   const [name, setName] = useState("");
   const [targetInput, setTargetInput] = useState("");
-  const [deadlineInput, setDeadlineInput] = useState("");
-  const [deadlineError, setDeadlineError] = useState("");
+  const [deadlineMonth, setDeadlineMonth] = useState<Date | null>(null);
   const [toast, setToast] = useState("");
   const [selectedColor, setSelectedColor] = useState(COLORS[8]);
 
@@ -203,38 +203,15 @@ function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalMo
   const resetForm = () => {
     setName("");
     setTargetInput("");
-    setDeadlineInput("");
-    setDeadlineError("");
+    setDeadlineMonth(null);
     setSelectedColor(COLORS[8]);
-  };
-
-  const parseDeadline = (raw: string): { deadline: string } | { error: string } | null => {
-    if (!raw.trim()) return null;
-    const [month, year] = raw.split("/");
-    const m = parseInt(month, 10);
-    const y = parseInt(year, 10);
-    if (isNaN(m) || isNaN(y) || m < 1 || m > 12) return { error: "Use MM/YYYY format" };
-    const now = new Date();
-    if (y < now.getFullYear() || (y === now.getFullYear() && m < now.getMonth() + 1)) {
-      return { error: "Deadline can't be in the past" };
-    }
-    return { deadline: `${y}-${String(m).padStart(2, "0")}-01` };
   };
 
   const handleCreate = () => {
     const target = parseFloat(targetInput);
     if (!name.trim() || isNaN(target) || target <= 0) return;
 
-    let deadline: string | undefined;
-    if (deadlineInput.trim()) {
-      const result = parseDeadline(deadlineInput);
-      if (result && "error" in result) {
-        setDeadlineError(result.error);
-        showToast(result.error);
-        return;
-      }
-      if (result && "deadline" in result) deadline = result.deadline;
-    }
+    const deadline = deadlineMonth ? formatMonthISO(deadlineMonth) : undefined;
 
     onCreate({ name: name.trim(), targetAmount: target, color: selectedColor, deadline });
 
@@ -288,21 +265,8 @@ function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalMo
                   placeholderTextColor="#bbb"
                 />
 
-                <Text style={styles.fieldLabel}>Deadline (optional, MM/YYYY)</Text>
-                <TextInput
-                  style={[
-                    styles.textInput,
-                    Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
-                  ]}
-                  value={deadlineInput}
-                  onChangeText={v => { setDeadlineInput(v); setDeadlineError(""); }}
-                  placeholder="e.g. 12/2026"
-                  placeholderTextColor="#bbb"
-                  keyboardType="default"
-                />
-                {!!deadlineError && (
-                  <Text style={styles.fieldError}>{deadlineError}</Text>
-                )}
+                <Text style={styles.fieldLabel}>Deadline (optional)</Text>
+                <MonthPickerField value={deadlineMonth} onChange={setDeadlineMonth} />
 
                 <Text style={styles.fieldLabel}>Color</Text>
                 <View style={styles.colorGrid}>
