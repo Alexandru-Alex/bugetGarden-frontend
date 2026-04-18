@@ -158,7 +158,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: GREEN_DARK,
+    backgroundColor: "#FFE566",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 14,
@@ -175,6 +175,6 @@ export const styles = StyleSheet.create({
   buyBtnText: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 16,
-    color: "#FFE566",
+    color: GREEN_DARK,
   },
 });
