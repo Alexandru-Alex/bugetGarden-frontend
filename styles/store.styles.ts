@@ -136,15 +136,17 @@ export const styles = StyleSheet.create({
   },
   modalName: {
     fontFamily: "Nunito_900Black",
-    fontSize: 22,
-    color: "#333",
+    fontSize: 24,
+    color: GREEN_DARK,
+    letterSpacing: 0.5,
   },
   modalDescription: {
-    fontFamily: "Nunito_400Regular",
-    fontSize: 14,
-    color: "#666",
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13,
+    color: "#888",
     textAlign: "center",
-    lineHeight: 20,
+    lineHeight: 22,
+    fontStyle: "italic",
   },
   buyBtn: {
     flexDirection: "row",
