@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
-    backgroundColor: "#9FCB98",
+    backgroundColor: GREEN_DARK,
     borderRadius: 16,
     padding: 10,
     alignItems: "center",
@@ -123,7 +123,7 @@ export const styles = StyleSheet.create({
   modalCard: {
     width: "100%",
     maxWidth: 400,
-    backgroundColor: "#9FCB98",
+    backgroundColor: GREEN_DARK,
     borderRadius: 20,
     padding: 24,
     alignItems: "center",
