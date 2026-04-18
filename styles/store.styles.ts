@@ -78,9 +78,9 @@ export const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     borderRadius: 16,
-    padding: 8,
+    padding: 4,
     alignItems: "center",
-    gap: 4,
+    gap: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
@@ -108,7 +108,7 @@ export const styles = StyleSheet.create({
   cardPrice: {
     fontFamily: "Nunito_700Bold",
     fontSize: 14,
-    color: GREEN_DARK,
+    color: "#FFE566",
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
