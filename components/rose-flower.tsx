@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
@@ -8,24 +9,15 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
-import { SvgProps } from "react-native-svg";
 
-import BluebellSvg from "../flowers/bluebell.svg";
-import DaisySvg from "../flowers/daisy.svg";
-import LavenderSvg from "../flowers/lavender.svg";
-import MarigoldSvg from "../flowers/marigold.svg";
-import PeonySvg from "../flowers/peony.svg";
-import RoseSvg from "../flowers/rose.svg";
-import TulipSvg from "../flowers/tulip.svg";
-
-const FLOWER_COMPONENTS: React.FC<SvgProps>[] = [
-  RoseSvg,
-  TulipSvg,
-  DaisySvg,
-  LavenderSvg,
-  PeonySvg,
-  BluebellSvg,
-  MarigoldSvg,
+const FLOWER_IMAGES = [
+  require("../flowers/rose.svg"),
+  require("../flowers/tulip.svg"),
+  require("../flowers/daisy.svg"),
+  require("../flowers/lavender.svg"),
+  require("../flowers/peony.svg"),
+  require("../flowers/bluebell.svg"),
+  require("../flowers/marigold.svg"),
 ];
 
 interface RoseFlowerProps {
@@ -35,7 +27,7 @@ interface RoseFlowerProps {
 }
 
 export function RoseFlower({ size = 48, delay = 0, flowerIndex = 0 }: RoseFlowerProps) {
-  const FlowerComponent = FLOWER_COMPONENTS[flowerIndex % FLOWER_COMPONENTS.length];
+  const source = FLOWER_IMAGES[flowerIndex % FLOWER_IMAGES.length];
   const sway = useSharedValue(0);
   const pulse = useSharedValue(1);
   const sizeSV = useSharedValue(size);
@@ -45,7 +37,6 @@ export function RoseFlower({ size = 48, delay = 0, flowerIndex = 0 }: RoseFlower
   }, [size]);
 
   useEffect(() => {
-    // Sway: leganare stanga-dreapta, natural si lent
     sway.value = withDelay(
       delay,
       withRepeat(
@@ -55,7 +46,6 @@ export function RoseFlower({ size = 48, delay = 0, flowerIndex = 0 }: RoseFlower
       ),
     );
 
-    // Pulse: pulsatie subtila de scala
     pulse.value = withDelay(
       delay + 200,
       withRepeat(
@@ -68,7 +58,6 @@ export function RoseFlower({ size = 48, delay = 0, flowerIndex = 0 }: RoseFlower
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
-      // Rotatie din baza florii (transform-origin simulat cu translateY)
       { translateY: sizeSV.value * 0.4 },
       { rotate: `${(sway.value - 0.5) * 10}deg` },
       { translateY: -sizeSV.value * 0.4 },
@@ -79,7 +68,7 @@ export function RoseFlower({ size = 48, delay = 0, flowerIndex = 0 }: RoseFlower
   return (
     <View style={[styles.container, { width: size, height: size }]}>
       <Animated.View style={[{ width: size, height: size }, animatedStyle]}>
-        <FlowerComponent width={size} height={size} />
+        <Image source={source} style={{ width: size, height: size }} contentFit="contain" />
       </Animated.View>
     </View>
   );
