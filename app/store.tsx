@@ -105,7 +105,6 @@ export default function StoreScreen() {
   });
 
   const navBarHeight = Platform.OS === "web" ? BAR_HEIGHT : 0;
-
   if (token === undefined) return null;
   if (token === null) return <Redirect href="/landing" />;
 
@@ -113,15 +112,11 @@ export default function StoreScreen() {
     <View style={styles.root}>
       <LinearGradient colors={["#346739", "#79AE6F"]} style={styles.gradient}>
         <NavMenu />
-        <View style={[styles.header, { paddingTop: insets.top + navBarHeight + 16 }]}>
-          <View style={styles.headerInner}>
-            <View style={styles.headerSpacer} />
-            <Text style={styles.headerTitle}>Store</Text>
-            <View style={styles.coinWidget}>
-              <RNImage source={require("@/assets/images/coin.png")} style={styles.coinImage} />
-              <View style={styles.coinBadge}>
-                <Text style={styles.coinAmount}>{account?.goldCoins ?? 0}</Text>
-              </View>
+        <View style={[styles.topBar, { marginTop: insets.top + navBarHeight + 8 }]}>
+          <View style={styles.coinWidget}>
+            <RNImage source={require("@/assets/images/coin.png")} style={styles.coinImage} />
+            <View style={styles.coinBadge}>
+              <Text style={styles.coinAmount}>{account?.goldCoins ?? 0}</Text>
             </View>
           </View>
         </View>

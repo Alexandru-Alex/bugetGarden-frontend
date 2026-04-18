@@ -11,28 +11,10 @@ export const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
-  header: {
+  topBar: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
-    alignItems: "center",
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  headerInner: {
-    width: "100%",
-    maxWidth: 480,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerSpacer: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontFamily: "Nunito_900Black",
-    fontSize: 28,
-    color: "#fff",
-    flex: 1,
-    textAlign: "center",
+    paddingBottom: 8,
+    alignItems: "flex-end",
   },
   coinWidget: {
     flex: 1,
