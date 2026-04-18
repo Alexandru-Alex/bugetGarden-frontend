@@ -49,7 +49,9 @@ function FlowerCard({ flower, onPress }: { flower: FlowerDef; onPress: () => voi
       onPress={onPress}
     >
       <View style={styles.card}>
-        <Image source={flower.image} style={{ width: 100, height: 100 }} contentFit="contain" />
+        <View style={styles.imageFrame}>
+          <Image source={flower.image} style={{ width: 88, height: 88 }} contentFit="contain" />
+        </View>
         <Text style={styles.cardName}>{flower.name}</Text>
       </View>
       <View style={styles.cardPriceRow}>
