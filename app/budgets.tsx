@@ -373,9 +373,12 @@ export default function BudgetsScreen() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.backdrop}>
             <Pressable style={StyleSheet.absoluteFillObject} onPress={handleCloseModal} />
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ width: "100%", paddingHorizontal: 20 }}
+            >
               <View
-                style={[styles.modalCard, { maxWidth: 300, width: "90%" }]}
+                style={[styles.modalCard, { width: "100%", maxWidth: 400, alignSelf: "center" }]}
                 {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
               >
                 <Text style={styles.modalTitle}>Set budget</Text>

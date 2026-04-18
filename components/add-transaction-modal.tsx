@@ -56,6 +56,7 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
     }) => api.post("/financial-entries", body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["summary"] });
+      queryClient.invalidateQueries({ queryKey: ["budgets"] });
       setAmount("");
       setComment("");
       setSelectedCategory(null);

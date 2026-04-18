@@ -68,6 +68,7 @@ export default function EditEntryScreen() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["financial-entries", categoryId] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
+      queryClient.invalidateQueries({ queryKey: ["budgets"] });
       router.back();
     },
   });
@@ -77,6 +78,7 @@ export default function EditEntryScreen() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["financial-entries", categoryId] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
+      queryClient.invalidateQueries({ queryKey: ["budgets"] });
       router.back();
     },
   });

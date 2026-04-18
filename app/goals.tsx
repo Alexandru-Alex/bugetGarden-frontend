@@ -253,9 +253,12 @@ function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalMo
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.backdrop}>
             <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ width: "100%", paddingHorizontal: 20 }}
+            >
               <View
-                style={styles.modalCard}
+                style={[styles.modalCard, { width: "100%", maxWidth: 400, alignSelf: "center" }]}
                 {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
               >
                 <Text style={styles.modalTitle}>New Goal</Text>
@@ -390,9 +393,12 @@ function AddTransactionModal({ goal, symbol, isPending, onClose, onAdd }: AddTra
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.backdrop}>
             <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ width: "100%", paddingHorizontal: 20 }}
+            >
               <View
-                style={styles.modalCard}
+                style={[styles.modalCard, { width: "100%", maxWidth: 400, alignSelf: "center" }]}
                 {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
               >
                 <Text style={styles.modalTitle}>{goal.name}</Text>

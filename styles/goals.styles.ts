@@ -187,8 +187,6 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 24,
-    width: "97%",
-    maxWidth: 480,
   },
   modalTitle: {
     fontFamily: "Nunito_900Black",
@@ -231,13 +229,13 @@ export const styles = StyleSheet.create({
   },
   textInput: {
     borderWidth: 1.5,
-    borderColor: "#E0E0E0",
+    borderColor: "#C8DFC6",
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
     fontFamily: "Nunito_700Bold",
     fontSize: 15,
-    color: "#333",
+    color: "#346739",
     marginBottom: 14,
   },
   // Color picker grid
