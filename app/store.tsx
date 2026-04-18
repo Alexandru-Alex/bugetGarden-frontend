@@ -72,7 +72,9 @@ function FlowerModal({ flower, onClose }: { flower: FlowerDef; onClose: () => vo
           style={styles.modalCard}
           onPress={Platform.OS === "web" ? (e) => (e as any).stopPropagation() : undefined}
         >
-          <Image source={flower.image} style={{ width: 140, height: 140 }} contentFit="contain" />
+          <View style={styles.modalImageFrame}>
+            <Image source={flower.image} style={{ width: 150, height: 150 }} contentFit="cover" />
+          </View>
           <Text style={styles.modalName}>{flower.name}</Text>
           <Text style={styles.modalDescription}>{flower.description}</Text>
           <Pressable
