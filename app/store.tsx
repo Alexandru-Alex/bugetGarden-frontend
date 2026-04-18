@@ -128,15 +128,19 @@ export default function StoreScreen() {
         <View style={styles.listOuter}>
           <FlatList
             style={styles.list}
-            data={FLOWERS}
-            keyExtractor={(item) => item.id}
+            data={FLOWERS.length % 2 === 0 ? FLOWERS : [...FLOWERS, null]}
+            keyExtractor={(item) => item?.id ?? "__empty__"}
             numColumns={2}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContent}
             columnWrapperStyle={styles.columnWrapper}
-            renderItem={({ item }) => (
-              <FlowerCard flower={item} onPress={() => setSelectedFlower(item)} />
-            )}
+            renderItem={({ item }) =>
+              item ? (
+                <FlowerCard flower={item} onPress={() => setSelectedFlower(item)} />
+              ) : (
+                <View style={styles.cardWrapper} />
+              )
+            }
           />
         </View>
       </LinearGradient>
