@@ -112,7 +112,7 @@ export default function StoreScreen() {
 
   return (
     <View style={styles.root}>
-      <LinearGradient colors={["#346739", "#79AE6F"]} style={styles.gradient}>
+      <LinearGradient colors={["#f5f5f5", "#ffffff"]} style={styles.gradient}>
         <NavMenu />
         <View style={[styles.topBar, { marginTop: insets.top + navBarHeight + 8 }]}>
           <View style={styles.coinWidget}>

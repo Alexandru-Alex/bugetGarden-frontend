@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   topBar: {
     paddingHorizontal: 20,
@@ -68,9 +69,9 @@ export const styles = StyleSheet.create({
     width: 112,
     height: 112,
     borderRadius: 56,
-    backgroundColor: "#EAF4E8",
+    backgroundColor: "#79AE6F",
     borderWidth: 2.5,
-    borderColor: "#9FCB98",
+    borderColor: "#346739",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 4,
@@ -78,7 +79,7 @@ export const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
-    backgroundColor: "rgba(255,255,255,0.82)",
+    backgroundColor: "#9FCB98",
     borderRadius: 16,
     padding: 10,
     alignItems: "center",
@@ -95,7 +96,7 @@ export const styles = StyleSheet.create({
   cardName: {
     fontFamily: "Nunito_700Bold",
     fontSize: 14,
-    color: "#333",
+    color: "#fff",
   },
   cardPriceRow: {
     flexDirection: "row",
