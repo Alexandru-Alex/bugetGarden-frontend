@@ -61,6 +61,14 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: "#FFE566",
   },
+  listOuter: {
+    flex: 1,
+    alignItems: "center",
+  },
+  list: {
+    width: "100%",
+    maxWidth: 360,
+  },
   listContent: {
     padding: 16,
     paddingBottom: 32,
