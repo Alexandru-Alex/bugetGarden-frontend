@@ -74,6 +74,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 4,
+    overflow: "hidden",
   },
   card: {
     width: "100%",
