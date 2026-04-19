@@ -560,6 +560,7 @@ export default function GoalsScreen() {
           return { ...g, currentAmount: g.currentAmount + delta };
         })
       );
+      queryClient.invalidateQueries({ queryKey: ["goal-transactions", goalId] });
     },
   });
 
@@ -670,7 +671,7 @@ export default function GoalsScreen() {
             onPress={(g) =>
               router.push({
                 pathname: "/goals/transaction",
-                params: { goalId: g.id, goalName: g.name, goalColor: g.color, symbol },
+                params: { goalId: g.id, goalName: g.name, goalColor: g.color, symbol, goalStatus: g.status },
               })
             }
             onMenu={setMenuGoal}

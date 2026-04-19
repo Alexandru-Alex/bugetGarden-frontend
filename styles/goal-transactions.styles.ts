@@ -321,4 +321,20 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: "#fff",
   },
+  errorToast: {
+    position: "absolute",
+    top: 120,
+    alignSelf: "center",
+    backgroundColor: "#C0392B",
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 12,
+    zIndex: 999,
+  },
+  errorToastText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#fff",
+    textAlign: "center",
+  },
 });

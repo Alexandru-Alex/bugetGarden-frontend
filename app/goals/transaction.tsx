@@ -90,6 +90,12 @@ function EditGoalTransactionModal({ tx, symbol, goalId, onClose }: EditGoalTrans
   const [txType, setTxType] = useState<GoalTransactionType>("deposit");
   const [note, setNote] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [errorToast, setErrorToast] = useState("");
+
+  const showError = (msg: string) => {
+    setErrorToast(msg);
+    setTimeout(() => setErrorToast(""), 3000);
+  };
 
   useEffect(() => {
     if (tx) {
@@ -118,6 +124,7 @@ function EditGoalTransactionModal({ tx, symbol, goalId, onClose }: EditGoalTrans
       queryClient.invalidateQueries({ queryKey: ["goals", "active"] });
       handleClose();
     },
+    onError: (err: Error) => showError(err.message),
   });
 
   const deleteMutation = useMutation({
@@ -243,8 +250,15 @@ function EditGoalTransactionModal({ tx, symbol, goalId, onClose }: EditGoalTrans
                   <Text style={styles.deleteBtnText}>Delete transaction</Text>
                 </Pressable>
               )}
+
             </View>
           </KeyboardAvoidingView>
+
+          {!!errorToast && (
+            <View style={styles.errorToast} pointerEvents="none">
+              <Text style={styles.errorToastText}>{errorToast}</Text>
+            </View>
+          )}
         </View>
       </TouchableWithoutFeedback>
     </Modal>
@@ -254,12 +268,15 @@ function EditGoalTransactionModal({ tx, symbol, goalId, onClose }: EditGoalTrans
 // ─── Screen ──────────────────────────────────────────────────────────────────────
 
 export default function GoalTransactionsScreen() {
-  const { goalId, goalName, goalColor, symbol } = useLocalSearchParams<{
+  const { goalId, goalName, goalColor, symbol, goalStatus } = useLocalSearchParams<{
     goalId: string;
     goalName: string;
     goalColor: string;
     symbol: string;
+    goalStatus: string;
   }>();
+
+  const isReadOnly = goalStatus === "completed" || goalStatus === "cancelled";
 
   const { width } = useWindowDimensions();
   const compact = width < 500;
@@ -306,9 +323,9 @@ export default function GoalTransactionsScreen() {
         style={({ pressed }) => [
           styles.txCard,
           !compact && styles.txCardWide,
-          pressed && styles.txCardPressed,
+          pressed && !isReadOnly && styles.txCardPressed,
         ]}
-        onPress={() => setSelectedTx(item)}
+        onPress={() => { if (!isReadOnly) setSelectedTx(item); }}
       >
         <View style={[styles.iconBox, { backgroundColor: isDeposit ? "#EAF3E8" : "#FDECEA" }]}>
           <MaterialCommunityIcons
@@ -328,7 +345,7 @@ export default function GoalTransactionsScreen() {
         </Text>
       </Pressable>
     );
-  }, [compact, symbol]);
+  }, [compact, symbol, isReadOnly]);
 
   return (
     <View style={styles.root}>

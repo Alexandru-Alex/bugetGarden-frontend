@@ -1,18 +1,18 @@
-import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
+import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/store.styles";
+import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
-  Image as RNImage,
   Modal,
   Platform,
   Pressable,
+  Image as RNImage,
   Text,
   View,
 } from "react-native";
@@ -35,7 +35,7 @@ const FLOWERS: FlowerDef[] = [
   { id: "tulip",    name: "Tulip",    image: require("@/flowers/tulip.svg"),    price: 80,  description: "Elegant and cheerful, tulips bring a burst of spring color. Available in every shade, they brighten even the gloomiest day." },
   { id: "lavender", name: "Lavender", image: require("@/flowers/lavender.svg"), price: 60,  description: "Soothing and fragrant, lavender calms the senses and attracts pollinators. A must-have for any peaceful garden corner." },
   { id: "peony",    name: "Peony",    image: require("@/flowers/peony.svg"),    price: 150, description: "Lush and romantic, peonies bloom in spectacular clouds of petals. Their sweet scent and full blooms are truly show-stopping." },
-  { id: "bluebell", name: "Bluebell", image: require("@/flowers/bluebell.svg"), price: 50,  description: "Delicate woodland charmers that carpet the ground in a sea of blue. They bring a magical, fairy-tale feel to shaded spots." },
+  { id: "bluebell", name: "Bluebell", image: require("@/flowers/bluebell_v3.png"), price: 50,  description: "Delicate woodland charmers that carpet the ground in a sea of blue. They bring a magical, fairy-tale feel to shaded spots." },
   { id: "marigold", name: "Marigold", image: require("@/flowers/marigold.svg"), price: 70,  description: "Vibrant and hardy, marigolds glow like little suns. They naturally repel pests and keep your garden healthy and bright." },
   { id: "daisy",    name: "Daisy",    image: require("@/flowers/daisy.svg"),    price: 40,  description: "Simple, cheerful, and beloved by all. Daisies symbolize innocence and new beginnings — perfect for a fresh garden start." },
 ];
