@@ -7,7 +7,7 @@ import { MonthPickerField } from "@/components/month-picker-field";
 import { styles } from "@/styles/goals.styles";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Redirect, router } from "expo-router";
+import { Redirect, Stack, router } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -592,6 +592,7 @@ export default function GoalsScreen() {
 
   return (
     <View style={styles.root}>
+      <Stack.Screen options={{ headerShown: false }} />
       <NavMenu />
 
       <LinearGradient
