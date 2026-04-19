@@ -1,15 +1,15 @@
-import { NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
-import { api, getStoredToken } from "@/lib/api";
-import { formatDateISO, formatMonthISO } from "@/lib/date";
 import { DatePickerField } from "@/components/date-picker-field";
 import { MonthPickerField } from "@/components/month-picker-field";
+import { NavMenu } from "@/components/nav-menu";
+import { api, getStoredToken } from "@/lib/api";
+import { formatDateISO, formatMonthISO } from "@/lib/date";
 import { styles } from "@/styles/goals.styles";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, router } from "expo-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -538,7 +538,7 @@ export default function GoalsScreen() {
   };
 
   const createMutation = useMutation({
-    mutationFn: (req: CreateGoalRequest) => api.post<GoalDto>("/goals", req),
+    mutationFn: (req: CreateGoalRequest) => api.post<GoalDto>("/goals/transaction", req),
     onSuccess: (newGoal) => {
       if (newGoal) {
         queryClient.setQueryData<GoalDto[]>(ACTIVE_GOALS_KEY, prev => [...(prev ?? []), newGoal]);
@@ -550,7 +550,7 @@ export default function GoalsScreen() {
 
   const updateFundsMutation = useMutation({
     mutationFn: (req: { goalId: string; amount: number; type: GoalTransactionType; date: string; note?: string }) =>
-      api.post<GoalDto>("/goals/transaction", req),
+      api.put<GoalDto>("/goals", req),
     onSuccess: (updatedGoal, { goalId, amount, type }) => {
       queryClient.setQueryData<GoalDto[]>(ACTIVE_GOALS_KEY, prev =>
         (prev ?? []).map(g => {
@@ -668,7 +668,7 @@ export default function GoalsScreen() {
             symbol={symbol}
             onPress={(g) =>
               router.push({
-                pathname: "/goals/transaction",
+                pathname: "/goal-transactions",
                 params: { goalId: g.id, goalName: g.name, goalColor: g.color, symbol },
               })
             }
