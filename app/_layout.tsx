@@ -13,9 +13,9 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -62,6 +62,8 @@ export default function RootLayout() {
             <Stack.Screen name="create-categories" options={{ headerShown: false }} />
             <Stack.Screen name="budgets" options={{ headerShown: false }} />
             <Stack.Screen name="goals" options={{ headerShown: false }} />
+            <Stack.Screen name="goals/transaction" options={{ headerShown: false }} />
+            <Stack.Screen name="goals/index" options={{ headerShown: false }} />
             <Stack.Screen name="store" options={{ headerShown: false }} />
           </Stack>
           <StatusBar style="auto" />

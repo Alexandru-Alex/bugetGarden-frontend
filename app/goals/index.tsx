@@ -7,7 +7,7 @@ import { MonthPickerField } from "@/components/month-picker-field";
 import { styles } from "@/styles/goals.styles";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Redirect } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -100,10 +100,11 @@ function goalProgress(goal: GoalDto): number {
 interface GoalCardProps {
   goal: GoalDto;
   symbol: string;
+  onPress: (goal: GoalDto) => void;
   onMenu: (goal: GoalDto) => void;
 }
 
-function GoalCard({ goal, symbol, onMenu }: GoalCardProps) {
+function GoalCard({ goal, symbol, onPress, onMenu }: GoalCardProps) {
   const pct = goalProgress(goal);
   const isCompleted = goal.status === "completed";
   const isCancelled = goal.status === "cancelled";
@@ -140,7 +141,10 @@ function GoalCard({ goal, symbol, onMenu }: GoalCardProps) {
   const deadlineLabel = formatDeadline(goal.deadline);
 
   return (
-    <View style={styles.card}>
+    <Pressable
+      style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]}
+      onPress={() => onPress(goal)}
+    >
       <View style={styles.cardHeader}>
         <View style={[styles.colorDot, { backgroundColor: goal.color }]} />
         <Text style={[styles.cardName, (isCompleted || isCancelled) && { color: "#aaa" }]} numberOfLines={1}>{goal.name}</Text>
@@ -175,7 +179,7 @@ function GoalCard({ goal, symbol, onMenu }: GoalCardProps) {
           style={[styles.progressFill, { backgroundColor: goal.color }, fillStyle, pulseStyle]}
         />
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -658,7 +662,18 @@ export default function GoalsScreen() {
           </Text>
         )}
         {!isLoading && sortedGoals.map(goal => (
-          <GoalCard key={goal.id} goal={goal} symbol={symbol} onMenu={setMenuGoal} />
+          <GoalCard
+            key={goal.id}
+            goal={goal}
+            symbol={symbol}
+            onPress={(g) =>
+              router.push({
+                pathname: "/goals/transaction",
+                params: { goalId: g.id, goalName: g.name, goalColor: g.color, symbol },
+              })
+            }
+            onMenu={setMenuGoal}
+          />
         ))}
       </ScrollView>
 

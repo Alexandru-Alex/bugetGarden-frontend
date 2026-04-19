@@ -1,0 +1,172 @@
+<h2>Design final — Garden Shop</h2>
+<p class="subtitle">Toate deciziile incorporate. Apasă pe card pentru a simula tap-ul (modal).</p>
+
+<div style="background:linear-gradient(160deg,#e8f5e9,#f1f8e9);border-radius:12px;font-family:sans-serif;overflow:hidden;max-width:360px;margin:0 auto;box-shadow:0 8px 40px rgba(0,0,0,0.12)">
+
+  <!-- banner -->
+  <div style="background:linear-gradient(135deg,#346739,#4a8c50);padding:18px 16px 18px;text-align:center;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-12px;left:-12px;font-size:72px;opacity:0.12;transform:rotate(-15deg)">🌿</div>
+    <div style="position:absolute;bottom:-12px;right:-12px;font-size:72px;opacity:0.12;transform:rotate(15deg)">🌸</div>
+    <div style="position:absolute;top:10px;right:14px;font-size:30px;opacity:0.16">🌼</div>
+    <div style="position:absolute;top:22px;left:16px;font-size:22px;opacity:0.16">🌷</div>
+    <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:0.3px">🌸 Garden Shop</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.68);margin-top:3px">Cumpără flori pentru grădina ta</div>
+    <div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,0.22);padding:6px 16px;border-radius:16px">
+      <span style="font-size:14px;color:#FFE566;font-weight:800">🪙 240 monede</span>
+    </div>
+  </div>
+  <svg viewBox="0 0 400 24" style="display:block;margin-top:-1px" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,24 C100,0 300,0 400,24 L400,0 L0,0 Z" fill="#4a8c50"/>
+  </svg>
+
+  <!-- grid -->
+  <div style="padding:6px 14px 20px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+
+    <!-- normal -->
+    <div style="width:124px;background:#fff;border-radius:16px;overflow:visible;box-shadow:0 8px 24px rgba(76,175,80,0.2),0 2px 6px rgba(0,0,0,0.05);position:relative;flex-shrink:0;cursor:pointer" onclick="document.getElementById('modal-rose').style.display='flex'">
+      <div style="position:absolute;bottom:-5px;left:-5px;font-size:40px;opacity:0.07;transform:rotate(20deg);pointer-events:none">🌿</div>
+      <div style="height:54px;background:linear-gradient(135deg,#81c784,#4CAF50);border-radius:14px 14px 0 0;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#66bb6a;margin-bottom:-27px;box-shadow:0 4px 14px rgba(0,0,0,0.16)">
+          <img src="/files/rose.svg" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+      </div>
+      <div style="padding:34px 10px 13px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#1a3a1f">Rose</div>
+        <div style="margin-top:6px;display:inline-flex;align-items:center;gap:3px;background:#FFE566;padding:3px 10px;border-radius:10px;box-shadow:0 2px 6px rgba(255,200,0,0.25)">
+          <span style="font-size:11px;font-weight:800;color:#7a5200">🪙 120</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- unlocked — badge galben -->
+    <div style="width:124px;background:#fff;border-radius:16px;overflow:visible;box-shadow:0 8px 24px rgba(76,175,80,0.25),0 2px 6px rgba(0,0,0,0.05);position:relative;flex-shrink:0;outline:2.5px solid #4CAF50;cursor:pointer" onclick="document.getElementById('modal-tulip').style.display='flex'">
+      <div style="position:absolute;top:-10px;right:-10px;background:#FFE566;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,0.15);z-index:2">🌱</div>
+      <div style="position:absolute;bottom:-5px;left:-5px;font-size:40px;opacity:0.07;transform:rotate(20deg);pointer-events:none">🌿</div>
+      <div style="height:54px;background:linear-gradient(135deg,#81c784,#4CAF50);border-radius:14px 14px 0 0;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#66bb6a;margin-bottom:-27px;box-shadow:0 4px 14px rgba(0,0,0,0.16)">
+          <img src="/files/tulip.svg" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+      </div>
+      <div style="padding:34px 10px 13px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#1a3a1f">Tulip</div>
+        <div style="margin-top:6px;display:inline-flex;align-items:center;gap:3px;background:rgba(76,175,80,0.12);padding:3px 10px;border-radius:10px">
+          <span style="font-size:10px;font-weight:800;color:#2e7d32">🌱 Unlocked</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- normal -->
+    <div style="width:124px;background:#fff;border-radius:16px;overflow:visible;box-shadow:0 8px 24px rgba(76,175,80,0.2),0 2px 6px rgba(0,0,0,0.05);position:relative;flex-shrink:0;cursor:pointer">
+      <div style="position:absolute;bottom:-5px;left:-5px;font-size:40px;opacity:0.07;transform:rotate(20deg);pointer-events:none">🌿</div>
+      <div style="height:54px;background:linear-gradient(135deg,#81c784,#4CAF50);border-radius:14px 14px 0 0;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#66bb6a;margin-bottom:-27px;box-shadow:0 4px 14px rgba(0,0,0,0.16)">
+          <img src="/files/lavender.svg" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+      </div>
+      <div style="padding:34px 10px 13px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#1a3a1f">Lavender</div>
+        <div style="margin-top:6px;display:inline-flex;align-items:center;gap:3px;background:#FFE566;padding:3px 10px;border-radius:10px;box-shadow:0 2px 6px rgba(255,200,0,0.25)">
+          <span style="font-size:11px;font-weight:800;color:#7a5200">🪙 60</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- can't afford — gri -->
+    <div style="width:124px;background:#fff;border-radius:16px;overflow:visible;box-shadow:0 4px 12px rgba(0,0,0,0.05);position:relative;flex-shrink:0;opacity:0.42;cursor:pointer">
+      <div style="height:54px;background:linear-gradient(135deg,#ccc,#bbb);border-radius:14px 14px 0 0;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#bbb;margin-bottom:-27px;box-shadow:0 4px 14px rgba(0,0,0,0.1);filter:grayscale(1)">
+          <img src="/files/peony.svg" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+      </div>
+      <div style="padding:34px 10px 13px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#999">Peony</div>
+        <div style="margin-top:6px;display:inline-flex;align-items:center;gap:3px;background:#eee;padding:3px 10px;border-radius:10px">
+          <span style="font-size:11px;font-weight:800;color:#bbb">🪙 150</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- normal -->
+    <div style="width:124px;background:#fff;border-radius:16px;overflow:visible;box-shadow:0 8px 24px rgba(76,175,80,0.2),0 2px 6px rgba(0,0,0,0.05);position:relative;flex-shrink:0;cursor:pointer">
+      <div style="position:absolute;bottom:-5px;left:-5px;font-size:40px;opacity:0.07;transform:rotate(20deg);pointer-events:none">🌿</div>
+      <div style="height:54px;background:linear-gradient(135deg,#81c784,#4CAF50);border-radius:14px 14px 0 0;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#66bb6a;margin-bottom:-27px;box-shadow:0 4px 14px rgba(0,0,0,0.16)">
+          <img src="/files/bluebell.svg" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+      </div>
+      <div style="padding:34px 10px 13px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#1a3a1f">Bluebell</div>
+        <div style="margin-top:6px;display:inline-flex;align-items:center;gap:3px;background:#FFE566;padding:3px 10px;border-radius:10px;box-shadow:0 2px 6px rgba(255,200,0,0.25)">
+          <span style="font-size:11px;font-weight:800;color:#7a5200">🪙 50</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- normal -->
+    <div style="width:124px;background:#fff;border-radius:16px;overflow:visible;box-shadow:0 8px 24px rgba(76,175,80,0.2),0 2px 6px rgba(0,0,0,0.05);position:relative;flex-shrink:0;cursor:pointer">
+      <div style="position:absolute;bottom:-5px;left:-5px;font-size:40px;opacity:0.07;transform:rotate(20deg);pointer-events:none">🌿</div>
+      <div style="height:54px;background:linear-gradient(135deg,#81c784,#4CAF50);border-radius:14px 14px 0 0;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#66bb6a;margin-bottom:-27px;box-shadow:0 4px 14px rgba(0,0,0,0.16)">
+          <img src="/files/marigold.svg" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+      </div>
+      <div style="padding:34px 10px 13px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#1a3a1f">Marigold</div>
+        <div style="margin-top:6px;display:inline-flex;align-items:center;gap:3px;background:#FFE566;padding:3px 10px;border-radius:10px;box-shadow:0 2px 6px rgba(255,200,0,0.25)">
+          <span style="font-size:11px;font-weight:800;color:#7a5200">🪙 70</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- normal -->
+    <div style="width:124px;background:#fff;border-radius:16px;overflow:visible;box-shadow:0 8px 24px rgba(76,175,80,0.2),0 2px 6px rgba(0,0,0,0.05);position:relative;flex-shrink:0;cursor:pointer">
+      <div style="position:absolute;bottom:-5px;left:-5px;font-size:40px;opacity:0.07;transform:rotate(20deg);pointer-events:none">🌿</div>
+      <div style="height:54px;background:linear-gradient(135deg,#81c784,#4CAF50);border-radius:14px 14px 0 0;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#66bb6a;margin-bottom:-27px;box-shadow:0 4px 14px rgba(0,0,0,0.16)">
+          <img src="/files/daisy.svg" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+      </div>
+      <div style="padding:34px 10px 13px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#1a3a1f">Daisy</div>
+        <div style="margin-top:6px;display:inline-flex;align-items:center;gap:3px;background:#FFE566;padding:3px 10px;border-radius:10px;box-shadow:0 2px 6px rgba(255,200,0,0.25)">
+          <span style="font-size:11px;font-weight:800;color:#7a5200">🪙 40</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal simulat -->
+<div id="modal-rose" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;padding:20px" onclick="this.style.display='none'">
+  <div style="background:#fff;border-radius:20px;padding:24px;max-width:300px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)" onclick="event.stopPropagation()">
+    <div style="width:100px;height:100px;border-radius:50%;border:3px solid #4CAF50;overflow:hidden;background:#66bb6a;margin:0 auto 14px;box-shadow:0 4px 16px rgba(76,175,80,0.3)">
+      <img src="/files/rose.svg" style="width:100%;height:100%;object-fit:cover" />
+    </div>
+    <div style="font-size:22px;font-weight:800;color:#1a3a1f;margin-bottom:8px">Rose</div>
+    <div style="font-size:13px;color:#666;line-height:1.6;font-style:italic;margin-bottom:16px">A timeless symbol of love and beauty. Its velvety petals and rich fragrance make it the crown jewel of any garden.</div>
+    <button style="background:#FFE566;border:none;border-radius:14px;padding:12px 28px;font-size:15px;font-weight:800;color:#7a5200;cursor:pointer;box-shadow:0 4px 12px rgba(255,200,0,0.35);display:inline-flex;align-items:center;gap:8px">
+      🪙 120 — Cumpără
+    </button>
+    <div style="margin-top:12px;font-size:11px;color:#aaa;cursor:pointer" onclick="document.getElementById('modal-rose').style.display='none'">✕ Închide</div>
+  </div>
+</div>
+
+<div id="modal-tulip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;padding:20px" onclick="this.style.display='none'">
+  <div style="background:#fff;border-radius:20px;padding:24px;max-width:300px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)" onclick="event.stopPropagation()">
+    <div style="width:100px;height:100px;border-radius:50%;border:3px solid #4CAF50;overflow:hidden;background:#66bb6a;margin:0 auto 14px;box-shadow:0 4px 16px rgba(76,175,80,0.3)">
+      <img src="/files/tulip.svg" style="width:100%;height:100%;object-fit:cover" />
+    </div>
+    <div style="font-size:22px;font-weight:800;color:#1a3a1f;margin-bottom:4px">Tulip</div>
+    <div style="display:inline-flex;align-items:center;gap:4px;background:#FFE566;padding:3px 12px;border-radius:10px;margin-bottom:12px">
+      <span style="font-size:11px;font-weight:800;color:#2e7d32">🌱 Unlocked</span>
+    </div>
+    <div style="font-size:13px;color:#666;line-height:1.6;font-style:italic;margin-bottom:16px">Elegant and cheerful, tulips bring a burst of spring color. Available in every shade, they brighten even the gloomiest day.</div>
+    <button style="background:#FFE566;border:none;border-radius:14px;padding:12px 28px;font-size:15px;font-weight:800;color:#7a5200;cursor:pointer;box-shadow:0 4px 12px rgba(255,200,0,0.35);display:inline-flex;align-items:center;gap:8px">
+      🪙 80 — Cumpără din nou
+    </button>
+    <div style="margin-top:12px;font-size:11px;color:#aaa;cursor:pointer" onclick="document.getElementById('modal-tulip').style.display='none'">✕ Închide</div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;text-align:center">Apasă pe Rose sau Tulip pentru a vedea modalul. Ești mulțumit cu designul final?</p>

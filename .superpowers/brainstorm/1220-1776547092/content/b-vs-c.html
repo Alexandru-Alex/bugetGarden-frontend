@@ -1,0 +1,123 @@
+<h2>B vs C — mai în detaliu</h2>
+<p class="subtitle">Același conținut, două filosofii diferite de layout.</p>
+
+<div class="split">
+
+  <div class="mockup">
+    <div class="mockup-header">B — Banner + 2 coloane</div>
+    <div class="mockup-body" style="padding:0;overflow:hidden">
+      <div style="background:linear-gradient(160deg,#e8f5e9,#f1f8e9);font-family:sans-serif;color:#1a3a1f;min-height:420px;display:flex;flex-direction:column">
+        <!-- banner -->
+        <div style="background:linear-gradient(135deg,#346739,#4a8c50);padding:20px 16px;text-align:center;position:relative;overflow:hidden">
+          <div style="position:absolute;top:-12px;left:-12px;font-size:60px;opacity:0.12">🌿</div>
+          <div style="position:absolute;bottom:-12px;right:-12px;font-size:60px;opacity:0.12">🌸</div>
+          <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:0.3px">🌸 Garden Shop</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px">Cumpără flori pentru grădina ta</div>
+          <div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,0.2);padding:5px 14px;border-radius:16px">
+            <span style="font-size:13px;color:#FFE566;font-weight:700">🪙 240 monede</span>
+          </div>
+        </div>
+        <!-- 2-col grid -->
+        <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:#fff;border-radius:14px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+            <div style="width:54px;height:54px;background:linear-gradient(135deg,#a5d6a7,#66bb6a);border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #4CAF50">🌹</div>
+            <div style="font-size:13px;font-weight:700;color:#1a3a1f">Rose</div>
+            <div style="font-size:11px;color:#d4900a;font-weight:600;margin-top:4px">🪙 120</div>
+          </div>
+          <div style="background:#fff;border-radius:14px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+            <div style="width:54px;height:54px;background:linear-gradient(135deg,#a5d6a7,#66bb6a);border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #4CAF50">🌷</div>
+            <div style="font-size:13px;font-weight:700;color:#1a3a1f">Tulip</div>
+            <div style="font-size:11px;color:#d4900a;font-weight:600;margin-top:4px">🪙 80</div>
+          </div>
+          <div style="background:#fff;border-radius:14px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+            <div style="width:54px;height:54px;background:linear-gradient(135deg,#a5d6a7,#66bb6a);border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #4CAF50">💜</div>
+            <div style="font-size:13px;font-weight:700;color:#1a3a1f">Lavender</div>
+            <div style="font-size:11px;color:#d4900a;font-weight:600;margin-top:4px">🪙 60</div>
+          </div>
+          <div style="background:#fff;border-radius:14px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+            <div style="width:54px;height:54px;background:linear-gradient(135deg,#a5d6a7,#66bb6a);border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #4CAF50">🌸</div>
+            <div style="font-size:13px;font-weight:700;color:#1a3a1f">Peony</div>
+            <div style="font-size:11px;color:#d4900a;font-weight:600;margin-top:4px">🪙 150</div>
+          </div>
+        </div>
+        <div style="padding:0 14px;font-size:9px;color:#aaa;text-align:center">↓ scroll pentru mai multe flori</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">C — Featured + grid compact</div>
+    <div class="mockup-body" style="padding:0;overflow:hidden">
+      <div style="background:linear-gradient(160deg,#e8f5e9,#f1f8e9);font-family:sans-serif;color:#1a3a1f;min-height:420px;display:flex;flex-direction:column;padding:14px;gap:10px">
+        <!-- top bar mic -->
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:16px;font-weight:800">🌸 Garden Shop</span>
+          <span style="background:rgba(52,103,57,0.12);padding:4px 12px;border-radius:14px;font-size:11px;color:#346739;font-weight:700">🪙 240</span>
+        </div>
+        <!-- featured -->
+        <div style="background:#fff;border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 16px rgba(0,0,0,0.1);border:2px solid #FFD700">
+          <div style="width:64px;height:64px;background:linear-gradient(135deg,#a5d6a7,#66bb6a);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:30px;border:2.5px solid #4CAF50">🌹</div>
+          <div style="flex:1">
+            <div style="font-size:10px;background:#FF6B6B;color:#fff;border-radius:6px;padding:2px 7px;display:inline-block;margin-bottom:4px;font-weight:700">⭐ Popular</div>
+            <div style="font-size:15px;font-weight:800;color:#1a3a1f">Rose</div>
+            <div style="font-size:11px;color:#777;margin-top:1px">Simbolul clasic al frumuseții</div>
+            <div style="font-size:12px;color:#d4900a;font-weight:700;margin-top:4px">🪙 120</div>
+          </div>
+        </div>
+        <!-- label -->
+        <div style="font-size:10px;font-weight:800;color:#346739;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Toate florile</div>
+        <!-- 3-col grid compact -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+          <div style="background:#fff;border-radius:12px;padding:9px;text-align:center;box-shadow:0 1px 5px rgba(0,0,0,0.07)">
+            <div style="font-size:22px">🌷</div>
+            <div style="font-size:10px;font-weight:700;margin-top:3px">Tulip</div>
+            <div style="font-size:9px;color:#d4900a;margin-top:1px">🪙 80</div>
+          </div>
+          <div style="background:#fff;border-radius:12px;padding:9px;text-align:center;box-shadow:0 1px 5px rgba(0,0,0,0.07)">
+            <div style="font-size:22px">💜</div>
+            <div style="font-size:10px;font-weight:700;margin-top:3px">Lavender</div>
+            <div style="font-size:9px;color:#d4900a;margin-top:1px">🪙 60</div>
+          </div>
+          <div style="background:#fff;border-radius:12px;padding:9px;text-align:center;box-shadow:0 1px 5px rgba(0,0,0,0.07)">
+            <div style="font-size:22px">🌸</div>
+            <div style="font-size:10px;font-weight:700;margin-top:3px">Peony</div>
+            <div style="font-size:9px;color:#d4900a;margin-top:1px">🪙 150</div>
+          </div>
+          <div style="background:#fff;border-radius:12px;padding:9px;text-align:center;box-shadow:0 1px 5px rgba(0,0,0,0.07)">
+            <div style="font-size:22px">🔵</div>
+            <div style="font-size:10px;font-weight:700;margin-top:3px">Bluebell</div>
+            <div style="font-size:9px;color:#d4900a;margin-top:1px">🪙 50</div>
+          </div>
+          <div style="background:#fff;border-radius:12px;padding:9px;text-align:center;box-shadow:0 1px 5px rgba(0,0,0,0.07)">
+            <div style="font-size:22px">🌼</div>
+            <div style="font-size:10px;font-weight:700;margin-top:3px">Marigold</div>
+            <div style="font-size:9px;color:#d4900a;margin-top:1px">🪙 70</div>
+          </div>
+          <div style="background:#fff;border-radius:12px;padding:9px;text-align:center;box-shadow:0 1px 5px rgba(0,0,0,0.07)">
+            <div style="font-size:22px">🌼</div>
+            <div style="font-size:10px;font-weight:700;margin-top:3px">Daisy</div>
+            <div style="font-size:9px;color:#d4900a;margin-top:1px">🪙 40</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="options" style="margin-top:20px">
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Banner verde decorativ</h3>
+      <p>Mai multă atmosferă la intrare. Cardurile sunt mai mari și mai respirate. Scroll mai mult pentru a vedea toate florile.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Featured + grid compact</h3>
+      <p>Ierarhie clară, toate florile vizibile fără scroll mult. Featured-ul ghidează atenția dar nu domină.</p>
+    </div>
+  </div>
+</div>

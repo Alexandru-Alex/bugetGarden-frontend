@@ -1,0 +1,44 @@
+<h2>3 abordări pentru redesign-ul shop-ului</h2>
+<p class="subtitle">Toate folosesc Light Meadow + banner verde + 2 coloane + badge Unlocked. Diferă în cât de "viu" e.</p>
+
+<div class="options">
+
+  <div class="option" data-choice="clean" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Clean refresh</h3>
+      <p>Fix culori → Light Meadow, banner verde cu titlu + coin balance, carduri albe cu shadow, badge 🌱 Unlocked, florile prea scumpe gri. Zero animații, zero decorații extra. <strong>Cel mai rapid de implementat.</strong></p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pro</h4><ul><li>1-2 ore de muncă</li><li>Curat, fără distrageri</li><li>Ușor de extins ulterior</li></ul></div>
+        <div class="cons"><h4>Contra</h4><ul><li>Poate părea tot "cam gol"</li><li>Fără personalitate extra față de un app generic</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="atmospheric" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Atmospheric ⭐ Recomandat</h3>
+      <p>Tot ce e în A + banner cu emoji decorativi (🌿 🌸 în colțuri), un titlu cu tagline, <code>animated-trees</code> în fundal la opacitate mică, marginea de jos a banner-ului ondulată (SVG wave). Cardurile au o mică animație de scale la press.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pro</h4><ul><li>Simte ca un shop dintr-un joc</li><li>Reutilizează <code>animated-trees</code> existent</li><li>Personalitate clară fără să fie greu</li></ul></div>
+        <div class="cons"><h4>Contra</h4><ul><li>~half day de implementat</li><li>Wave SVG poate fi tricky pe Android</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="full" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Full garden experience</h3>
+      <p>Tot ce e în B + particule de petale care cad ușor în banner, card "Floarea zilei" featured deasupra gridului (rotit zilnic), label secțiune "🌿 Toate florile", banner coin cu animație pulse când soldul crește.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pro</h4><ul><li>Cel mai imersiv, arată premium</li><li>Floarea zilei = motiv să revii zilnic</li></ul></div>
+        <div class="cons"><h4>Contra</h4><ul><li>Zi întreagă de muncă</li><li>Petale pot consuma perf pe telefoane mai slabe</li><li>Floarea zilei necesită logică backend/local</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:16px;text-align:center">Recomand <strong>B</strong> — echilibrul bun între atmosferă și efort. Apasă opțiunea ta.</p>

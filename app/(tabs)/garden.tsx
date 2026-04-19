@@ -242,11 +242,11 @@ export default function GardenScreen() {
                             style={{
                               position: "absolute",
                               top: -CELL_SIZE * 0.6,
-                              left: -8,
+                              left: 8,
                               width: CELL_SIZE + 16,
                             }}
                           >
-                            <RoseFlower size={CELL_SIZE + 16} delay={day * 80} flowerIndex={flowerIndex} />
+                            <RoseFlower size={CELL_SIZE - 4} flowerIndex={flowerIndex} />
                           </View>
                         )}
 

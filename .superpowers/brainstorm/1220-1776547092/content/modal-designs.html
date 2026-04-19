@@ -1,0 +1,113 @@
+<h2>Variante de modal</h2>
+<p class="subtitle">Apasă pe fiecare să îl deschizi.</p>
+
+<div style="display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-family:sans-serif">
+
+  <!-- trigger A -->
+  <div style="text-align:center">
+    <div style="font-size:10px;font-weight:700;color:#555;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">A — banner verde sus în modal</div>
+    <div style="width:130px;background:#fff;border-radius:16px;overflow:visible;box-shadow:0 8px 24px rgba(76,175,80,0.2);position:relative;cursor:pointer;margin:0 auto" onclick="document.getElementById('m-a').style.display='flex'">
+      <div style="height:54px;background:linear-gradient(135deg,#81c784,#4CAF50);border-radius:14px 14px 0 0;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#66bb6a;margin-bottom:-27px;box-shadow:0 4px 14px rgba(0,0,0,0.16)">
+          <img src="/files/rose.svg" style="width:100%;height:100%;object-fit:cover" />
+        </div>
+      </div>
+      <div style="padding:34px 10px 13px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#1a3a1f">Rose</div>
+        <div style="margin-top:6px;display:inline-flex;background:#FFE566;padding:3px 10px;border-radius:10px">
+          <span style="font-size:11px;font-weight:800;color:#7a5200">🪙 120</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:#4CAF50;font-weight:600;cursor:pointer" onclick="document.getElementById('m-a').style.display='flex'">→ Deschide modalul A</div>
+  </div>
+
+  <!-- trigger B -->
+  <div style="text-align:center">
+    <div style="font-size:10px;font-weight:700;color:#555;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">B — card de magazin, fundale pastel</div>
+    <div style="width:130px;background:#fff;border-radius:16px;overflow:visible;box-shadow:0 8px 24px rgba(76,175,80,0.2);position:relative;cursor:pointer;margin:0 auto;outline:2.5px solid #4CAF50" onclick="document.getElementById('m-b').style.display='flex'">
+      <div style="position:absolute;top:-10px;right:-10px;background:#FFE566;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,0.15);z-index:2">🌱</div>
+      <div style="height:54px;background:linear-gradient(135deg,#81c784,#4CAF50);border-radius:14px 14px 0 0;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:72px;height:72px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#66bb6a;margin-bottom:-27px;box-shadow:0 4px 14px rgba(0,0,0,0.16)">
+          <img src="/files/tulip.svg" style="width:100%;height:100%;object-fit:cover" />
+        </div>
+      </div>
+      <div style="padding:34px 10px 13px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#1a3a1f">Tulip</div>
+        <div style="margin-top:6px;display:inline-flex;background:rgba(76,175,80,0.12);padding:3px 10px;border-radius:10px">
+          <span style="font-size:10px;font-weight:800;color:#2e7d32">🌱 Unlocked</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:#4CAF50;font-weight:600;cursor:pointer" onclick="document.getElementById('m-b').style.display='flex'">→ Deschide modalul B</div>
+  </div>
+
+</div>
+
+<!-- MODAL A: banner verde sus, imagine mare plutitoare, buton galben solid -->
+<div id="m-a" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:100;align-items:flex-end;justify-content:center;padding:0" onclick="this.style.display='none'">
+  <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:420px;overflow:hidden;box-shadow:0 -8px 40px rgba(0,0,0,0.2)" onclick="event.stopPropagation()">
+    <!-- banner verde cu imagine plutitoare -->
+    <div style="background:linear-gradient(135deg,#346739,#4a8c50);height:110px;position:relative;display:flex;align-items:flex-end;justify-content:center;overflow:visible">
+      <div style="position:absolute;top:-10px;left:-10px;font-size:80px;opacity:0.1;transform:rotate(-15deg)">🌿</div>
+      <div style="position:absolute;top:8px;right:14px;font-size:32px;opacity:0.14">🌸</div>
+      <div style="width:100px;height:100px;border-radius:50%;border:4px solid #fff;overflow:hidden;background:#66bb6a;margin-bottom:-36px;box-shadow:0 6px 20px rgba(0,0,0,0.2);position:relative;z-index:2">
+        <img src="/files/rose.svg" style="width:100%;height:100%;object-fit:cover" />
+      </div>
+    </div>
+    <!-- content -->
+    <div style="padding:48px 24px 32px;text-align:center">
+      <div style="font-size:26px;font-weight:800;color:#1a3a1f;margin-bottom:8px">Rose</div>
+      <div style="font-size:13px;color:#777;line-height:1.7;font-style:italic;margin-bottom:24px">A timeless symbol of love and beauty. Its velvety petals and rich fragrance make it the crown jewel of any garden.</div>
+      <button style="width:100%;background:linear-gradient(135deg,#FFE566,#f5d020);border:none;border-radius:16px;padding:16px;font-size:16px;font-weight:800;color:#7a5200;cursor:pointer;box-shadow:0 4px 16px rgba(255,200,0,0.4);display:flex;align-items:center;justify-content:center;gap:10px">
+        🪙 120 — Cumpără
+      </button>
+      <div style="margin-top:16px;font-size:12px;color:#bbb;cursor:pointer" onclick="document.getElementById('m-a').style.display='none'">✕ Închide</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL B: sheet bottom, fundal pastel, imagine cu cerc decorat, doua butoane -->
+<div id="m-b" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:100;align-items:flex-end;justify-content:center" onclick="this.style.display='none'">
+  <div style="background:linear-gradient(180deg,#f0faf1,#fff);border-radius:24px 24px 0 0;width:100%;max-width:420px;overflow:hidden;box-shadow:0 -8px 40px rgba(0,0,0,0.2)" onclick="event.stopPropagation()">
+    <!-- handle bar -->
+    <div style="width:36px;height:4px;background:#ddd;border-radius:2px;margin:12px auto 0"></div>
+    <!-- content -->
+    <div style="padding:20px 24px 32px;text-align:center">
+      <!-- imagine cu ring decorativ -->
+      <div style="position:relative;width:110px;margin:0 auto 16px">
+        <div style="width:110px;height:110px;border-radius:50%;border:4px solid #4CAF50;overflow:hidden;background:#66bb6a;box-shadow:0 6px 20px rgba(76,175,80,0.3)">
+          <img src="/files/tulip.svg" style="width:100%;height:100%;object-fit:cover" />
+        </div>
+        <div style="position:absolute;bottom:2px;right:2px;background:#FFE566;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.15)">🌱</div>
+      </div>
+      <div style="font-size:24px;font-weight:800;color:#1a3a1f;margin-bottom:4px">Tulip</div>
+      <div style="display:inline-flex;align-items:center;gap:4px;background:rgba(76,175,80,0.12);padding:4px 14px;border-radius:10px;margin-bottom:14px">
+        <span style="font-size:11px;font-weight:800;color:#2e7d32">🌱 Unlocked — poți primi din quests</span>
+      </div>
+      <div style="font-size:13px;color:#777;line-height:1.7;font-style:italic;margin-bottom:24px">Elegant and cheerful, tulips bring a burst of spring color. Available in every shade, they brighten even the gloomiest day.</div>
+      <!-- buton cumpara -->
+      <button style="width:100%;background:linear-gradient(135deg,#FFE566,#f5d020);border:none;border-radius:16px;padding:15px;font-size:15px;font-weight:800;color:#7a5200;cursor:pointer;box-shadow:0 4px 16px rgba(255,200,0,0.4);display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">
+        🪙 80 — Plantează în grădină
+      </button>
+      <div style="font-size:12px;color:#bbb;cursor:pointer" onclick="document.getElementById('m-b').style.display='none'">✕ Închide</div>
+    </div>
+  </div>
+</div>
+
+<div class="options" style="margin-top:24px">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Bottom sheet + banner verde</h3>
+      <p>Apare de jos în sus (mai natural pe mobile). Banner verde cu imaginea plutitoare, buton galben full-width.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Bottom sheet pastel + imagine cu badge</h3>
+      <p>Fundal verde-pastel, imaginea are badge-ul 🌱 integrat, textul "Plantează în grădină" mai descriptiv. Handle bar sus.</p>
+    </div>
+  </div>
+</div>
