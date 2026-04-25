@@ -148,8 +148,8 @@ function StatisticsContent() {
   });
 
   const { data: goalsData = [], isLoading: goalsLoading } = useQuery({
-    queryKey: ["statistics-goals", activePeriod],
-    queryFn: () => api.get<GoalsPeriodItem[]>(`/statistics/goals?period=${activePeriod}`),
+    queryKey: ["statistics-goals", activeTab, activePeriod],
+    queryFn: () => api.get<GoalsPeriodItem[]>(`/statistics/goals?type=${activeTab}&period=${activePeriod}`),
     staleTime: 5 * 60 * 1000,
   });
 
