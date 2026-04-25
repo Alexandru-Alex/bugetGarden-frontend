@@ -98,7 +98,7 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
   },
   legendText: {
-    fontFamily: "Nunito_400Regular",
+    fontFamily: "Nunito_700Bold",
     fontSize: 11,
     color: "#346739",
   },
@@ -178,7 +178,7 @@ export const styles = StyleSheet.create({
     color: "#1A1A1A",
   },
   txDescription: {
-    fontFamily: "Nunito_400Regular",
+    fontFamily: "Nunito_700Bold",
     fontSize: 11,
     color: "#79AE6F",
     marginTop: 1,
@@ -192,7 +192,7 @@ export const styles = StyleSheet.create({
     color: "#346739",
   },
   txDate: {
-    fontFamily: "Nunito_400Regular",
+    fontFamily: "Nunito_700Bold",
     fontSize: 11,
     color: "#9FCB98",
     marginTop: 2,
