@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: "#346739",
     marginBottom: 12,
-    paddingHorizontal: 16,
+    textAlign: "center",
   },
   legend: {
     flexDirection: "row",
