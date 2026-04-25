@@ -63,6 +63,19 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
+  chartsRow: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    gap: 12,
+    marginBottom: 16,
+  },
+  chartCardWide: {
+    flex: 1,
+    marginHorizontal: 0,
+    marginBottom: 0,
+    alignSelf: "stretch",
+    maxWidth: undefined,
+  },
   chartTitle: {
     fontFamily: "Nunito_700Bold",
     fontSize: 13,

@@ -111,6 +111,7 @@ function StatisticsContent() {
   const [toastPos, setToastPos] = useState<{ x: number; y: number } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { width: screenWidth } = useWindowDimensions();
+  const isWide = screenWidth >= 768;
 
   const { data: account } = useQuery<AccountDto>({
     queryKey: ACCOUNT_QUERY_KEY,
@@ -298,54 +299,56 @@ function StatisticsContent() {
             ))}
           </View>
 
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>{CHART_TITLES[activeTab]}</Text>
+          <View style={isWide ? styles.chartsRow : null}>
+            <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
+              <Text style={styles.chartTitle}>{CHART_TITLES[activeTab]}</Text>
 
-            {renderChart()}
+              {renderChart()}
 
-            {activeTab === "GENERAL" && (
+              {activeTab === "GENERAL" && (
+                <View style={styles.legend}>
+                  <View style={styles.legendItem}>
+                    <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
+                    <Text style={styles.legendText}>Income</Text>
+                  </View>
+                  <View style={styles.legendItem}>
+                    <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
+                    <Text style={styles.legendText}>Expense</Text>
+                  </View>
+                  <View style={styles.legendItem}>
+                    <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
+                    <Text style={styles.legendText}>Profit</Text>
+                  </View>
+                  <View style={styles.legendItem}>
+                    <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
+                    <Text style={styles.legendText}>Loss</Text>
+                  </View>
+                </View>
+              )}
+            </View>
+
+            <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
+              <Text style={styles.chartTitle}>Goals Activity</Text>
+              {goalsLoading ? (
+                <View style={styles.chartLoader}>
+                  <ActivityIndicator color="#346739" />
+                </View>
+              ) : goalsData.length === 0 ? (
+                <View style={styles.chartEmpty}>
+                  <Text style={styles.chartEmptyText}>No data for this period</Text>
+                </View>
+              ) : (
+                <StatGoalsChart data={goalsData} onDotPress={handleGoalsDotPress} />
+              )}
               <View style={styles.legend}>
                 <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
-                  <Text style={styles.legendText}>Income</Text>
-                </View>
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
-                  <Text style={styles.legendText}>Expense</Text>
-                </View>
-                <View style={styles.legendItem}>
                   <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
-                  <Text style={styles.legendText}>Profit</Text>
+                  <Text style={styles.legendText}>Deposited</Text>
                 </View>
                 <View style={styles.legendItem}>
                   <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
-                  <Text style={styles.legendText}>Loss</Text>
+                  <Text style={styles.legendText}>Withdrawn</Text>
                 </View>
-              </View>
-            )}
-          </View>
-
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>Goals Activity</Text>
-            {goalsLoading ? (
-              <View style={styles.chartLoader}>
-                <ActivityIndicator color="#346739" />
-              </View>
-            ) : goalsData.length === 0 ? (
-              <View style={styles.chartEmpty}>
-                <Text style={styles.chartEmptyText}>No data for this period</Text>
-              </View>
-            ) : (
-              <StatGoalsChart data={goalsData} onDotPress={handleGoalsDotPress} />
-            )}
-            <View style={styles.legend}>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
-                <Text style={styles.legendText}>Deposited</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
-                <Text style={styles.legendText}>Withdrawn</Text>
               </View>
             </View>
           </View>
