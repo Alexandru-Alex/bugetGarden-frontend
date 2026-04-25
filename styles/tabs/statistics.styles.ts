@@ -83,8 +83,8 @@ export const styles = StyleSheet.create({
   },
   legend: {
     flexDirection: "row",
+    justifyContent: "center",
     gap: 16,
-    paddingHorizontal: 16,
     marginBottom: 8,
   },
   legendItem: {
