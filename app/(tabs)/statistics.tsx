@@ -108,6 +108,7 @@ function StatisticsContent() {
   const [activeTab, setActiveTab] = useState<StatTab>("GENERAL");
   const [activePeriod, setActivePeriod] = useState<StatPeriod>("MONTH");
   const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);
+  const [txCollapsed, setTxCollapsed] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastPos, setToastPos] = useState<{ x: number; y: number } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -214,6 +215,7 @@ function StatisticsContent() {
       showToast(`${symbol}${formatAmount(value)}`, position);
       if (barType !== "profit") {
         setSelectedBar({ barType, item });
+        setTxCollapsed(false);
       }
     },
     [showToast, symbol],
@@ -419,8 +421,11 @@ function StatisticsContent() {
 
           {selectedBar && selectedBar.barType !== "profit" && (
             <View style={styles.txSection}>
-              <Text style={styles.txTitle}>Transactions — {selectedBar.item.label}</Text>
-              {txLoading ? (
+              <Pressable style={styles.txTitleRow} onPress={() => setTxCollapsed((c) => !c)}>
+                <Text style={styles.txTitle}>Transactions — {selectedBar.item.label}</Text>
+                <MaterialCommunityIcons name={txCollapsed ? "chevron-down" : "chevron-up"} size={20} color="#346739" />
+              </Pressable>
+              {!txCollapsed && (txLoading ? (
                 <View style={styles.txLoader}>
                   <ActivityIndicator color="#346739" />
                 </View>
@@ -453,7 +458,7 @@ function StatisticsContent() {
                     <ActivityIndicator style={styles.txFooterSpinner} size="small" color="#346739" />
                   )}
                 </>
-              )}
+              ))}
             </View>
           )}
       </ScrollView>

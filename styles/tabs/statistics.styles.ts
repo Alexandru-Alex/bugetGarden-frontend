@@ -66,6 +66,7 @@ export const styles = StyleSheet.create({
   chartsRow: {
     flexDirection: "row",
     alignSelf: "stretch",
+    justifyContent: "center",
     paddingHorizontal: 16,
     gap: 12,
     marginBottom: 16,
@@ -158,11 +159,16 @@ export const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 480,
   },
+  txTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
   txTitle: {
     fontFamily: "Nunito_700Bold",
     fontSize: 14,
     color: "#346739",
-    marginBottom: 10,
   },
   txCard: {
     backgroundColor: "#FFFFFF",
