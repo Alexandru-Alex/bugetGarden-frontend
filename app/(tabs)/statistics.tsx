@@ -330,6 +330,31 @@ function StatisticsContent() {
 
           <View style={isWide ? styles.chartsRow : null}>
             <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
+              <Text style={styles.chartTitle}>Goals Activity</Text>
+              {goalsLoading ? (
+                <View style={styles.chartLoader}>
+                  <ActivityIndicator color="#346739" />
+                </View>
+              ) : goalsData.length === 0 ? (
+                <View style={styles.chartEmpty}>
+                  <Text style={styles.chartEmptyText}>No data for this period</Text>
+                </View>
+              ) : (
+                <StatGoalsChart data={goalsData} onDotPress={handleGoalsDotPress} />
+              )}
+              <View style={styles.legend}>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
+                  <Text style={styles.legendText}>Deposited</Text>
+                </View>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
+                  <Text style={styles.legendText}>Withdrawn</Text>
+                </View>
+              </View>
+            </View>
+
+            <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
               <Text style={styles.chartTitle}>{CHART_TITLES[activeTab]}</Text>
 
               {renderChart()}
@@ -354,31 +379,6 @@ function StatisticsContent() {
                   </View>
                 </View>
               )}
-            </View>
-
-            <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
-              <Text style={styles.chartTitle}>Goals Activity</Text>
-              {goalsLoading ? (
-                <View style={styles.chartLoader}>
-                  <ActivityIndicator color="#346739" />
-                </View>
-              ) : goalsData.length === 0 ? (
-                <View style={styles.chartEmpty}>
-                  <Text style={styles.chartEmptyText}>No data for this period</Text>
-                </View>
-              ) : (
-                <StatGoalsChart data={goalsData} onDotPress={handleGoalsDotPress} />
-              )}
-              <View style={styles.legend}>
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
-                  <Text style={styles.legendText}>Deposited</Text>
-                </View>
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
-                  <Text style={styles.legendText}>Withdrawn</Text>
-                </View>
-              </View>
             </View>
 
             <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
