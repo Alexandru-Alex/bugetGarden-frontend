@@ -46,11 +46,13 @@ export function StatBarChart({ data, onBarPress }: Props) {
               <Pressable
                 style={styles.barWrapper}
                 onPress={() => onBarPress(item, "income")}
+                disabled={item.income === 0}
               >
                 <View
                   style={[
                     styles.bar,
                     { height: barHeight(item.income, maxValue), backgroundColor: INCOME_COLOR },
+                    item.income === 0 && styles.barDisabled,
                   ]}
                 />
               </Pressable>
@@ -58,11 +60,13 @@ export function StatBarChart({ data, onBarPress }: Props) {
               <Pressable
                 style={styles.barWrapper}
                 onPress={() => onBarPress(item, "expense")}
+                disabled={item.expenses === 0}
               >
                 <View
                   style={[
                     styles.bar,
                     { height: barHeight(item.expenses, maxValue), backgroundColor: EXPENSE_COLOR },
+                    item.expenses === 0 && styles.barDisabled,
                   ]}
                 />
               </Pressable>
@@ -70,6 +74,7 @@ export function StatBarChart({ data, onBarPress }: Props) {
               <Pressable
                 style={styles.barWrapper}
                 onPress={() => onBarPress(item, "profit")}
+                disabled={profit === 0}
               >
                 <View
                   style={[
@@ -78,6 +83,7 @@ export function StatBarChart({ data, onBarPress }: Props) {
                       height: barHeight(profit, maxValue),
                       backgroundColor: profit >= 0 ? PROFIT_POS_COLOR : PROFIT_NEG_COLOR,
                     },
+                    profit === 0 && styles.barDisabled,
                   ]}
                 />
               </Pressable>
@@ -127,6 +133,9 @@ const styles = StyleSheet.create({
   bar: {
     width: BAR_WIDTH,
     borderRadius: 4,
+  },
+  barDisabled: {
+    opacity: 0.25,
   },
   label: {
     marginTop: 6,
