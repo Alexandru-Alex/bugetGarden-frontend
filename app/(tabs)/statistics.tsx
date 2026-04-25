@@ -226,8 +226,7 @@ function StatisticsContent() {
   const handleGoalsDotPress = useCallback(
     (item: GoalsPeriodItem, type: GoalsDotType, position: { x: number; y: number }) => {
       const value = type === "deposited" ? item.deposited : item.withdrawn;
-      const label = type === "deposited" ? "Deposited" : "Withdrawn";
-      showToast(`${item.label} — ${label}: ${symbol}${formatAmount(value)}`, position);
+      showToast(`${symbol}${formatAmount(value)}`, position);
     },
     [showToast, symbol],
   );
