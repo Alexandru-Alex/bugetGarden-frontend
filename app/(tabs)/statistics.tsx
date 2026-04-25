@@ -1,6 +1,7 @@
 import { BarType, StatBarChart, SummaryItem } from "@/components/stat-bar-chart";
 import { StatCategoryChart } from "@/components/stat-category-chart";
 import { GoalsDotType, GoalsPeriodItem, StatGoalsChart } from "@/components/stat-goals-chart";
+import { CategoryEntryDto, CategoryPeriodDto, StatStackedChart } from "@/components/stat-stacked-chart";
 import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
@@ -150,6 +151,13 @@ function StatisticsContent() {
     staleTime: 5 * 60 * 1000,
   });
 
+  const { data: categoriesData = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ["statistics-categories", activeTab, activePeriod],
+    queryFn: () =>
+      api.get<CategoryPeriodDto[]>(`/statistics/categories?type=${activeTab}&period=${activePeriod}`),
+    staleTime: 5 * 60 * 1000,
+  });
+
   const txEnabled = selectedBar !== null && selectedBar.barType !== "profit";
 
   const txReferenceDate = useMemo(() => {
@@ -223,6 +231,13 @@ function StatisticsContent() {
     (item: GoalsPeriodItem, type: GoalsDotType, position: { x: number; y: number }) => {
       const value = type === "deposited" ? item.deposited : item.withdrawn;
       showToast(`${symbol}${formatAmount(value)}`, position);
+    },
+    [showToast, symbol],
+  );
+
+  const handleSegmentPress = useCallback(
+    (entry: CategoryEntryDto, position: { x: number; y: number }) => {
+      showToast(`${entry.name} • ${symbol}${formatAmount(entry.amount)}`, position);
     },
     [showToast, symbol],
   );
@@ -351,6 +366,21 @@ function StatisticsContent() {
                 </View>
               </View>
             </View>
+          </View>
+
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>Category Breakdown</Text>
+            {categoriesLoading ? (
+              <View style={styles.chartLoader}>
+                <ActivityIndicator color="#346739" />
+              </View>
+            ) : categoriesData.length === 0 ? (
+              <View style={styles.chartEmpty}>
+                <Text style={styles.chartEmptyText}>No data for this period</Text>
+              </View>
+            ) : (
+              <StatStackedChart data={categoriesData} onSegmentPress={handleSegmentPress} />
+            )}
           </View>
 
           {selectedBar && selectedBar.barType !== "profit" && (
