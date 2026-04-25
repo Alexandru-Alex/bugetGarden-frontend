@@ -1,5 +1,6 @@
 import { BarType, StatBarChart, SummaryItem } from "@/components/stat-bar-chart";
 import { StatCategoryChart } from "@/components/stat-category-chart";
+import { GoalsPeriodItem, StatGoalsChart } from "@/components/stat-goals-chart";
 import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
@@ -143,6 +144,12 @@ function StatisticsContent() {
     queryKey: ["statistics-summary", activeTab, activePeriod],
     queryFn: () =>
       api.get<SummaryItem[]>(`/statistics/summary?type=${activeTab}&period=${activePeriod}`),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: goalsData = [], isLoading: goalsLoading } = useQuery({
+    queryKey: ["statistics-goals", activePeriod],
+    queryFn: () => api.get<GoalsPeriodItem[]>(`/statistics/goals?period=${activePeriod}`),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -309,6 +316,31 @@ function StatisticsContent() {
                 </View>
               </View>
             )}
+          </View>
+
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>Goals Activity</Text>
+            {goalsLoading ? (
+              <View style={styles.chartLoader}>
+                <ActivityIndicator color="#346739" />
+              </View>
+            ) : goalsData.length === 0 ? (
+              <View style={styles.chartEmpty}>
+                <Text style={styles.chartEmptyText}>No data for this period</Text>
+              </View>
+            ) : (
+              <StatGoalsChart data={goalsData} />
+            )}
+            <View style={styles.legend}>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
+                <Text style={styles.legendText}>Deposited</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
+                <Text style={styles.legendText}>Withdrawn</Text>
+              </View>
+            </View>
           </View>
 
           {selectedBar && selectedBar.barType !== "profit" && (
