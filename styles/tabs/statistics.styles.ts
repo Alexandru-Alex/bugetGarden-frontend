@@ -12,15 +12,15 @@ export const styles = StyleSheet.create({
 
   tabRow: {
     flexDirection: "row",
-    marginHorizontal: 16,
+    alignSelf: "center",
     marginBottom: 12,
     backgroundColor: "#E4EFE1",
     borderRadius: 12,
     padding: 4,
   },
   tabItem: {
-    flex: 1,
     paddingVertical: 8,
+    paddingHorizontal: 20,
     alignItems: "center",
     borderRadius: 10,
   },
@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
 
   periodRow: {
     flexDirection: "row",
-    marginHorizontal: 16,
+    justifyContent: "center",
     marginBottom: 20,
     gap: 8,
   },
