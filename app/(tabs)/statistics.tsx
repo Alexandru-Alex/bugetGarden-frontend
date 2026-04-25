@@ -112,6 +112,12 @@ function StatisticsContent() {
     [],
   );
 
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
+  }, []);
+
   const { data: summaryData = [], isLoading: summaryLoading } = useQuery({
     queryKey: ["statistics-summary", activeTab, activePeriod],
     queryFn: () =>
@@ -126,12 +132,10 @@ function StatisticsContent() {
     return toReferenceDate(selectedBar.item.label, activePeriod);
   }, [selectedBar, activePeriod]);
 
-  const txType = useMemo<StatTab>(() => {
-    if (!selectedBar) return activeTab;
-    if (selectedBar.barType === "income") return "INCOME";
-    if (selectedBar.barType === "expense") return "EXPENSES" as StatTab;
-    return activeTab;
-  }, [selectedBar, activeTab]);
+  const txType: StatTab =
+    selectedBar?.barType === "income" ? "INCOME" :
+    selectedBar?.barType === "expense" ? ("EXPENSES" as StatTab) :
+    activeTab;
 
   const { data: transactions = [], isLoading: txLoading } = useQuery({
     queryKey: ["statistics-transactions", txType, activePeriod, txReferenceDate],
