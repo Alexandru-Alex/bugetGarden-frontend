@@ -108,7 +108,7 @@ export function StatGoalsChart({ data }: Props) {
 
         {/* dots + labels */}
         {data.map((d, i) => (
-          <React.Fragment key={i}>
+          <React.Fragment key={d.label}>
             <Circle cx={xs[i]} cy={toY(d.deposited, maxValue)} r={3.5} fill="#346739" />
             <Circle cx={xs[i]} cy={toY(d.withdrawn, maxValue)} r={3.5} fill="#FFAA44" />
             <SvgText
