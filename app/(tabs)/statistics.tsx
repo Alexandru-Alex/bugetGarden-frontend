@@ -1,6 +1,7 @@
 import { BarType, StatBarChart, SummaryItem } from "@/components/stat-bar-chart";
 import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
+import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/tabs/statistics.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -64,9 +65,11 @@ function toReferenceDate(label: string, period: StatPeriod): string {
 }
 
 function barLabel(barType: BarType, item: SummaryItem, symbol: string): string {
-  const profit = item.income - item.expenses;
-  if (barType === "income") return `Income: ${symbol}${formatAmount(item.income)}`;
-  if (barType === "expense") return `Expense: ${symbol}${formatAmount(item.expenses)}`;
+  const inc = item.income ?? 0;
+  const exp = item.expenses ?? 0;
+  const profit = inc - exp;
+  if (barType === "income") return `Income: ${symbol}${formatAmount(inc)}`;
+  if (barType === "expense") return `Expense: ${symbol}${formatAmount(exp)}`;
   return `${profit >= 0 ? "Profit" : "Loss"}: ${symbol}${formatAmount(Math.abs(profit))}`;
 }
 
@@ -97,8 +100,9 @@ function StatisticsContent() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { data: account } = useQuery<{ currency: string }>({
-    queryKey: ["account"],
+  const { data: account } = useQuery<AccountDto>({
+    queryKey: ACCOUNT_QUERY_KEY,
+    queryFn: () => api.get<AccountDto>("/accounts"),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -133,10 +137,13 @@ function StatisticsContent() {
     return toReferenceDate(selectedBar.item.label, activePeriod);
   }, [selectedBar, activePeriod]);
 
-  const txType: StatTab =
-    selectedBar?.barType === "income" ? "INCOME" :
-    selectedBar?.barType === "expense" ? ("EXPENSES" as StatTab) :
-    activeTab;
+  const txType = useMemo<StatTab>(
+    () =>
+      selectedBar?.barType === "income" ? "INCOME" :
+      selectedBar?.barType === "expense" ? "EXPENSES" :
+      activeTab,
+    [selectedBar?.barType, activeTab],
+  );
 
   const { data: transactions = [], isLoading: txLoading } = useQuery({
     queryKey: ["statistics-transactions", txType, activePeriod, txReferenceDate],

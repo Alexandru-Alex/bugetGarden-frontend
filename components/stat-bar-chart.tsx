@@ -3,8 +3,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export interface SummaryItem {
   label: string;
-  income: number;
-  expenses: number;
+  income: number | null;
+  expenses: number | null;
 }
 
 export type BarType = "income" | "expense" | "profit";
@@ -31,7 +31,9 @@ export function StatBarChart({ data, onBarPress }: Props) {
   const maxValue = useMemo(() => {
     let m = 0;
     for (const d of data) {
-      m = Math.max(m, d.income, d.expenses, Math.abs(d.income - d.expenses));
+      const inc = d.income ?? 0;
+      const exp = d.expenses ?? 0;
+      m = Math.max(m, inc, exp, Math.abs(inc - exp));
     }
     return m || 1;
   }, [data]);
@@ -39,20 +41,22 @@ export function StatBarChart({ data, onBarPress }: Props) {
   const groups = useMemo(
     () =>
       data.map((item) => {
-        const profit = item.income - item.expenses;
+        const inc = item.income ?? 0;
+        const exp = item.expenses ?? 0;
+        const profit = inc - exp;
         return (
           <View key={item.label} style={styles.group}>
             <View style={styles.barsRow}>
               <Pressable
                 style={styles.barWrapper}
                 onPress={() => onBarPress(item, "income")}
-                disabled={item.income === 0}
+                disabled={inc === 0}
               >
                 <View
                   style={[
                     styles.bar,
-                    { height: barHeight(item.income, maxValue), backgroundColor: INCOME_COLOR },
-                    item.income === 0 && styles.barDisabled,
+                    { height: barHeight(inc, maxValue), backgroundColor: INCOME_COLOR },
+                    inc === 0 && styles.barDisabled,
                   ]}
                 />
               </Pressable>
@@ -60,13 +64,13 @@ export function StatBarChart({ data, onBarPress }: Props) {
               <Pressable
                 style={styles.barWrapper}
                 onPress={() => onBarPress(item, "expense")}
-                disabled={item.expenses === 0}
+                disabled={exp === 0}
               >
                 <View
                   style={[
                     styles.bar,
-                    { height: barHeight(item.expenses, maxValue), backgroundColor: EXPENSE_COLOR },
-                    item.expenses === 0 && styles.barDisabled,
+                    { height: barHeight(exp, maxValue), backgroundColor: EXPENSE_COLOR },
+                    exp === 0 && styles.barDisabled,
                   ]}
                 />
               </Pressable>
