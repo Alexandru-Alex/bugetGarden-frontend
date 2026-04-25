@@ -90,6 +90,15 @@ export const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 8,
   },
+  categoryLegend: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 12,
+    marginTop: 12,
+    marginBottom: 8,
+    paddingHorizontal: 8,
+  },
   legendItem: {
     flexDirection: "row",
     alignItems: "center",

@@ -242,6 +242,20 @@ function StatisticsContent() {
     [showToast, symbol],
   );
 
+  const categoryLegendItems = useMemo(() => {
+    const seen = new Set<string>();
+    const items: { name: string; color: string }[] = [];
+    for (const period of categoriesData) {
+      for (const cat of period.categories) {
+        if (!seen.has(cat.name)) {
+          seen.add(cat.name);
+          items.push({ name: cat.name, color: cat.color });
+        }
+      }
+    }
+    return items;
+  }, [categoriesData]);
+
   function handleTabChange(tab: StatTab) {
     setActiveTab(tab);
     setSelectedBar(null);
@@ -366,21 +380,31 @@ function StatisticsContent() {
                 </View>
               </View>
             </View>
-          </View>
 
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>Category Breakdown</Text>
-            {categoriesLoading ? (
-              <View style={styles.chartLoader}>
-                <ActivityIndicator color="#346739" />
-              </View>
-            ) : categoriesData.length === 0 ? (
-              <View style={styles.chartEmpty}>
-                <Text style={styles.chartEmptyText}>No data for this period</Text>
-              </View>
-            ) : (
-              <StatStackedChart data={categoriesData} onSegmentPress={handleSegmentPress} />
-            )}
+            <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
+              <Text style={styles.chartTitle}>Category Breakdown</Text>
+              {categoriesLoading ? (
+                <View style={styles.chartLoader}>
+                  <ActivityIndicator color="#346739" />
+                </View>
+              ) : categoriesData.length === 0 ? (
+                <View style={styles.chartEmpty}>
+                  <Text style={styles.chartEmptyText}>No data for this period</Text>
+                </View>
+              ) : (
+                <StatStackedChart data={categoriesData} onSegmentPress={handleSegmentPress} />
+              )}
+              {categoryLegendItems.length > 0 && (
+                <View style={styles.categoryLegend}>
+                  {categoryLegendItems.map((item) => (
+                    <View key={item.name} style={styles.legendItem}>
+                      <View style={[styles.legendDot, { backgroundColor: item.color }]} />
+                      <Text style={styles.legendText}>{item.name}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
           </View>
 
           {selectedBar && selectedBar.barType !== "profit" && (
