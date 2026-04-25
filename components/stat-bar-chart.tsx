@@ -23,8 +23,8 @@ const EXPENSE_COLOR = "#FF6B6B";
 const PROFIT_POS_COLOR = "#346739";
 const PROFIT_NEG_COLOR = "#FFAA44";
 
-function profitColor(profit: number) {
-  return profit >= 0 ? PROFIT_POS_COLOR : PROFIT_NEG_COLOR;
+function barHeight(value: number, maxValue: number) {
+  return Math.max(4, (Math.abs(value) / maxValue) * MAX_HEIGHT);
 }
 
 export function StatBarChart({ data, onBarPress }: Props) {
@@ -36,9 +36,61 @@ export function StatBarChart({ data, onBarPress }: Props) {
     return m || 1;
   }, [data]);
 
-  function barHeight(value: number) {
-    return Math.max(4, (Math.abs(value) / maxValue) * MAX_HEIGHT);
-  }
+  const groups = useMemo(
+    () =>
+      data.map((item) => {
+        const profit = item.income - item.expenses;
+        return (
+          <View key={item.label} style={styles.group}>
+            <View style={styles.barsRow}>
+              <Pressable
+                style={styles.barWrapper}
+                onPress={() => onBarPress(item, "income")}
+              >
+                <View
+                  style={[
+                    styles.bar,
+                    { height: barHeight(item.income, maxValue), backgroundColor: INCOME_COLOR },
+                  ]}
+                />
+              </Pressable>
+
+              <Pressable
+                style={styles.barWrapper}
+                onPress={() => onBarPress(item, "expense")}
+              >
+                <View
+                  style={[
+                    styles.bar,
+                    { height: barHeight(item.expenses, maxValue), backgroundColor: EXPENSE_COLOR },
+                  ]}
+                />
+              </Pressable>
+
+              <Pressable
+                style={styles.barWrapper}
+                onPress={() => onBarPress(item, "profit")}
+              >
+                <View
+                  style={[
+                    styles.bar,
+                    {
+                      height: barHeight(profit, maxValue),
+                      backgroundColor: profit >= 0 ? PROFIT_POS_COLOR : PROFIT_NEG_COLOR,
+                    },
+                  ]}
+                />
+              </Pressable>
+            </View>
+
+            <Text style={styles.label} numberOfLines={1}>
+              {item.label}
+            </Text>
+          </View>
+        );
+      }),
+    [data, maxValue, onBarPress],
+  );
 
   return (
     <ScrollView
@@ -46,55 +98,7 @@ export function StatBarChart({ data, onBarPress }: Props) {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.scroll}
     >
-      {data.map((item) => {
-        const profit = item.income - item.expenses;
-        return (
-          <View key={item.label} style={styles.group}>
-            <Pressable
-              style={styles.barWrapper}
-              onPress={() => onBarPress(item, "income")}
-            >
-              <View
-                style={[
-                  styles.bar,
-                  { height: barHeight(item.income), backgroundColor: INCOME_COLOR },
-                ]}
-              />
-            </Pressable>
-
-            <Pressable
-              style={styles.barWrapper}
-              onPress={() => onBarPress(item, "expense")}
-            >
-              <View
-                style={[
-                  styles.bar,
-                  { height: barHeight(item.expenses), backgroundColor: EXPENSE_COLOR },
-                ]}
-              />
-            </Pressable>
-
-            <Pressable
-              style={styles.barWrapper}
-              onPress={() => onBarPress(item, "profit")}
-            >
-              <View
-                style={[
-                  styles.bar,
-                  {
-                    height: barHeight(profit),
-                    backgroundColor: profitColor(profit),
-                  },
-                ]}
-              />
-            </Pressable>
-
-            <Text style={styles.label} numberOfLines={1}>
-              {item.label}
-            </Text>
-          </View>
-        );
-      })}
+      {groups}
     </ScrollView>
   );
 }
@@ -103,18 +107,19 @@ const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: 16,
     paddingBottom: 8,
-    alignItems: "flex-end",
   },
   group: {
+    flexDirection: "column",
+    marginRight: GROUP_GAP,
+  },
+  barsRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    marginRight: GROUP_GAP,
-    flexWrap: "wrap",
-    width: (BAR_WIDTH + BAR_GAP) * 3 - BAR_GAP,
+    gap: BAR_GAP,
   },
   barWrapper: {
     width: BAR_WIDTH,
-    marginRight: BAR_GAP,
+    height: MAX_HEIGHT,
     justifyContent: "flex-end",
   },
   bar: {
@@ -122,7 +127,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   label: {
-    width: "100%",
     marginTop: 6,
     fontSize: 9,
     fontFamily: "Nunito_700Bold",
