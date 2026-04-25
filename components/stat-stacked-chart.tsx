@@ -43,7 +43,7 @@ export function StatStackedChart({ data, onSegmentPress }: Props) {
                 <View style={styles.emptyBar} />
               ) : (
                 period.categories.map((cat) => {
-                  const h = Math.max(2, (cat.amount / maxTotal) * MAX_HEIGHT);
+                  const h = Math.max(4, (cat.amount / maxTotal) * MAX_HEIGHT);
                   return (
                     <Pressable
                       key={cat.name}
@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   group: {
-    flexDirection: "column",
     alignItems: "center",
     marginRight: GROUP_GAP,
     width: BAR_WIDTH + 12,
@@ -93,7 +92,6 @@ const styles = StyleSheet.create({
     height: MAX_HEIGHT,
     width: BAR_WIDTH,
     justifyContent: "flex-end",
-    flexDirection: "column",
     overflow: "hidden",
     borderRadius: 5,
   },
