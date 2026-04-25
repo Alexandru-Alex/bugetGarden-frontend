@@ -21,6 +21,7 @@ import {
   Pressable,
   ScrollView,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -115,7 +116,9 @@ function StatisticsContent() {
   const [activePeriod, setActivePeriod] = useState<StatPeriod>("MONTH");
   const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastPos, setToastPos] = useState<{ x: number; y: number } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { width: screenWidth } = useWindowDimensions();
 
   const { data: account } = useQuery<AccountDto>({
     queryKey: ACCOUNT_QUERY_KEY,
@@ -126,10 +129,11 @@ function StatisticsContent() {
   const symbol = currencySymbolFor(account?.currency);
 
   const showToast = useCallback(
-    (msg: string) => {
+    (msg: string, pos?: { x: number; y: number }) => {
       if (toastTimer.current) clearTimeout(toastTimer.current);
       setToastMsg(msg);
-      toastTimer.current = setTimeout(() => setToastMsg(null), 3000);
+      setToastPos(pos ?? null);
+      toastTimer.current = setTimeout(() => { setToastMsg(null); setToastPos(null); }, 3000);
     },
     [],
   );
@@ -220,10 +224,10 @@ function StatisticsContent() {
   );
 
   const handleGoalsDotPress = useCallback(
-    (item: GoalsPeriodItem, type: GoalsDotType) => {
+    (item: GoalsPeriodItem, type: GoalsDotType, position: { x: number; y: number }) => {
       const value = type === "deposited" ? item.deposited : item.withdrawn;
       const label = type === "deposited" ? "Deposited" : "Withdrawn";
-      showToast(`${item.label} — ${label}: ${symbol}${formatAmount(value)}`);
+      showToast(`${item.label} — ${label}: ${symbol}${formatAmount(value)}`, position);
     },
     [showToast, symbol],
   );
@@ -394,7 +398,17 @@ function StatisticsContent() {
       </ScrollView>
 
       {toastMsg && (
-        <View style={styles.toast} pointerEvents="none">
+        <View
+          style={[
+            styles.toast,
+            toastPos && {
+              top: toastPos.y - 52,
+              left: Math.max(10, Math.min(screenWidth - 230, toastPos.x - 110)),
+              alignSelf: "flex-start" as const,
+            },
+          ]}
+          pointerEvents="none"
+        >
           <Text style={styles.toastText}>{toastMsg}</Text>
         </View>
       )}

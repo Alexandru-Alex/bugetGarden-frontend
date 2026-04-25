@@ -12,7 +12,7 @@ export type GoalsDotType = "deposited" | "withdrawn";
 
 interface Props {
   data: GoalsPeriodItem[];
-  onDotPress: (item: GoalsPeriodItem, type: GoalsDotType) => void;
+  onDotPress: (item: GoalsPeriodItem, type: GoalsDotType, position: { x: number; y: number }) => void;
 }
 
 const CHART_H = 140;
@@ -120,14 +120,14 @@ export function StatGoalsChart({ data, onDotPress }: Props) {
               cy={toY(d.deposited, maxValue)}
               r={14}
               fill="transparent"
-              onPress={() => onDotPress(d, "deposited")}
+              onPress={(e) => onDotPress(d, "deposited", { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY })}
             />
             <Circle
               cx={xs[i]}
               cy={toY(d.withdrawn, maxValue)}
               r={14}
               fill="transparent"
-              onPress={() => onDotPress(d, "withdrawn")}
+              onPress={(e) => onDotPress(d, "withdrawn", { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY })}
             />
             <SvgText
               x={xs[i]}
