@@ -105,6 +105,8 @@ export function StatBarChart({ data, onBarPress }: Props) {
 
 const styles = StyleSheet.create({
   scroll: {
+    flexGrow: 1,
+    justifyContent: "center",
     paddingHorizontal: 16,
     paddingBottom: 8,
   },

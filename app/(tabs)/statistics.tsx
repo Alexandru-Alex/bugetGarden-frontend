@@ -1,5 +1,5 @@
 import { BarType, StatBarChart, SummaryItem } from "@/components/stat-bar-chart";
-import { NavMenu } from "@/components/nav-menu";
+import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/tabs/statistics.styles";
@@ -9,6 +9,7 @@ import { Redirect } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -178,7 +179,12 @@ function StatisticsContent() {
     <PageTransition style={styles.root}>
       <NavMenu />
       <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.content,
+            Platform.OS === "web" && { paddingTop: BAR_HEIGHT + 16 },
+          ]}
+        >
           <View style={styles.tabRow}>
             {STAT_TABS.map((tab) => (
               <Pressable
