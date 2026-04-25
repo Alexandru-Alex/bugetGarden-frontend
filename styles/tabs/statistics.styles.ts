@@ -5,36 +5,22 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F8F5",
   },
+  header: {
+    paddingHorizontal: 16,
+    paddingBottom: 28,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: "Nunito_900Black",
+    color: "#FFFFFF",
+    textAlign: "center",
+    paddingTop: 12,
+    paddingBottom: 10,
+  },
+
   content: {
     paddingTop: 16,
     paddingBottom: 32,
-  },
-
-  tabRow: {
-    flexDirection: "row",
-    alignSelf: "center",
-    marginBottom: 12,
-    backgroundColor: "#E4EFE1",
-    borderRadius: 12,
-    padding: 4,
-  },
-  tabItem: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    borderRadius: 10,
-  },
-  tabItemActive: {
-    backgroundColor: "#346739",
-  },
-  tabText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 12,
-    color: "#346739",
-    letterSpacing: 0.5,
-  },
-  tabTextActive: {
-    color: "#FFFFFF",
   },
 
   periodRow: {
@@ -63,6 +49,9 @@ export const styles = StyleSheet.create({
 
   chartCard: {
     marginHorizontal: 16,
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: 480,
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     paddingTop: 16,
@@ -121,7 +110,7 @@ export const styles = StyleSheet.create({
 
   toast: {
     position: "absolute",
-    top: 120,
+    top: 360,
     alignSelf: "center",
     backgroundColor: "#346739",
     paddingHorizontal: 20,

@@ -1,11 +1,14 @@
 import { BarType, StatBarChart, SummaryItem } from "@/components/stat-bar-chart";
+import { StatCategoryChart } from "@/components/stat-category-chart";
 import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/tabs/statistics.styles";
+import { sharedStyles } from "@/styles/shared.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
+import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -16,7 +19,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type StatTab = "GENERAL" | "EXPENSES" | "INCOME";
 type StatPeriod = "YEAR" | "MONTH" | "WEEK" | "DAY";
@@ -38,6 +41,7 @@ interface SelectedBar {
 
 const STAT_TABS: StatTab[] = ["GENERAL", "EXPENSES", "INCOME"];
 const STAT_PERIODS: StatPeriod[] = ["YEAR", "MONTH", "WEEK", "DAY"];
+const TAB_LABELS: Record<StatTab, string> = { GENERAL: "General", EXPENSES: "Expenses", INCOME: "Income" };
 const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function formatAmount(amount: number) {
@@ -61,6 +65,14 @@ function toReferenceDate(label: string, period: StatPeriod): string {
   }
   const iso = label.trim().match(/\d{4}-\d{2}-\d{2}/);
   if (iso) return iso[0];
+  // WEEK labels: "4/13" or "4/13 - 4/19" — take the first M/D
+  const md = label.trim().match(/^(\d{1,2})\/(\d{1,2})/);
+  if (md) {
+    const year = new Date().getFullYear();
+    const month = String(parseInt(md[1], 10)).padStart(2, "0");
+    const day = String(parseInt(md[2], 10)).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
   return new Date().toISOString().slice(0, 10);
 }
 
@@ -94,6 +106,7 @@ export default function StatisticsScreen() {
 }
 
 function StatisticsContent() {
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<StatTab>("GENERAL");
   const [activePeriod, setActivePeriod] = useState<StatPeriod>("MONTH");
   const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);
@@ -165,6 +178,14 @@ function StatisticsContent() {
     [showToast, symbol],
   );
 
+  const handleCategoryBarPress = useCallback(
+    (item: SummaryItem) => {
+      const value = activeTab === "INCOME" ? (item.income ?? 0) : (item.expenses ?? 0);
+      showToast(`${item.label}: ${symbol}${formatAmount(value)}`);
+    },
+    [showToast, symbol, activeTab],
+  );
+
   function handleTabChange(tab: StatTab) {
     setActiveTab(tab);
     setSelectedBar(null);
@@ -175,38 +196,53 @@ function StatisticsContent() {
     setSelectedBar(null);
   }
 
-  const chartTitle =
-    activeTab === "GENERAL"
-      ? "Income, Expenses & Profit"
-      : activeTab === "EXPENSES"
-      ? "Expenses Overview"
-      : "Income Overview";
+  const CHART_TITLES: Record<StatTab, string> = {
+    GENERAL: "Income, Expenses & Profit",
+    EXPENSES: "Expenses Overview",
+    INCOME: "Income Overview",
+  };
+
+  function renderChart() {
+    if (summaryLoading) {
+      return <View style={styles.chartLoader}><ActivityIndicator color="#346739" /></View>;
+    }
+    if (summaryData.length === 0) {
+      return <View style={styles.chartEmpty}><Text style={styles.chartEmptyText}>No data for this period</Text></View>;
+    }
+    if (activeTab === "GENERAL") {
+      return <StatBarChart data={summaryData} onBarPress={handleBarPress} />;
+    }
+    return <StatCategoryChart data={summaryData} type={activeTab} onBarPress={handleCategoryBarPress} />;
+  }
 
   return (
     <PageTransition style={styles.root}>
       <NavMenu />
-      <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
-        <ScrollView
-          contentContainerStyle={[
-            styles.content,
-            Platform.OS === "web" && { paddingTop: BAR_HEIGHT + 16 },
-          ]}
-        >
-          <View style={styles.tabRow}>
-            {STAT_TABS.map((tab) => (
-              <Pressable
-                key={tab}
-                style={[styles.tabItem, activeTab === tab && styles.tabItemActive]}
-                onPress={() => handleTabChange(tab)}
-              >
-                <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-                  {tab}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+      <LinearGradient
+        colors={["#2A4A2E", "#346739"]}
+        style={[styles.header, { paddingTop: Platform.OS === "web" ? BAR_HEIGHT : insets.top }]}
+      >
+        <Text style={styles.headerTitle}>Statistics</Text>
+      </LinearGradient>
 
-          <View style={styles.periodRow}>
+      <View style={sharedStyles.tabsExtension}>
+        <View style={sharedStyles.typeRow}>
+          {STAT_TABS.map((tab) => (
+            <Pressable
+              key={tab}
+              style={[sharedStyles.typeBtn, activeTab === tab && sharedStyles.typeBtnActive]}
+              onPress={() => handleTabChange(tab)}
+            >
+              <Text style={[sharedStyles.typeBtnText, activeTab === tab && sharedStyles.typeBtnTextActive]}>
+                {TAB_LABELS[tab]}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.periodRow}>
             {STAT_PERIODS.map((period) => (
               <Pressable
                 key={period}
@@ -223,38 +259,30 @@ function StatisticsContent() {
           </View>
 
           <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>{chartTitle}</Text>
+            <Text style={styles.chartTitle}>{CHART_TITLES[activeTab]}</Text>
 
-            {summaryLoading ? (
-              <View style={styles.chartLoader}>
-                <ActivityIndicator color="#346739" />
+            {renderChart()}
+
+            {activeTab === "GENERAL" && (
+              <View style={styles.legend}>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
+                  <Text style={styles.legendText}>Income</Text>
+                </View>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
+                  <Text style={styles.legendText}>Expense</Text>
+                </View>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
+                  <Text style={styles.legendText}>Profit</Text>
+                </View>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
+                  <Text style={styles.legendText}>Loss</Text>
+                </View>
               </View>
-            ) : summaryData.length === 0 ? (
-              <View style={styles.chartEmpty}>
-                <Text style={styles.chartEmptyText}>No data for this period</Text>
-              </View>
-            ) : (
-              <StatBarChart data={summaryData} onBarPress={handleBarPress} />
             )}
-
-            <View style={styles.legend}>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
-                <Text style={styles.legendText}>Income</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
-                <Text style={styles.legendText}>Expense</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
-                <Text style={styles.legendText}>Profit</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
-                <Text style={styles.legendText}>Loss</Text>
-              </View>
-            </View>
           </View>
 
           {selectedBar && selectedBar.barType !== "profit" && (
@@ -291,14 +319,13 @@ function StatisticsContent() {
               )}
             </View>
           )}
-        </ScrollView>
+      </ScrollView>
 
-        {toastMsg && (
-          <View style={styles.toast} pointerEvents="none">
-            <Text style={styles.toastText}>{toastMsg}</Text>
-          </View>
-        )}
-      </SafeAreaView>
+      {toastMsg && (
+        <View style={styles.toast} pointerEvents="none">
+          <Text style={styles.toastText}>{toastMsg}</Text>
+        </View>
+      )}
     </PageTransition>
   );
 }

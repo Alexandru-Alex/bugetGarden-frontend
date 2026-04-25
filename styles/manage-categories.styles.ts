@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: 20,
+    fontSize: 28,
     fontFamily: "Nunito_900Black",
     color: "#FFFFFF",
     textAlign: "center",
