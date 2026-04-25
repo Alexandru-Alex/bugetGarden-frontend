@@ -12,7 +12,7 @@ interface Props {
   data: GoalsPeriodItem[];
 }
 
-const CHART_H = 120;
+const CHART_H = 140;
 const CHART_W_PER_POINT = 52;
 const PADDING_LEFT = 12;
 const PADDING_RIGHT = 12;
@@ -70,7 +70,7 @@ export function StatGoalsChart({ data }: Props) {
   );
 
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 16 }}>
       <Svg width={totalW} height={CHART_H}>
         {/* baseline */}
         <Line
@@ -83,9 +83,9 @@ export function StatGoalsChart({ data }: Props) {
         />
 
         {/* deposited area */}
-        <Polygon points={depositedArea} fill="#79AE6F" fillOpacity={0.22} />
+        <Polygon points={depositedArea} fill="#79AE6F" fillOpacity={0.25} />
         {/* withdrawn area */}
-        <Polygon points={withdrawnArea} fill="#FFAA44" fillOpacity={0.32} />
+        <Polygon points={withdrawnArea} fill="#FFAA44" fillOpacity={0.35} />
 
         {/* deposited line */}
         <Polyline
@@ -94,6 +94,7 @@ export function StatGoalsChart({ data }: Props) {
           stroke="#346739"
           strokeWidth={2}
           strokeLinejoin="round"
+          strokeLinecap="round"
         />
         {/* withdrawn line */}
         <Polyline
@@ -102,11 +103,12 @@ export function StatGoalsChart({ data }: Props) {
           stroke="#FFAA44"
           strokeWidth={2}
           strokeLinejoin="round"
+          strokeLinecap="round"
         />
 
         {/* dots + labels */}
         {data.map((d, i) => (
-          <React.Fragment key={d.label}>
+          <React.Fragment key={i}>
             <Circle cx={xs[i]} cy={toY(d.deposited, maxValue)} r={3.5} fill="#346739" />
             <Circle cx={xs[i]} cy={toY(d.withdrawn, maxValue)} r={3.5} fill="#FFAA44" />
             <SvgText
