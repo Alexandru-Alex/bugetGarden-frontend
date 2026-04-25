@@ -355,33 +355,6 @@ function StatisticsContent() {
             </View>
 
             <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
-              <Text style={styles.chartTitle}>{CHART_TITLES[activeTab]}</Text>
-
-              {renderChart()}
-
-              {activeTab === "GENERAL" && (
-                <View style={styles.legend}>
-                  <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
-                    <Text style={styles.legendText}>Income</Text>
-                  </View>
-                  <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
-                    <Text style={styles.legendText}>Expense</Text>
-                  </View>
-                  <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
-                    <Text style={styles.legendText}>Profit</Text>
-                  </View>
-                  <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
-                    <Text style={styles.legendText}>Loss</Text>
-                  </View>
-                </View>
-              )}
-            </View>
-
-            <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
               <Text style={styles.chartTitle}>Category Breakdown</Text>
               {categoriesLoading ? (
                 <View style={styles.chartLoader}>
@@ -405,6 +378,33 @@ function StatisticsContent() {
                 </View>
               )}
             </View>
+          </View>
+
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>{CHART_TITLES[activeTab]}</Text>
+
+            {renderChart()}
+
+            {activeTab === "GENERAL" && (
+              <View style={styles.legend}>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
+                  <Text style={styles.legendText}>Income</Text>
+                </View>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
+                  <Text style={styles.legendText}>Expense</Text>
+                </View>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
+                  <Text style={styles.legendText}>Profit</Text>
+                </View>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
+                  <Text style={styles.legendText}>Loss</Text>
+                </View>
+              </View>
+            )}
           </View>
 
           {selectedBar && selectedBar.barType !== "profit" && (
