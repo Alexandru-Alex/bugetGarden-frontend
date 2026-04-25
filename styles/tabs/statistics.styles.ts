@@ -65,6 +65,7 @@ export const styles = StyleSheet.create({
   },
   chartsRow: {
     flexDirection: "row",
+    alignSelf: "stretch",
     paddingHorizontal: 16,
     gap: 12,
     marginBottom: 16,
