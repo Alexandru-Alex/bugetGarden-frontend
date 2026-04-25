@@ -8,8 +8,11 @@ export interface GoalsPeriodItem {
   withdrawn: number;
 }
 
+export type GoalsDotType = "deposited" | "withdrawn";
+
 interface Props {
   data: GoalsPeriodItem[];
+  onDotPress: (item: GoalsPeriodItem, type: GoalsDotType) => void;
 }
 
 const CHART_H = 140;
@@ -24,7 +27,7 @@ function toY(value: number, maxValue: number): number {
   return PADDING_TOP + PLOT_H - Math.max(2, (value / maxValue) * PLOT_H);
 }
 
-export function StatGoalsChart({ data }: Props) {
+export function StatGoalsChart({ data, onDotPress }: Props) {
   const maxValue = useMemo(() => {
     let m = 0;
     for (const d of data) m = Math.max(m, d.deposited, d.withdrawn);
@@ -111,6 +114,21 @@ export function StatGoalsChart({ data }: Props) {
           <React.Fragment key={d.label}>
             <Circle cx={xs[i]} cy={toY(d.deposited, maxValue)} r={3.5} fill="#346739" />
             <Circle cx={xs[i]} cy={toY(d.withdrawn, maxValue)} r={3.5} fill="#FFAA44" />
+            {/* transparent hit areas for easy tap */}
+            <Circle
+              cx={xs[i]}
+              cy={toY(d.deposited, maxValue)}
+              r={14}
+              fill="transparent"
+              onPress={() => onDotPress(d, "deposited")}
+            />
+            <Circle
+              cx={xs[i]}
+              cy={toY(d.withdrawn, maxValue)}
+              r={14}
+              fill="transparent"
+              onPress={() => onDotPress(d, "withdrawn")}
+            />
             <SvgText
               x={xs[i]}
               y={CHART_H - 4}

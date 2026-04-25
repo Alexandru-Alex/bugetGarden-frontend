@@ -1,6 +1,6 @@
 import { BarType, StatBarChart, SummaryItem } from "@/components/stat-bar-chart";
 import { StatCategoryChart } from "@/components/stat-category-chart";
-import { GoalsPeriodItem, StatGoalsChart } from "@/components/stat-goals-chart";
+import { GoalsDotType, GoalsPeriodItem, StatGoalsChart } from "@/components/stat-goals-chart";
 import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
@@ -219,6 +219,15 @@ function StatisticsContent() {
     [showToast, symbol, activeTab],
   );
 
+  const handleGoalsDotPress = useCallback(
+    (item: GoalsPeriodItem, type: GoalsDotType) => {
+      const value = type === "deposited" ? item.deposited : item.withdrawn;
+      const label = type === "deposited" ? "Deposited" : "Withdrawn";
+      showToast(`${item.label} — ${label}: ${symbol}${formatAmount(value)}`);
+    },
+    [showToast, symbol],
+  );
+
   function handleTabChange(tab: StatTab) {
     setActiveTab(tab);
     setSelectedBar(null);
@@ -329,7 +338,7 @@ function StatisticsContent() {
                 <Text style={styles.chartEmptyText}>No data for this period</Text>
               </View>
             ) : (
-              <StatGoalsChart data={goalsData} />
+              <StatGoalsChart data={goalsData} onDotPress={handleGoalsDotPress} />
             )}
             <View style={styles.legend}>
               <View style={styles.legendItem}>
