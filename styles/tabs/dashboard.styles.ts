@@ -219,7 +219,7 @@ export const styles = StyleSheet.create({
   chartCenterAmount: {
     fontSize: 17,
     fontFamily: "Nunito_900Black",
-    color: "#1A2A1A",
+    color: "#346739",
   },
 
   // ── Legend ────────────────────────────────────────────────────────────────
@@ -251,12 +251,12 @@ export const styles = StyleSheet.create({
   },
   legendLabel: {
     flex: 1,
-    color: "#2A2A2A",
+    color: "#346739",
     fontSize: 14,
     fontFamily: "Nunito_700Bold",
   },
   legendValue: {
-    color: "#1A1A1A",
+    color: "#346739",
     fontSize: 14,
     fontFamily: "Nunito_900Black",
   },

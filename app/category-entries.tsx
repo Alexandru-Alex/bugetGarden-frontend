@@ -1,5 +1,6 @@
 import { NavMenu } from "@/components/nav-menu";
 import { api } from "@/lib/api";
+import { PAGE_SIZE, PagedResponse } from "@/lib/types";
 import { styles } from "@/styles/category-entries.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -28,20 +29,11 @@ interface FinancialEntryDto {
   color: string;
 }
 
-interface PagedResponse {
-  content: FinancialEntryDto[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-}
-
 interface Section {
   title: string;
   data: FinancialEntryDto[];
 }
 
-const PAGE_SIZE = 20;
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function formatEntryDate(dateStr: string): string {
@@ -92,7 +84,7 @@ export default function CategoryEntriesScreen() {
   } = useInfiniteQuery({
     queryKey: ["financial-entries", categoryId],
     queryFn: ({ pageParam = 0 }) =>
-      api.get<PagedResponse>(`/financial-entries?categoryId=${categoryId}&page=${pageParam}&size=${PAGE_SIZE}`),
+      api.get<PagedResponse<FinancialEntryDto>>(`/financial-entries?categoryId=${categoryId}&page=${pageParam}&size=${PAGE_SIZE}`),
     getNextPageParam: (lastPage) =>
       lastPage.page + 1 < lastPage.totalPages ? lastPage.page + 1 : undefined,
     initialPageParam: 0,

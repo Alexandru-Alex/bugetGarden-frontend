@@ -152,7 +152,7 @@ export const styles = StyleSheet.create({
   entryCategory: {
     fontSize: 14,
     fontFamily: "Nunito_800ExtraBold",
-    color: "#1A2A1A",
+    color: "#346739",
   },
   entryDescription: {
     fontSize: 12,
@@ -162,7 +162,7 @@ export const styles = StyleSheet.create({
   entryAmount: {
     fontSize: 15,
     fontFamily: "Nunito_900Black",
-    color: "#1A2A1A",
+    color: "#346739",
   },
 
   // ── States ───────────────────────────────────────────────────────────────────

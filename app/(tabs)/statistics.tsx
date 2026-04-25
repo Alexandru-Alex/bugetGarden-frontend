@@ -4,15 +4,18 @@ import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
+import { PAGE_SIZE, PagedResponse } from "@/lib/types";
 import { styles } from "@/styles/tabs/statistics.styles";
 import { sharedStyles } from "@/styles/shared.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Platform,
   Pressable,
   ScrollView,
@@ -158,15 +161,38 @@ function StatisticsContent() {
     [selectedBar?.barType, activeTab],
   );
 
-  const { data: transactions = [], isLoading: txLoading } = useQuery({
+  const {
+    data: txPages,
+    isLoading: txLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["statistics-transactions", txType, activePeriod, txReferenceDate],
-    queryFn: () =>
-      api.get<TransactionItem[]>(
-        `/statistics/transactions?type=${txType}&period=${activePeriod}&referenceDate=${txReferenceDate}`,
+    queryFn: ({ pageParam = 0 }) =>
+      api.get<PagedResponse<TransactionItem>>(
+        `/statistics/transactions?type=${txType}&period=${activePeriod}&referenceDate=${txReferenceDate}&page=${pageParam}&size=${PAGE_SIZE}`,
       ),
+    getNextPageParam: (lastPage) =>
+      lastPage.page + 1 < lastPage.totalPages ? lastPage.page + 1 : undefined,
+    initialPageParam: 0,
     enabled: txEnabled && txReferenceDate !== "",
     staleTime: 0,
   });
+
+  const transactions = useMemo(
+    () => txPages?.pages.flatMap((p) => p.content ?? []) ?? [],
+    [txPages],
+  );
+
+  const handleTxScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (!txEnabled || !hasNextPage || isFetchingNextPage) return;
+      const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
+      if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 120) fetchNextPage();
+    },
+    [txEnabled, hasNextPage, isFetchingNextPage, fetchNextPage],
+  );
 
   const handleBarPress = useCallback(
     (item: SummaryItem, barType: BarType) => {
@@ -241,7 +267,7 @@ function StatisticsContent() {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} onScroll={handleTxScroll} scrollEventThrottle={16}>
         <View style={styles.periodRow}>
             {STAT_PERIODS.map((period) => (
               <Pressable
@@ -297,25 +323,30 @@ function StatisticsContent() {
                   <Text style={styles.txEmptyText}>No transactions found</Text>
                 </View>
               ) : (
-                transactions.map((tx) => (
-                  <View key={tx.id} style={styles.txCard}>
-                    <View style={[styles.txIconCircle, { backgroundColor: tx.color + "22" }]}>
-                      <MaterialCommunityIcons name={tx.icon as any} size={20} color={tx.color} />
+                <>
+                  {transactions.map((tx) => (
+                    <View key={tx.id} style={styles.txCard}>
+                      <View style={[styles.txIconCircle, { backgroundColor: tx.color + "22" }]}>
+                        <MaterialCommunityIcons name={tx.icon as any} size={20} color={tx.color} />
+                      </View>
+                      <View style={styles.txInfo}>
+                        <Text style={styles.txCategory}>{tx.categoryName}</Text>
+                        {!!tx.description && (
+                          <Text style={styles.txDescription} numberOfLines={1}>
+                            {tx.description}
+                          </Text>
+                        )}
+                      </View>
+                      <View style={styles.txRight}>
+                        <Text style={styles.txAmount}>{symbol}{formatAmount(tx.amount)}</Text>
+                        <Text style={styles.txDate}>{formatEntryDate(tx.entryDate)}</Text>
+                      </View>
                     </View>
-                    <View style={styles.txInfo}>
-                      <Text style={styles.txCategory}>{tx.categoryName}</Text>
-                      {!!tx.description && (
-                        <Text style={styles.txDescription} numberOfLines={1}>
-                          {tx.description}
-                        </Text>
-                      )}
-                    </View>
-                    <View style={styles.txRight}>
-                      <Text style={styles.txAmount}>{symbol}{formatAmount(tx.amount)}</Text>
-                      <Text style={styles.txDate}>{formatEntryDate(tx.entryDate)}</Text>
-                    </View>
-                  </View>
-                ))
+                  ))}
+                  {isFetchingNextPage && (
+                    <ActivityIndicator style={styles.txFooterSpinner} size="small" color="#346739" />
+                  )}
+                </>
               )}
             </View>
           )}

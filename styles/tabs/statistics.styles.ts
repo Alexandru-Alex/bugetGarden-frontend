@@ -131,6 +131,9 @@ export const styles = StyleSheet.create({
 
   txSection: {
     marginHorizontal: 16,
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: 480,
   },
   txTitle: {
     fontFamily: "Nunito_700Bold",
@@ -199,5 +202,8 @@ export const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontSize: 13,
     color: "#9FCB98",
+  },
+  txFooterSpinner: {
+    marginVertical: 12,
   },
 });
