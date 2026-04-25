@@ -328,84 +328,94 @@ function StatisticsContent() {
             ))}
           </View>
 
-          <View style={isWide ? styles.chartsRow : null}>
-            <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
-              <Text style={styles.chartTitle}>Goals Activity</Text>
-              {goalsLoading ? (
-                <View style={styles.chartLoader}>
-                  <ActivityIndicator color="#346739" />
-                </View>
-              ) : goalsData.length === 0 ? (
-                <View style={styles.chartEmpty}>
-                  <Text style={styles.chartEmptyText}>No data for this period</Text>
-                </View>
-              ) : (
-                <StatGoalsChart data={goalsData} onDotPress={handleGoalsDotPress} />
-              )}
-              <View style={styles.legend}>
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
-                  <Text style={styles.legendText}>Deposited</Text>
-                </View>
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
-                  <Text style={styles.legendText}>Withdrawn</Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
-              <Text style={styles.chartTitle}>{CHART_TITLES[activeTab]}</Text>
-
-              {renderChart()}
-
-              {activeTab === "GENERAL" && (
-                <View style={styles.legend}>
-                  <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
-                    <Text style={styles.legendText}>Income</Text>
-                  </View>
-                  <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
-                    <Text style={styles.legendText}>Expense</Text>
-                  </View>
-                  <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
-                    <Text style={styles.legendText}>Profit</Text>
-                  </View>
-                  <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
-                    <Text style={styles.legendText}>Loss</Text>
-                  </View>
-                </View>
-              )}
-            </View>
-
-            <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
-              <Text style={styles.chartTitle}>Category Breakdown</Text>
-              {categoriesLoading ? (
-                <View style={styles.chartLoader}>
-                  <ActivityIndicator color="#346739" />
-                </View>
-              ) : categoriesData.length === 0 ? (
-                <View style={styles.chartEmpty}>
-                  <Text style={styles.chartEmptyText}>No data for this period</Text>
-                </View>
-              ) : (
-                <StatStackedChart data={categoriesData} onSegmentPress={handleSegmentPress} />
-              )}
-              {categoryLegendItems.length > 0 && (
-                <View style={styles.categoryLegend}>
-                  {categoryLegendItems.map((item) => (
-                    <View key={item.name} style={styles.legendItem}>
-                      <View style={[styles.legendDot, { backgroundColor: item.color }]} />
-                      <Text style={styles.legendText}>{item.name}</Text>
+          {(() => {
+            const summaryCard = (
+              <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
+                <Text style={styles.chartTitle}>{CHART_TITLES[activeTab]}</Text>
+                {renderChart()}
+                {activeTab === "GENERAL" && (
+                  <View style={styles.legend}>
+                    <View style={styles.legendItem}>
+                      <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
+                      <Text style={styles.legendText}>Income</Text>
                     </View>
-                  ))}
+                    <View style={styles.legendItem}>
+                      <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
+                      <Text style={styles.legendText}>Expense</Text>
+                    </View>
+                    <View style={styles.legendItem}>
+                      <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
+                      <Text style={styles.legendText}>Profit</Text>
+                    </View>
+                    <View style={styles.legendItem}>
+                      <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
+                      <Text style={styles.legendText}>Loss</Text>
+                    </View>
+                  </View>
+                )}
+              </View>
+            );
+
+            return (
+              <>
+                <View style={isWide ? styles.chartsRow : null}>
+                  <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
+                    <Text style={styles.chartTitle}>Goals Activity</Text>
+                    {goalsLoading ? (
+                      <View style={styles.chartLoader}>
+                        <ActivityIndicator color="#346739" />
+                      </View>
+                    ) : goalsData.length === 0 ? (
+                      <View style={styles.chartEmpty}>
+                        <Text style={styles.chartEmptyText}>No data for this period</Text>
+                      </View>
+                    ) : (
+                      <StatGoalsChart data={goalsData} onDotPress={handleGoalsDotPress} />
+                    )}
+                    <View style={styles.legend}>
+                      <View style={styles.legendItem}>
+                        <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
+                        <Text style={styles.legendText}>Deposited</Text>
+                      </View>
+                      <View style={styles.legendItem}>
+                        <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
+                        <Text style={styles.legendText}>Withdrawn</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  {isWide && summaryCard}
+
+                  <View style={[styles.chartCard, isWide && styles.chartCardWide]}>
+                    <Text style={styles.chartTitle}>Category Breakdown</Text>
+                    {categoriesLoading ? (
+                      <View style={styles.chartLoader}>
+                        <ActivityIndicator color="#346739" />
+                      </View>
+                    ) : categoriesData.length === 0 ? (
+                      <View style={styles.chartEmpty}>
+                        <Text style={styles.chartEmptyText}>No data for this period</Text>
+                      </View>
+                    ) : (
+                      <StatStackedChart data={categoriesData} onSegmentPress={handleSegmentPress} />
+                    )}
+                    {categoryLegendItems.length > 0 && (
+                      <View style={styles.categoryLegend}>
+                        {categoryLegendItems.map((item) => (
+                          <View key={item.name} style={styles.legendItem}>
+                            <View style={[styles.legendDot, { backgroundColor: item.color }]} />
+                            <Text style={styles.legendText}>{item.name}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+                  </View>
                 </View>
-              )}
-            </View>
-          </View>
+
+                {!isWide && summaryCard}
+              </>
+            );
+          })()}
 
           {selectedBar && selectedBar.barType !== "profit" && (
             <View style={styles.txSection}>
