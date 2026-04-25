@@ -11,7 +11,7 @@ export type BarType = "income" | "expense" | "profit";
 
 interface Props {
   data: SummaryItem[];
-  onBarPress: (item: SummaryItem, barType: BarType) => void;
+  onBarPress: (item: SummaryItem, barType: BarType, position: { x: number; y: number }) => void;
 }
 
 const BAR_WIDTH = 18;
@@ -49,7 +49,7 @@ export function StatBarChart({ data, onBarPress }: Props) {
             <View style={styles.barsRow}>
               <Pressable
                 style={styles.barWrapper}
-                onPress={() => onBarPress(item, "income")}
+                onPress={(e) => onBarPress(item, "income", { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY })}
                 disabled={inc === 0}
               >
                 <View
@@ -63,7 +63,7 @@ export function StatBarChart({ data, onBarPress }: Props) {
 
               <Pressable
                 style={styles.barWrapper}
-                onPress={() => onBarPress(item, "expense")}
+                onPress={(e) => onBarPress(item, "expense", { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY })}
                 disabled={exp === 0}
               >
                 <View
@@ -77,7 +77,7 @@ export function StatBarChart({ data, onBarPress }: Props) {
 
               <Pressable
                 style={styles.barWrapper}
-                onPress={() => onBarPress(item, "profit")}
+                onPress={(e) => onBarPress(item, "profit", { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY })}
                 disabled={profit === 0}
               >
                 <View

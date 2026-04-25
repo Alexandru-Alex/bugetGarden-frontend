@@ -81,14 +81,6 @@ function toReferenceDate(label: string, period: StatPeriod): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-function barLabel(barType: BarType, item: SummaryItem, symbol: string): string {
-  const inc = item.income ?? 0;
-  const exp = item.expenses ?? 0;
-  const profit = inc - exp;
-  if (barType === "income") return `Income: ${symbol}${formatAmount(inc)}`;
-  if (barType === "expense") return `Expense: ${symbol}${formatAmount(exp)}`;
-  return `${profit >= 0 ? "Profit" : "Loss"}: ${symbol}${formatAmount(Math.abs(profit))}`;
-}
 
 function currencySymbolFor(currency?: string) {
   const upper = currency?.toUpperCase();
@@ -206,8 +198,11 @@ function StatisticsContent() {
   );
 
   const handleBarPress = useCallback(
-    (item: SummaryItem, barType: BarType) => {
-      showToast(barLabel(barType, item, symbol));
+    (item: SummaryItem, barType: BarType, position: { x: number; y: number }) => {
+      const inc = item.income ?? 0;
+      const exp = item.expenses ?? 0;
+      const value = barType === "income" ? inc : barType === "expense" ? exp : Math.abs(inc - exp);
+      showToast(`${symbol}${formatAmount(value)}`, position);
       if (barType !== "profit") {
         setSelectedBar({ barType, item });
       }
@@ -216,9 +211,9 @@ function StatisticsContent() {
   );
 
   const handleCategoryBarPress = useCallback(
-    (item: SummaryItem) => {
+    (item: SummaryItem, position: { x: number; y: number }) => {
       const value = activeTab === "INCOME" ? (item.income ?? 0) : (item.expenses ?? 0);
-      showToast(`${item.label}: ${symbol}${formatAmount(value)}`);
+      showToast(`${symbol}${formatAmount(value)}`, position);
     },
     [showToast, symbol, activeTab],
   );

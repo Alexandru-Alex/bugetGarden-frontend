@@ -9,7 +9,7 @@ const MAX_HEIGHT = 140;
 interface Props {
   data: SummaryItem[];
   type: "INCOME" | "EXPENSES";
-  onBarPress: (item: SummaryItem) => void;
+  onBarPress: (item: SummaryItem, position: { x: number; y: number }) => void;
 }
 
 function barHeight(value: number, maxValue: number) {
@@ -38,7 +38,7 @@ export function StatCategoryChart({ data, type, onBarPress }: Props) {
             <View style={styles.barWrapper}>
               <Pressable
                 style={styles.barArea}
-                onPress={() => onBarPress(item)}
+                onPress={(e) => onBarPress(item, { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY })}
                 disabled={value === 0}
               >
                 <View
