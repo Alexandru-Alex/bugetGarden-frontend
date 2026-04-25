@@ -218,21 +218,6 @@ function StatisticsContent() {
           <View style={styles.chartCard}>
             <Text style={styles.chartTitle}>{chartTitle}</Text>
 
-            <View style={styles.legend}>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
-                <Text style={styles.legendText}>Income</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
-                <Text style={styles.legendText}>Expense</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
-                <Text style={styles.legendText}>Profit/Loss</Text>
-              </View>
-            </View>
-
             {summaryLoading ? (
               <View style={styles.chartLoader}>
                 <ActivityIndicator color="#346739" />
@@ -244,6 +229,25 @@ function StatisticsContent() {
             ) : (
               <StatBarChart data={summaryData} onBarPress={handleBarPress} />
             )}
+
+            <View style={styles.legend}>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: "#79AE6F" }]} />
+                <Text style={styles.legendText}>Income</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: "#FF6B6B" }]} />
+                <Text style={styles.legendText}>Expense</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: "#346739" }]} />
+                <Text style={styles.legendText}>Profit</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: "#FFAA44" }]} />
+                <Text style={styles.legendText}>Loss</Text>
+              </View>
+            </View>
           </View>
 
           {selectedBar && selectedBar.barType !== "profit" && (
