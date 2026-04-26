@@ -53,74 +53,98 @@ export const styles = StyleSheet.create({
     marginTop: 16,
   },
 
-  // ── Achievement card ──────────────────────────────────────────────────────
+  // ── Achievement row ───────────────────────────────────────────────────────
 
-  card: {
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 20,
     marginBottom: 10,
     backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 14,
     borderWidth: 1.5,
     borderColor: "#C8DFC6",
     shadowColor: "#346739",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.07,
     shadowRadius: 6,
     elevation: 2,
+    gap: 14,
   },
-  cardLocked: {
-    opacity: 0.5,
+  rowLocked: {
+    borderColor: "#D8D8D8",
+    backgroundColor: "#F8F8F8",
+    shadowOpacity: 0,
+    elevation: 0,
   },
-  cardTitle: {
+
+  // ── Badge ────────────────────────────────────────────────────────────────
+
+  badge: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  badgeEmoji: {
+    fontSize: 26,
+  },
+
+  // ── Content (right of badge) ──────────────────────────────────────────────
+
+  content: {
+    flex: 1,
+    gap: 6,
+  },
+  title: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 15,
+    fontSize: 14,
     color: "#1A2A1A",
-    marginBottom: 8,
+    lineHeight: 18,
+  },
+  titleLocked: {
+    color: "#999999",
   },
 
   // ── Progress bar ──────────────────────────────────────────────────────────
 
   progressBar: {
     height: 6,
-    backgroundColor: "#E8F2E8",
+    backgroundColor: "#E8E8E8",
     borderRadius: 3,
     overflow: "hidden",
-    marginBottom: 6,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#346739",
     borderRadius: 3,
   },
-  progressFillUnlocked: {
-    backgroundColor: "#52B788",
-  },
 
-  // ── Meta row ──────────────────────────────────────────────────────────────
+  // ── Meta ──────────────────────────────────────────────────────────────────
 
   meta: {
     flexDirection: "row",
-    gap: 12,
     alignItems: "center",
+    gap: 10,
   },
-  metaText: {
+  metaCount: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 12,
-    color: "#5A8A5A",
-  },
-
-  // ── Difficulty badge ──────────────────────────────────────────────────────
-
-  difficultyBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-    alignSelf: "flex-start",
-    marginBottom: 8,
-  },
-  difficultyText: {
     fontSize: 11,
+    color: "#888888",
+  },
+  metaCoins: {
     fontFamily: "Nunito_700Bold",
+    fontSize: 11,
+  },
+  metaFlower: {
+    fontSize: 12,
+  },
+  unlockedBadge: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 10,
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
 });
