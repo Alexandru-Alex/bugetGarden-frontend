@@ -5,6 +5,7 @@ import { formatDateISO } from "@/lib/date";
 import { inputOutline, styles } from "@/styles/edit-entry.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTaskProgress } from "@/hooks/use-task-progress";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
@@ -39,6 +40,7 @@ export default function EditEntryScreen() {
 
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
+  const { checkProgress } = useTaskProgress();
 
   const [amount, setAmount] = useState(initialAmount ?? "");
   const [description, setDescription] = useState(initialDescription ?? "");
@@ -70,6 +72,7 @@ export default function EditEntryScreen() {
       queryClient.invalidateQueries({ queryKey: ["summary"] });
       queryClient.invalidateQueries({ queryKey: ["budgets"] });
       router.back();
+      void checkProgress();
     },
   });
 
@@ -80,6 +83,7 @@ export default function EditEntryScreen() {
       queryClient.invalidateQueries({ queryKey: ["summary"] });
       queryClient.invalidateQueries({ queryKey: ["budgets"] });
       router.back();
+      void checkProgress();
     },
   });
 

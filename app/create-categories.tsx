@@ -4,6 +4,7 @@ import { styles } from "@/styles/create-categories.styles";
 import { sharedStyles } from "@/styles/shared.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTaskProgress } from "@/hooks/use-task-progress";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -76,6 +77,7 @@ export default function CreateCategoriesScreen() {
 
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
+  const { checkProgress } = useTaskProgress();
 
   useEffect(() => {
     getStoredToken().then(setToken);
@@ -86,6 +88,7 @@ export default function CreateCategoriesScreen() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       router.replace({ pathname: "/manage-categories", params: { deleted: "true" } });
+      void checkProgress();
     },
     onError: (err: unknown) => {
       const msg = err instanceof Error ? err.message : "Could not delete category.";
@@ -105,6 +108,7 @@ export default function CreateCategoriesScreen() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       router.canGoBack() ? router.back() : router.replace("/manage-categories");
+      void checkProgress();
     },
   });
 
