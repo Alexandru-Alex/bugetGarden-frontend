@@ -10,39 +10,42 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Platform, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const DIFFICULTY: Record<
-  string,
-  { emoji: string; badgeBg: string; fillColor: string; coinsColor: string; unlockedLabel: string; unlockedColor: string }
-> = {
+const DIFFICULTY: Record<string, {
+  emoji: string;
+  gradient: [string, string];
+  ring: string;
+  fillColor: string;
+  coinsColor: string;
+  unlockedColor: string;
+  shadowColor: string;
+}> = {
   easy: {
-    emoji: "🌿",
-    badgeBg: "#E8F5E9",
+    emoji: "🌱",
+    gradient: ["#D8F3DC", "#95D5B2"],
+    ring: "#74C69D",
     fillColor: "#52B788",
-    coinsColor: "#2E7D32",
-    unlockedLabel: "✓ Done",
-    unlockedColor: "#2E7D32",
+    coinsColor: "#2D6A4F",
+    unlockedColor: "#2D6A4F",
+    shadowColor: "#52B788",
   },
   medium: {
-    emoji: "⚡",
-    badgeBg: "#FFF8E1",
-    fillColor: "#FFC107",
-    coinsColor: "#B8860B",
-    unlockedLabel: "✓ Done",
-    unlockedColor: "#B8860B",
+    emoji: "🌿",
+    gradient: ["#FFF9C4", "#FFE082"],
+    ring: "#FFD54F",
+    fillColor: "#F9A825",
+    coinsColor: "#E65100",
+    unlockedColor: "#E65100",
+    shadowColor: "#F9C74F",
   },
   hard: {
-    emoji: "💎",
-    badgeBg: "#FCE4EC",
-    fillColor: "#FF6B6B",
-    coinsColor: "#C62828",
-    unlockedLabel: "✓ Done",
-    unlockedColor: "#C62828",
+    emoji: "🌳",
+    gradient: ["#2D6A4F", "#1B4332"],
+    ring: "#52B788",
+    fillColor: "#40916C",
+    coinsColor: "#1B4332",
+    unlockedColor: "#1B4332",
+    shadowColor: "#2D6A4F",
   },
-};
-
-const LOCKED_CONFIG = {
-  badgeBg: "#EBEBEB",
-  fillColor: "#CCCCCC",
 };
 
 export default function AchievementsScreen() {
@@ -99,7 +102,6 @@ export default function AchievementsScreen() {
                 {unlocked.map((a) => <AchievementRow key={a.id} achievement={a} />)}
               </>
             )}
-
             {locked.length > 0 && (
               <>
                 <Text style={styles.sectionTitle}>In progress ({locked.length})</Text>
@@ -117,40 +119,53 @@ function AchievementRow({ achievement: a }: { achievement: AchievementDto }) {
   const cfg = DIFFICULTY[a.difficulty] ?? DIFFICULTY.easy;
   const progress = Math.min(a.currentCount / a.targetCount, 1);
 
-  const badgeBg = a.unlocked ? cfg.badgeBg : LOCKED_CONFIG.badgeBg;
-  const fillColor = a.unlocked ? cfg.fillColor : LOCKED_CONFIG.fillColor;
-
   return (
-    <View style={[styles.row, !a.unlocked && styles.rowLocked]}>
-      <View style={[styles.badge, { backgroundColor: badgeBg }]}>
-        <Text style={[styles.badgeEmoji, !a.unlocked && { opacity: 0.35 }]}>
-          {a.unlocked ? cfg.emoji : "🔒"}
-        </Text>
+    <View style={[
+      styles.row,
+      a.unlocked
+        ? { borderColor: cfg.ring, shadowColor: cfg.shadowColor, shadowOpacity: 0.18 }
+        : styles.rowLocked,
+    ]}>
+      {/* Badge */}
+      <View style={[styles.badgeRing, a.unlocked && { borderColor: cfg.ring }]}>
+        {a.unlocked ? (
+          <LinearGradient
+            colors={cfg.gradient}
+            start={{ x: 0.15, y: 0 }}
+            end={{ x: 0.85, y: 1 }}
+            style={styles.badgeGradient}
+          >
+            <Text style={styles.badgeEmoji}>{cfg.emoji}</Text>
+          </LinearGradient>
+        ) : (
+          <View style={[styles.badgeGradient, styles.badgeGradientLocked]}>
+            <Text style={[styles.badgeEmoji, { opacity: 0.28 }]}>{cfg.emoji}</Text>
+            <Text style={styles.lockIcon}>🔒</Text>
+          </View>
+        )}
       </View>
 
+      {/* Content */}
       <View style={styles.content}>
         <Text style={[styles.title, !a.unlocked && styles.titleLocked]}>
           {a.title}
         </Text>
 
-        <View style={styles.progressBar}>
-          <View
-            style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: fillColor }]}
-          />
+        <View style={styles.progressTrack}>
+          <View style={[
+            styles.progressFill,
+            { width: `${progress * 100}%`, backgroundColor: a.unlocked ? cfg.fillColor : "#CCCCCC" },
+          ]} />
         </View>
 
         <View style={styles.meta}>
-          <Text style={styles.metaCount}>
-            {a.currentCount}/{a.targetCount}
-          </Text>
-          <Text style={[styles.metaCoins, { color: a.unlocked ? cfg.coinsColor : "#AAAAAA" }]}>
+          <Text style={styles.metaCount}>{a.currentCount}/{a.targetCount}</Text>
+          <Text style={[styles.metaCoins, { color: a.unlocked ? cfg.coinsColor : "#BBBBBB" }]}>
             +{a.coinReward} coins
           </Text>
-          {a.difficulty === "hard" && <Text style={styles.metaFlower}>🌸</Text>}
+          {a.difficulty === "hard" && <Text style={styles.metaExtra}>🌸</Text>}
           {a.unlocked && (
-            <Text style={[styles.unlockedBadge, { color: cfg.unlockedColor }]}>
-              {cfg.unlockedLabel}
-            </Text>
+            <Text style={[styles.doneLabel, { color: cfg.unlockedColor }]}>✓ Done</Text>
           )}
         </View>
       </View>

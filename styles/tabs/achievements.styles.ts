@@ -18,11 +18,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerLabel: {
-    fontSize: 13,
-    fontFamily: "Nunito_700Bold",
-    color: "rgba(255,255,255,0.85)",
-    letterSpacing: 2.5,
-    textTransform: "uppercase",
+    fontFamily: "Nunito_900Black",
+    fontSize: 28,
+    color: "#fff",
+    textAlign: "center",
     marginBottom: 4,
   },
 
@@ -40,7 +39,7 @@ export const styles = StyleSheet.create({
     borderTopRightRadius: 28,
   },
 
-  // ── Section ───────────────────────────────────────────────────────────────
+  // ── Section title ─────────────────────────────────────────────────────────
 
   sectionTitle: {
     fontSize: 12,
@@ -53,7 +52,7 @@ export const styles = StyleSheet.create({
     marginTop: 16,
   },
 
-  // ── Achievement row ───────────────────────────────────────────────────────
+  // ── Row card ──────────────────────────────────────────────────────────────
 
   row: {
     flexDirection: "row",
@@ -61,90 +60,107 @@ export const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 10,
     backgroundColor: "#FFFFFF",
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 14,
     borderWidth: 1.5,
     borderColor: "#C8DFC6",
-    shadowColor: "#346739",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 8,
+    elevation: 3,
     gap: 14,
   },
   rowLocked: {
-    borderColor: "#D8D8D8",
-    backgroundColor: "#F8F8F8",
+    borderColor: "#E2E2E2",
+    backgroundColor: "#F9F9F9",
     shadowOpacity: 0,
     elevation: 0,
   },
 
-  // ── Badge ────────────────────────────────────────────────────────────────
+  // ── Badge ring + gradient ─────────────────────────────────────────────────
 
-  badge: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+  badgeRing: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 2.5,
+    borderColor: "#DEDEDE",
+    padding: 3,
+    flexShrink: 0,
+  },
+  badgeGradient: {
+    flex: 1,
+    borderRadius: 26,
     alignItems: "center",
     justifyContent: "center",
-    flexShrink: 0,
+  },
+  badgeGradientLocked: {
+    backgroundColor: "#E8E8E8",
+    position: "relative",
   },
   badgeEmoji: {
     fontSize: 26,
+    lineHeight: 30,
+  },
+  lockIcon: {
+    position: "absolute",
+    fontSize: 12,
+    bottom: 2,
+    right: 2,
   },
 
-  // ── Content (right of badge) ──────────────────────────────────────────────
+  // ── Content ───────────────────────────────────────────────────────────────
 
   content: {
     flex: 1,
-    gap: 6,
+    gap: 7,
   },
   title: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
     color: "#1A2A1A",
-    lineHeight: 18,
+    lineHeight: 19,
   },
   titleLocked: {
-    color: "#999999",
+    color: "#A0A0A0",
   },
 
   // ── Progress bar ──────────────────────────────────────────────────────────
 
-  progressBar: {
-    height: 6,
-    backgroundColor: "#E8E8E8",
-    borderRadius: 3,
+  progressTrack: {
+    height: 7,
+    backgroundColor: "#EDF2ED",
+    borderRadius: 4,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    borderRadius: 3,
+    borderRadius: 4,
   },
 
-  // ── Meta ──────────────────────────────────────────────────────────────────
+  // ── Meta row ──────────────────────────────────────────────────────────────
 
   meta: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
   },
   metaCount: {
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
-    color: "#888888",
+    color: "#AAAAAA",
   },
   metaCoins: {
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
   },
-  metaFlower: {
+  metaExtra: {
     fontSize: 12,
   },
-  unlockedBadge: {
+  doneLabel: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 10,
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
     textTransform: "uppercase",
+    marginLeft: 2,
   },
 });
