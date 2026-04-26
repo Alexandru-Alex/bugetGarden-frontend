@@ -1790,7 +1790,7 @@ export default function AchievementsScreen() {
 
           {unlocked.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>Deblocate ({unlocked.length})</Text>
+              <Text style={styles.sectionTitle}>Unlocked ({unlocked.length})</Text>
               {unlocked.map((a) => <AchievementCard key={a.id} achievement={a} />)}
             </>
           )}
@@ -1884,23 +1884,7 @@ onSuccess: async () => {
 }
 ```
 
-- [ ] **Step 4: Testează end-to-end**
 
-1. Pornește backend: `./mvnw spring-boot:run`
-2. Asignează manual task-uri unui user (SQL din Task 10, Step 4)
-3. Pornește frontend: `npx expo start`
-4. Navighează la `/tasks` → verifică că task-urile apar
-5. Adaugă o tranzacție → verifică că bara de progres se actualizează
-6. Navighează la `/achievements` → verifică că progresul se actualizează
-
-- [ ] **Step 5: Commit final**
-
-```bash
-git add app/\(tabs\)/_layout.tsx
-git commit -m "feat: wire up tasks and achievements routes and progress checks"
-```
-
----
 
 ## Checklist final
 

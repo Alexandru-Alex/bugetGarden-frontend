@@ -18,11 +18,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerLabel: {
-    fontSize: 13,
-    fontFamily: "Nunito_700Bold",
-    color: "rgba(255,255,255,0.85)",
-    letterSpacing: 2.5,
-    textTransform: "uppercase",
+    fontFamily: "Nunito_900Black",
+    fontSize: 28,
+    color: "#fff",
+    textAlign: "center",
     marginBottom: 4,
   },
 

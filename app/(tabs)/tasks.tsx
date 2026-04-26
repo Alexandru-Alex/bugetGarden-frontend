@@ -1,9 +1,9 @@
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
+import { TASKS_MONTH_KEY, TASKS_TODAY_KEY } from "@/hooks/use-task-progress";
 import { getStoredToken } from "@/lib/api";
 import { fetchMonthTasks, fetchTodayTasks, TaskDto } from "@/lib/tasks-api";
 import { styles } from "@/styles/tabs/tasks.styles";
-import { TASKS_MONTH_KEY, TASKS_TODAY_KEY } from "@/hooks/use-task-progress";
 import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
@@ -65,7 +65,7 @@ export default function TasksScreen() {
                 onPress={() => setActiveTab(tab)}
               >
                 <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-                  {tab === "daily" ? "Zilnice" : "Lunare"}
+                  {tab === "daily" ? "Daily" : "Monthly"}
                 </Text>
               </Pressable>
             ))}
@@ -78,8 +78,8 @@ export default function TasksScreen() {
               {tasks.length === 0 && (
                 <Text style={styles.emptyText}>
                   {activeTab === "daily"
-                    ? "Nu ai task-uri asignate pentru azi."
-                    : "Nu ai task-uri lunare asignate."}
+                    ? "You don’t have any tasks assigned for today."
+                    : "You don’t have any monthly tasks assigned."}
                 </Text>
               )}
 
@@ -90,9 +90,9 @@ export default function TasksScreen() {
                   <Text style={styles.bonusText}>
                     {allDone
                       ? activeTab === "daily"
-                        ? "🌸 Ai completat toate task-urile zilnice! Primești o floare bonus."
-                        : "🌺 Ai completat toate task-urile lunare! Primești coins bonus + o floare deblocată."
-                      : `${completed}/${tasks.length} completate — mai ai ${tasks.length - completed} pentru bonus`}
+                        ? "🌸 You’ve completed all daily tasks! You receive a bonus flower."
+                        : "🌺 You’ve completed all monthly tasks! You receive bonus coins + an unlocked flower."
+                      : `${completed}/${tasks.length} completed — you still have ${tasks.length - completed} left for the bonus`}
                   </Text>
                 </View>
               )}
@@ -122,7 +122,7 @@ function TaskCard({ task }: { task: TaskDto }) {
       <View style={styles.rewardRow}>
         <Text style={styles.rewardText}>{task.currentCount}/{task.targetCount}</Text>
         <Text style={styles.rewardText}>+{task.coinReward} coins</Text>
-        <Text style={styles.rewardText}>+{task.scoreReward} scor</Text>
+        <Text style={styles.rewardText}>+{task.scoreReward} budget score</Text>
         {task.completed && <Text style={styles.rewardText}>✅</Text>}
       </View>
     </View>
