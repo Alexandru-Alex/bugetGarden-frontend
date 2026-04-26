@@ -25,11 +25,12 @@ const MENU_ITEMS = [
 ];
 
 const SECONDARY_ITEMS = [
-  { label: "Achievements", icon: "trophy-outline"     as const, path: "" },
   { label: "Store",        icon: "storefront-outline" as const, path: "/store"  },
   { label: "Categories",   icon: "pricetag-outline"   as const, path: "/manage-categories" },
   { label: "Budgets",      icon: "wallet-outline"     as const, path: "/budgets" },
   { label: "Goals",        icon: "flag-outline"       as const, path: "/goals" },
+  { label: "Tasks",        icon: "checkmark-circle-outline" as const, path: "/tasks" },
+  { label: "Achievements", icon: "trophy-outline"     as const, path: "/achievements" },
   { label: "Settings",     icon: "settings-outline"   as const, path: ""     },
 ];
 
