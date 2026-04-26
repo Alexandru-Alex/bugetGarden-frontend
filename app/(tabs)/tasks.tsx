@@ -46,7 +46,7 @@ export default function TasksScreen() {
       >
         <SafeAreaView edges={["top"]}>
           <View style={styles.headerSection}>
-            <Text style={styles.headerLabel}>Task-uri</Text>
+            <Text style={styles.headerLabel}>Tasks</Text>
           </View>
         </SafeAreaView>
       </LinearGradient>
