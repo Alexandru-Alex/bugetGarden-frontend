@@ -227,14 +227,16 @@ export default function StoreScreen() {
               <Text style={styles.headerTitle}>Shop the garden</Text>
               <Text style={styles.headerSubtitle}>Fresh seasonal blooms and rare hybrids.</Text>
             </View>
-            <View style={styles.coinBadge}>
+            <View style={styles.coinWidget}>
               <Image
                 source={require("../assets/images/coin.png")}
                 style={styles.coinImg}
               />
-              <Text style={styles.coinText}>
-                {account?.goldCoins?.toLocaleString() ?? "—"}
-              </Text>
+              <View style={styles.coinBadge}>
+                <Text style={styles.coinText}>
+                  {account?.goldCoins?.toLocaleString() ?? "—"}
+                </Text>
+              </View>
             </View>
           </View>
         </SafeAreaView>

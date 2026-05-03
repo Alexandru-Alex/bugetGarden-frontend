@@ -35,26 +35,31 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: "#9FCB98",
   },
-  coinBadge: {
+  coinWidget: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    backgroundColor: "#c8d0c0",
-    borderRadius: 999,
-    paddingVertical: 4,
-    paddingLeft: 4,
-    paddingRight: 14,
     marginLeft: 12,
   },
   coinImg: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
+    marginRight: -15,
+    zIndex: 1,
+  },
+  coinBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.22)",
+    paddingLeft: 20,
+    paddingRight: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
   },
   coinText: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
-    color: "#1a2a1d",
+    color: "#FFE566",
   },
 
   // ── Scroll ────────────────────────────────────────────────────────────────
