@@ -247,6 +247,7 @@ export default function StoreScreen() {
   const [selectedFlower, setSelectedFlower] = useState<Flower | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
   const [gridWidth, setGridWidth] = useState(0);
+  const [gridOffsetY, setGridOffsetY] = useState(0);
   const { width: screenWidth } = useWindowDimensions();
 
   const isWide = Platform.OS === "web" && screenWidth >= 600;
@@ -342,7 +343,10 @@ export default function StoreScreen() {
               <Text style={styles.sectionTitle}>Popular this week</Text>
               <View
                 style={styles.grid}
-                onLayout={e => setGridWidth(e.nativeEvent.layout.width)}
+                onLayout={e => {
+                  setGridWidth(e.nativeEvent.layout.width);
+                  setGridOffsetY(e.nativeEvent.layout.y);
+                }}
               >
                 {filtered.map(flower => (
                   <FlowerCard
@@ -354,7 +358,7 @@ export default function StoreScreen() {
                 ))}
               </View>
             </View>
-            <View style={styles.sideCol}>
+            <View style={[styles.sideCol, { marginTop: gridOffsetY }]}>
               <DailyBonusCard />
               <ProgressCard owned={0} total={CATALOG.length} />
             </View>
