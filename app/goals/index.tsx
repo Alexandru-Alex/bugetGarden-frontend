@@ -555,7 +555,7 @@ export default function GoalsScreen() {
     mutationFn: (req: { goalId: string; amount: number; type: GoalTransactionType; date: string; note?: string }) =>
       api.post<GoalDto>("/goals/transaction", req),
     onSuccess: (updatedGoal, { goalId, amount, type }) => {
-      queryClient.setQueryData<GoalDto[]>(ACTIVE_GOALS_KEY, prev =>
+      queryClient.setQueryData<GoalDto[]>(ACTIVE_GOALS_KEY, (prev): GoalDto[] =>
         (prev ?? []).map(g => {
           if (g.id !== goalId) return g;
           if (updatedGoal) return updatedGoal;
@@ -576,7 +576,7 @@ export default function GoalsScreen() {
     mutationFn: (goal: GoalDto) => api.delete(`/goals?goalId=${goal.id}`),
     onSuccess: (_, goal) => {
       const key = goal.status === "active" ? ACTIVE_GOALS_KEY : ARCHIVED_GOALS_KEY;
-      queryClient.setQueryData<GoalDto[]>(key, prev =>
+      queryClient.setQueryData<GoalDto[]>(key, (prev): GoalDto[] =>
         (prev ?? []).filter(g => g.id !== goal.id)
       );
       void checkProgress();
