@@ -16,12 +16,20 @@ export const styles = StyleSheet.create({
     paddingBottom: 8,
     flexDirection: "row",
     alignItems: "flex-start",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
   },
   headerInnerMobile: {
     paddingLeft: 64,
+    justifyContent: "space-between",
   },
   headerText: {
+    flex: 1,
+  },
+  headerTextWeb: {
+    flex: undefined,
+    position: "absolute",
+    left: 16,
+    right: 16,
     alignItems: "center",
   },
   headerTitle: {
