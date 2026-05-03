@@ -192,4 +192,7 @@ export const styles = StyleSheet.create({
     marginTop: 40,
     paddingHorizontal: 32,
   },
+  loader: {
+    marginTop: 40,
+  },
 });

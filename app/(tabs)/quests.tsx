@@ -84,7 +84,7 @@ export default function QuestsScreen() {
             showsVerticalScrollIndicator={false}
           >
             {isLoading && (
-              <ActivityIndicator color="#FFFFFF" style={{ marginTop: 40 }} />
+              <ActivityIndicator color="#FFFFFF" style={styles.loader} />
             )}
 
             {!isLoading && (
@@ -140,8 +140,8 @@ function SummaryCard({ completed, total }: { completed: number; total: number })
 }
 
 function QuestCard({ task }: { task: TaskDto }) {
-  const progress = Math.min(task.currentCount / task.targetCount, 1);
-  const labelColor = progress < 0.3 ? "#5A8A5A" : "#FFFFFF";
+  const progress = task.targetCount > 0 ? Math.min(task.currentCount / task.targetCount, 1) : 0;
+  const labelColor = progress < 0.5 ? "#5A8A5A" : "#FFFFFF";
 
   return (
     <View style={styles.taskCard}>
