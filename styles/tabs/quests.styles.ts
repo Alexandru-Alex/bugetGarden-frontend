@@ -116,8 +116,8 @@ export const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   chestImage: {
-    width: 72,
-    height: 72,
+    width: 56,
+    height: 56,
   },
 
   // ── Quest card ────────────────────────────────────────────────────────────
