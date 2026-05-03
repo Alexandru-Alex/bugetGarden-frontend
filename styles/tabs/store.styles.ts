@@ -86,20 +86,20 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   innerWeb: {
-    maxWidth: 900,
-    alignSelf: "center",
-    width: "100%",
-  },
-  gridWithSidebar: {
-    flexDirection: "row",
-    gap: 20,
-    alignItems: "flex-start",
-  },
-  gridCol: {
     flex: 1,
+    maxWidth: 900,
+  },
+  webContentRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  webSpacer: {
+    width: 230,
   },
   sideCol: {
     width: 210,
+    marginLeft: 20,
     gap: 12,
   },
 
