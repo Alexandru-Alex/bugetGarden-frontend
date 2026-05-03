@@ -1,7 +1,7 @@
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { getStoredToken } from "@/lib/api";
-import { AchievementDto, fetchAchievements } from "@/lib/tasks-api";
+import { AchievementDto, fetchAchievements } from "@/lib/quests-api";
 import { styles } from "@/styles/tabs/achievements.styles";
 import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
@@ -92,24 +92,26 @@ export default function AchievementsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {isLoading && <ActivityIndicator color="#346739" style={{ marginTop: 40 }} />}
+        <View style={styles.scrollInner}>
+          {isLoading && <ActivityIndicator color="#346739" style={{ marginTop: 40 }} />}
 
-        {!isLoading && (
-          <>
-            {unlocked.length > 0 && (
-              <>
-                <Text style={styles.sectionTitle}>Unlocked ({unlocked.length})</Text>
-                {unlocked.map((a) => <AchievementRow key={a.id} achievement={a} />)}
-              </>
-            )}
-            {locked.length > 0 && (
-              <>
-                <Text style={styles.sectionTitle}>In progress ({locked.length})</Text>
-                {locked.map((a) => <AchievementRow key={a.id} achievement={a} />)}
-              </>
-            )}
-          </>
-        )}
+          {!isLoading && (
+            <>
+              {unlocked.length > 0 && (
+                <>
+                  <Text style={styles.sectionTitle}>Unlocked ({unlocked.length})</Text>
+                  {unlocked.map((a) => <AchievementRow key={a.id} achievement={a} />)}
+                </>
+              )}
+              {locked.length > 0 && (
+                <>
+                  <Text style={styles.sectionTitle}>In progress ({locked.length})</Text>
+                  {locked.map((a) => <AchievementRow key={a.id} achievement={a} />)}
+                </>
+              )}
+            </>
+          )}
+        </View>
       </ScrollView>
     </PageTransition>
   );

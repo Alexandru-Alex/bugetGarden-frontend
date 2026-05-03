@@ -5,7 +5,11 @@
       "Read(//c/Program Files/Android/**)",
       "Read(//d//**)",
       "Bash(powershell.exe:*)",
-      "Bash(npx expo:*)"
+      "Bash(npx expo:*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(grep *)",
+      "Bash(git *)"
     ]
   }
 }
