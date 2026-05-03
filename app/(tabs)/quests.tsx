@@ -10,6 +10,7 @@ import { Redirect } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Platform,
   Pressable,
   ScrollView,
@@ -125,7 +126,16 @@ export default function QuestsScreen() {
   );
 }
 
+const chestImages = [
+  require("@/assets/images/chest_quests_1.png"),
+  require("@/assets/images/chest_quests_2.png"),
+  require("@/assets/images/chest_quests_3.png"),
+];
+
 function SummaryCard({ completed, total }: { completed: number; total: number }) {
+  const chestIndex = Math.min(Math.max(completed, 1), 3);
+  const isPressable = completed >= 3;
+
   return (
     <View style={styles.summaryCard}>
       <View style={styles.summaryLeft}>
@@ -136,7 +146,16 @@ function SummaryCard({ completed, total }: { completed: number; total: number })
           </Text>
         </View>
       </View>
-      <Text style={styles.summaryEmoji}>🎁</Text>
+      <Pressable
+        disabled={!isPressable}
+        style={({ pressed }) => [isPressable && pressed && { opacity: 0.75 }]}
+      >
+        <Image
+          source={chestImages[chestIndex - 1]}
+          style={styles.chestImage}
+          resizeMode="contain"
+        />
+      </Pressable>
     </View>
   );
 }

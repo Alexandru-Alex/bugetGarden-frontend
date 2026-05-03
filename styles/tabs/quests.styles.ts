@@ -115,8 +115,9 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "#FFFFFF",
   },
-  summaryEmoji: {
-    fontSize: 48,
+  chestImage: {
+    width: 72,
+    height: 72,
   },
 
   // ── Quest card ────────────────────────────────────────────────────────────
