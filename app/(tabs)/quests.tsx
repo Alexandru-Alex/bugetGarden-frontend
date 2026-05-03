@@ -59,6 +59,7 @@ export default function QuestsScreen() {
         style={[styles.gradient, Platform.OS === "web" && { paddingTop: 56 }]}
       >
         <SafeAreaView edges={["top"]} style={styles.safeArea}>
+          <View style={[styles.inner, Platform.OS === "web" && styles.innerWeb]}>
           <View style={styles.headerSection}>
             <Text style={styles.headerLabel}>Quests</Text>
             <Text style={styles.headerSubtitle}>{subtitle}</Text>
@@ -117,6 +118,7 @@ export default function QuestsScreen() {
               </>
             )}
           </ScrollView>
+          </View>
         </SafeAreaView>
       </LinearGradient>
     </PageTransition>

@@ -18,6 +18,16 @@ export const styles = StyleSheet.create({
     paddingBottom: 48,
   },
 
+  // ── Inner content wrapper ─────────────────────────────────────────────────
+  inner: {
+    flex: 1,
+  },
+  innerWeb: {
+    maxWidth: 560,
+    width: "100%",
+    alignSelf: "center",
+  },
+
   // ── Header ────────────────────────────────────────────────────────────────
   headerSection: {
     paddingTop: 16,
