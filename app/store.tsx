@@ -222,10 +222,10 @@ export default function StoreScreen() {
         style={[styles.header, Platform.OS === "web" && { paddingTop: 56 }]}
       >
         <SafeAreaView edges={["top"]}>
-          <View style={[styles.headerInner, Platform.OS !== "web" && styles.headerInnerMobile]}>
+          <View style={[styles.headerInner, (Platform.OS !== "web" || screenWidth < 600) && styles.headerInnerMobile]}>
             <View
-              style={[styles.headerText, Platform.OS === "web" && styles.headerTextWeb]}
-              pointerEvents="none"
+              style={[styles.headerText, Platform.OS === "web" && screenWidth >= 600 && styles.headerTextWeb]}
+              pointerEvents={Platform.OS === "web" && screenWidth >= 600 ? "none" : "auto"}
             >
               <Text style={styles.headerTitle}>Shop the garden</Text>
               <Text style={styles.headerSubtitle}>Fresh seasonal blooms and rare hybrids.</Text>
