@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#F5F8F5",
+    backgroundColor: "#f0f0ea",
   },
 
   // ── Header ────────────────────────────────────────────────────────────────
@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 24,
     paddingBottom: 48,
-    backgroundColor: "#F5F8F5",
+    backgroundColor: "#f0f0ea",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
   },
