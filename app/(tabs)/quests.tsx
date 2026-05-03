@@ -168,7 +168,7 @@ function QuestCard({ task }: { task: TaskDto }) {
     <View style={styles.taskCard}>
       <View style={styles.titleRow}>
         <Text style={styles.taskTitle}>{task.title}</Text>
-        {task.completed && <Text style={styles.completedCheck}>✅</Text>}
+        {task.completed && <Text style={styles.completedCheck}>✓</Text>}
       </View>
 
       <View style={styles.progressBarContainer}>

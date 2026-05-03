@@ -142,7 +142,9 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   completedCheck: {
-    fontSize: 18,
+    fontFamily: "Nunito_900Black",
+    fontSize: 16,
+    color: "#346739",
     marginLeft: 8,
   },
   progressBarContainer: {
