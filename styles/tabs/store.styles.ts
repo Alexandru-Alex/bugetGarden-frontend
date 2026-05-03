@@ -90,13 +90,15 @@ export const styles = StyleSheet.create({
     alignSelf: "center",
     width: "100%",
   },
-  webLayout: {
-    width: "100%",
+  gridWithSidebar: {
+    flexDirection: "row",
+    gap: 20,
+    alignItems: "flex-start",
   },
-  sideColAbsolute: {
-    position: "absolute",
-    top: 0,
-    right: 16,
+  gridCol: {
+    flex: 1,
+  },
+  sideCol: {
     width: 210,
     gap: 12,
   },

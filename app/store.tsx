@@ -322,25 +322,25 @@ export default function StoreScreen() {
         showsVerticalScrollIndicator={false}
       >
         {isWide ? (
-          <View style={styles.webLayout}>
-            <View style={[styles.inner, styles.innerWeb]}>
-              <FeatureBanner />
-              <View style={styles.searchBar}>
-                <Ionicons name="search-outline" size={16} color="#8a968c" />
-                <TextInput
-                  style={[
-                    styles.searchInput,
-                    ({ outlineStyle: "none", outlineWidth: 0 } as any),
-                  ]}
-                  placeholder="Search flowers..."
-                  placeholderTextColor="#8a968c"
-                  value={search}
-                  onChangeText={setSearch}
-                />
-              </View>
-              <Text style={styles.sectionTitle}>Popular this week</Text>
+          <View style={[styles.inner, styles.innerWeb]}>
+            <FeatureBanner />
+            <View style={styles.searchBar}>
+              <Ionicons name="search-outline" size={16} color="#8a968c" />
+              <TextInput
+                style={[
+                  styles.searchInput,
+                  ({ outlineStyle: "none", outlineWidth: 0 } as any),
+                ]}
+                placeholder="Search flowers..."
+                placeholderTextColor="#8a968c"
+                value={search}
+                onChangeText={setSearch}
+              />
+            </View>
+            <Text style={styles.sectionTitle}>Popular this week</Text>
+            <View style={styles.gridWithSidebar}>
               <View
-                style={styles.grid}
+                style={[styles.grid, styles.gridCol]}
                 onLayout={e => setGridWidth(e.nativeEvent.layout.width)}
               >
                 {filtered.map(flower => (
@@ -352,10 +352,10 @@ export default function StoreScreen() {
                   />
                 ))}
               </View>
-            </View>
-            <View style={styles.sideColAbsolute}>
-              <DailyBonusCard />
-              <ProgressCard owned={0} total={CATALOG.length} />
+              <View style={styles.sideCol}>
+                <DailyBonusCard />
+                <ProgressCard owned={0} total={CATALOG.length} />
+              </View>
             </View>
           </View>
         ) : (
