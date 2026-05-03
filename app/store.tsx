@@ -234,7 +234,7 @@ export default function StoreScreen() {
 
       <LinearGradient
         colors={["#2A4A2E", "#346739"]}
-        style={[styles.header, Platform.OS === "web" && { paddingTop: 56 }]}
+        style={[styles.header, Platform.OS === "web" && { paddingTop: 56, paddingBottom: 48 }]}
       >
         <SafeAreaView edges={["top"]}>
           <View style={[styles.headerInner, (Platform.OS !== "web" || screenWidth < 600) && styles.headerInnerMobile]}>
