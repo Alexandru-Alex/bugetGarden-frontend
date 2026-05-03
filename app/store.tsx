@@ -158,10 +158,10 @@ function BuyModal({
             <Text style={styles.modalPrice}>{flower.price}</Text>
           </View>
           <Pressable style={styles.modalBuyBtn} onPress={onBuy}>
-            <Text style={styles.modalBuyBtnText}>Cumpără</Text>
+            <Text style={styles.modalBuyBtnText}>Buy</Text>
           </Pressable>
           <Pressable style={styles.modalCancelBtn} onPress={onClose}>
-            <Text style={styles.modalCancelText}>Anulare</Text>
+            <Text style={styles.modalCancelText}>Cancel</Text>
           </Pressable>
         </Pressable>
       </Pressable>
@@ -213,7 +213,7 @@ export default function StoreScreen() {
 
       {toastVisible && (
         <View style={styles.toast}>
-          <Text style={styles.toastText}>Floare cumpărată! 🌸</Text>
+          <Text style={styles.toastText}>Flower purchased! 🌸</Text>
         </View>
       )}
 
@@ -255,7 +255,7 @@ export default function StoreScreen() {
                 styles.searchInput,
                 Platform.OS === "web" && ({ outlineStyle: "none", outlineWidth: 0 } as any),
               ]}
-              placeholder="Caută flori..."
+              placeholder="Search flowers..."
               placeholderTextColor="#8a968c"
               value={search}
               onChangeText={setSearch}
