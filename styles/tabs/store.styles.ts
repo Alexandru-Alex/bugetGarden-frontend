@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     paddingLeft: 64,
   },
   headerText: {
-    flex: 1,
+    alignItems: "center",
   },
   headerTitle: {
     fontFamily: "Nunito_900Black",

@@ -223,11 +223,12 @@ export default function StoreScreen() {
       >
         <SafeAreaView edges={["top"]}>
           <View style={[styles.headerInner, Platform.OS !== "web" && styles.headerInnerMobile]}>
-            <View style={styles.headerText}>
+            {Platform.OS === "web" && <View style={{ flex: 1 }} />}
+            <View style={[styles.headerText, Platform.OS !== "web" && { flex: 1 }]}>
               <Text style={styles.headerTitle}>Shop the garden</Text>
               <Text style={styles.headerSubtitle}>Fresh seasonal blooms and rare hybrids.</Text>
             </View>
-            <View style={styles.coinWidget}>
+            <View style={[styles.coinWidget, Platform.OS === "web" && { flex: 1, justifyContent: "flex-end" }]}>
               <Image
                 source={require("../assets/images/coin.png")}
                 style={styles.coinImg}
