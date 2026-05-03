@@ -141,7 +141,6 @@ export const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: "100%",
-    borderRadius: 12,
   },
   progressBarLabel: {
     position: "absolute",

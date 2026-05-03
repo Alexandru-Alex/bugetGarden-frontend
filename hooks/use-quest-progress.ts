@@ -5,7 +5,7 @@ import { useCallback } from "react";
 export const TASKS_TODAY_KEY = ["tasks", "today"];
 export const TASKS_MONTH_KEY = ["tasks", "month"];
 
-export function useTaskProgress() {
+export function useQuestProgress() {
   const queryClient = useQueryClient();
 
   const checkProgress = useCallback(async (): Promise<CompletedTaskNotification[]> => {

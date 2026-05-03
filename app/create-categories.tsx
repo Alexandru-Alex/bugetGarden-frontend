@@ -4,7 +4,7 @@ import { styles } from "@/styles/create-categories.styles";
 import { sharedStyles } from "@/styles/shared.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTaskProgress } from "@/hooks/use-task-progress";
+import { useQuestProgress } from "@/hooks/use-quest-progress";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -77,7 +77,7 @@ export default function CreateCategoriesScreen() {
 
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
-  const { checkProgress } = useTaskProgress();
+  const { checkProgress } = useQuestProgress();
 
   useEffect(() => {
     getStoredToken().then(setToken);

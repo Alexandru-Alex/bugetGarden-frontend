@@ -9,7 +9,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, Stack, router } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useTaskProgress } from "@/hooks/use-task-progress";
+import { useQuestProgress } from "@/hooks/use-quest-progress";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Keyboard,
@@ -464,7 +464,7 @@ function AddTransactionModal({ goal, symbol, isPending, onClose, onAdd }: AddTra
 export default function GoalsScreen() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
-  const { checkProgress } = useTaskProgress();
+  const { checkProgress } = useQuestProgress();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<"active" | "archived">("active");
   const [archivedEverOpened, setArchivedEverOpened] = useState(false);

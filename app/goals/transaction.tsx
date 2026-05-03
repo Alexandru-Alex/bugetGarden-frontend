@@ -3,7 +3,7 @@ import { api } from "@/lib/api";
 import { styles } from "@/styles/goal-transactions.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTaskProgress } from "@/hooks/use-task-progress";
+import { useQuestProgress } from "@/hooks/use-quest-progress";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -87,7 +87,7 @@ interface EditGoalTransactionModalProps {
 
 function EditGoalTransactionModal({ tx, symbol, goalId, onClose }: EditGoalTransactionModalProps) {
   const queryClient = useQueryClient();
-  const { checkProgress } = useTaskProgress();
+  const { checkProgress } = useQuestProgress();
   const [amountInput, setAmountInput] = useState("");
   const [txType, setTxType] = useState<GoalTransactionType>("deposit");
   const [note, setNote] = useState("");
