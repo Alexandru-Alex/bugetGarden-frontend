@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   },
   headerInnerMobile: {
     paddingLeft: 64,
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
   },
   headerText: {
     flex: 1,
