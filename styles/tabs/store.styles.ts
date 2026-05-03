@@ -86,18 +86,18 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   innerWeb: {
-    maxWidth: 960,
+    maxWidth: 900,
     alignSelf: "center",
     width: "100%",
-    flexDirection: "row",
-    gap: 24,
-    alignItems: "flex-start",
   },
-  mainCol: {
-    flex: 1,
+  webLayout: {
+    width: "100%",
   },
-  sideCol: {
-    width: 220,
+  sideColAbsolute: {
+    position: "absolute",
+    top: 0,
+    right: 16,
+    width: 210,
     gap: 12,
   },
 

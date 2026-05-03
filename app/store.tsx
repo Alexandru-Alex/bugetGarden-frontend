@@ -321,57 +321,16 @@ export default function StoreScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.inner, isWide && styles.innerWeb]}>
-          {isWide ? (
-            <>
-              <View style={styles.mainCol}>
-                <FeatureBanner />
-                <View style={styles.searchBar}>
-                  <Ionicons name="search-outline" size={16} color="#8a968c" />
-                  <TextInput
-                    style={[
-                      styles.searchInput,
-                      ({ outlineStyle: "none", outlineWidth: 0 } as any),
-                    ]}
-                    placeholder="Search flowers..."
-                    placeholderTextColor="#8a968c"
-                    value={search}
-                    onChangeText={setSearch}
-                  />
-                </View>
-                <Text style={styles.sectionTitle}>Popular this week</Text>
-                <View
-                  style={styles.grid}
-                  onLayout={e => setGridWidth(e.nativeEvent.layout.width)}
-                >
-                  {filtered.map(flower => (
-                    <FlowerCard
-                      key={flower.id}
-                      flower={flower}
-                      cardWidth={cardWidth}
-                      onPress={() => setSelectedFlower(flower)}
-                    />
-                  ))}
-                </View>
-              </View>
-              <View style={styles.sideCol}>
-                <DailyBonusCard />
-                <ProgressCard owned={0} total={CATALOG.length} />
-              </View>
-            </>
-          ) : (
-            <>
-              <View style={styles.infoRow}>
-                <DailyBonusCard />
-                <ProgressCard owned={0} total={CATALOG.length} />
-              </View>
+        {isWide ? (
+          <View style={styles.webLayout}>
+            <View style={[styles.inner, styles.innerWeb]}>
               <FeatureBanner />
               <View style={styles.searchBar}>
                 <Ionicons name="search-outline" size={16} color="#8a968c" />
                 <TextInput
                   style={[
                     styles.searchInput,
-                    Platform.OS === "web" && ({ outlineStyle: "none", outlineWidth: 0 } as any),
+                    ({ outlineStyle: "none", outlineWidth: 0 } as any),
                   ]}
                   placeholder="Search flowers..."
                   placeholderTextColor="#8a968c"
@@ -393,9 +352,48 @@ export default function StoreScreen() {
                   />
                 ))}
               </View>
-            </>
-          )}
-        </View>
+            </View>
+            <View style={styles.sideColAbsolute}>
+              <DailyBonusCard />
+              <ProgressCard owned={0} total={CATALOG.length} />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.inner}>
+            <FeatureBanner />
+            <View style={styles.infoRow}>
+              <DailyBonusCard />
+              <ProgressCard owned={0} total={CATALOG.length} />
+            </View>
+            <View style={styles.searchBar}>
+              <Ionicons name="search-outline" size={16} color="#8a968c" />
+              <TextInput
+                style={[
+                  styles.searchInput,
+                  Platform.OS === "web" && ({ outlineStyle: "none", outlineWidth: 0 } as any),
+                ]}
+                placeholder="Search flowers..."
+                placeholderTextColor="#8a968c"
+                value={search}
+                onChangeText={setSearch}
+              />
+            </View>
+            <Text style={styles.sectionTitle}>Popular this week</Text>
+            <View
+              style={styles.grid}
+              onLayout={e => setGridWidth(e.nativeEvent.layout.width)}
+            >
+              {filtered.map(flower => (
+                <FlowerCard
+                  key={flower.id}
+                  flower={flower}
+                  cardWidth={cardWidth}
+                  onPress={() => setSelectedFlower(flower)}
+                />
+              ))}
+            </View>
+          </View>
+        )}
       </ScrollView>
 
       {selectedFlower && (
