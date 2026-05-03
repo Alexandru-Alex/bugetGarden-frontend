@@ -66,18 +66,25 @@ export const styles = StyleSheet.create({
     color: "#346739",
   },
 
-  // ── Summary card ──────────────────────────────────────────────────────────
-  summaryCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+  // ── Quests container (wraps summary + all cards) ─────────────────────────
+  questsContainer: {
     backgroundColor: "rgba(255,255,255,0.15)",
     borderRadius: 20,
     borderWidth: 1.5,
     borderColor: "rgba(255,255,255,0.35)",
-    padding: 18,
     marginHorizontal: 20,
-    marginBottom: 16,
+    padding: 16,
+    gap: 12,
+  },
+
+  // ── Summary section ───────────────────────────────────────────────────────
+  summaryCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.25)",
   },
   summaryLeft: {
     flex: 1,
@@ -108,15 +115,13 @@ export const styles = StyleSheet.create({
   // ── Quest card ────────────────────────────────────────────────────────────
   taskCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 18,
-    marginHorizontal: 20,
-    marginBottom: 12,
+    borderRadius: 16,
+    padding: 16,
     shadowColor: "#1A3A1A",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
   titleRow: {
     flexDirection: "row",
@@ -165,14 +170,19 @@ export const styles = StyleSheet.create({
 
   // ── Bonus card ────────────────────────────────────────────────────────────
   bonusCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 16,
-    marginHorizontal: 20,
-    marginBottom: 16,
-    borderWidth: 1.5,
-    borderColor: "#52B788",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.4)",
     alignItems: "center",
+  },
+  bonusTextWhite: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#FFFFFF",
+    textAlign: "center",
+    lineHeight: 20,
   },
   bonusText: {
     fontFamily: "Nunito_700Bold",

@@ -98,21 +98,21 @@ export default function QuestsScreen() {
                 )}
 
                 {tasks.length > 0 && (
-                  <>
+                  <View style={styles.questsContainer}>
                     <SummaryCard completed={completed} total={tasks.length} />
                     {tasks.map((task) => (
                       <QuestCard key={task.id} task={task} />
                     ))}
                     {allDone && (
                       <View style={styles.bonusCard}>
-                        <Text style={styles.bonusText}>
+                        <Text style={styles.bonusTextWhite}>
                           {activeTab === "daily"
                             ? "🌸 You've completed all daily quests! You receive a bonus flower."
                             : "🌺 You've completed all monthly quests! You receive bonus coins + an unlocked flower."}
                         </Text>
                       </View>
                     )}
-                  </>
+                  </View>
                 )}
               </>
             )}
