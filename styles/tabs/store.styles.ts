@@ -86,9 +86,19 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   innerWeb: {
-    maxWidth: 900,
+    maxWidth: 960,
     alignSelf: "center",
     width: "100%",
+    flexDirection: "row",
+    gap: 24,
+    alignItems: "flex-start",
+  },
+  mainCol: {
+    flex: 1,
+  },
+  sideCol: {
+    width: 220,
+    gap: 12,
   },
 
   // ── Info row (Daily Bonus + Progress) ────────────────────────────────────
@@ -99,10 +109,10 @@ export const styles = StyleSheet.create({
   },
   infoCard: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#e8f0e8",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e3e5dc",
+    borderColor: "#c8dcc8",
     padding: 14,
     shadowColor: "#346739",
     shadowOffset: { width: 0, height: 2 },
@@ -149,7 +159,7 @@ export const styles = StyleSheet.create({
   },
   progressTrack: {
     height: 6,
-    backgroundColor: "#e8ede8",
+    backgroundColor: "#c8dcc8",
     borderRadius: 3,
     overflow: "hidden",
     marginTop: 8,
