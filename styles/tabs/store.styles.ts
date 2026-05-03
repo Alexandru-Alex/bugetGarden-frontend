@@ -91,6 +91,75 @@ export const styles = StyleSheet.create({
     width: "100%",
   },
 
+  // ── Info row (Daily Bonus + Progress) ────────────────────────────────────
+  infoRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 20,
+  },
+  infoCard: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#e3e5dc",
+    padding: 14,
+    shadowColor: "#346739",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  infoIconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: "rgba(52,103,57,0.10)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  infoCardTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: "#1f4a25",
+    marginBottom: 2,
+  },
+  infoCardHint: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 11,
+    color: "#8a968c",
+    marginBottom: 6,
+  },
+  infoCardMuted: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 10,
+    color: "#8a968c",
+    marginTop: 4,
+  },
+  infoCountdown: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 22,
+    color: "#1f4a25",
+  },
+  infoCountdownMuted: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 16,
+    color: "#8a968c",
+  },
+  progressTrack: {
+    height: 6,
+    backgroundColor: "#e8ede8",
+    borderRadius: 3,
+    overflow: "hidden",
+    marginTop: 8,
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#346739",
+    borderRadius: 3,
+  },
+
   // ── Feature banner ────────────────────────────────────────────────────────
   banner: {
     borderRadius: 20,

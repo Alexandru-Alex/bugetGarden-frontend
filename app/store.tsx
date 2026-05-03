@@ -59,6 +59,15 @@ const CATALOG: Flower[] = [
   { id: 12, name: "Lily",     price: 110,                   image: require("../flowers/daisy.png") },
 ];
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function secondsUntilMidnight(): number {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  return Math.floor((midnight.getTime() - now.getTime()) / 1000);
+}
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function FeatureBanner() {
@@ -93,6 +102,52 @@ function FeatureBanner() {
         />
       </View>
     </LinearGradient>
+  );
+}
+
+function DailyBonusCard() {
+  const [secs, setSecs] = useState(secondsUntilMidnight);
+
+  useEffect(() => {
+    const id = setInterval(() => setSecs(secondsUntilMidnight()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  return (
+    <View style={styles.infoCard}>
+      <View style={styles.infoIconBadge}>
+        <Ionicons name="time-outline" size={18} color="#346739" />
+      </View>
+      <Text style={styles.infoCardTitle}>Daily Bonus</Text>
+      <Text style={styles.infoCardHint}>New quests in</Text>
+      <Text style={styles.infoCountdown}>{pad(h)}:{pad(m)}:{pad(s)}</Text>
+      <Text style={styles.infoCardMuted}>Resets at midnight</Text>
+    </View>
+  );
+}
+
+function ProgressCard({ owned, total }: { owned: number; total: number }) {
+  const pct = total > 0 ? owned / total : 0;
+  return (
+    <View style={styles.infoCard}>
+      <View style={styles.infoIconBadge}>
+        <Ionicons name="leaf-outline" size={18} color="#346739" />
+      </View>
+      <Text style={styles.infoCardTitle}>Your Garden</Text>
+      <Text style={styles.infoCardHint}>Flowers owned</Text>
+      <Text style={styles.infoCountdown}>
+        {owned}
+        <Text style={styles.infoCountdownMuted}> / {total}</Text>
+      </Text>
+      <View style={styles.progressTrack}>
+        <View style={[styles.progressFill, { width: `${pct * 100}%` }]} />
+      </View>
+    </View>
   );
 }
 
@@ -280,6 +335,11 @@ export default function StoreScreen() {
               value={search}
               onChangeText={setSearch}
             />
+          </View>
+
+          <View style={styles.infoRow}>
+            <DailyBonusCard />
+            <ProgressCard owned={0} total={CATALOG.length} />
           </View>
 
           <Text style={styles.sectionTitle}>Popular this week</Text>
