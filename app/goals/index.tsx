@@ -9,7 +9,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, Stack, router } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useTaskProgress } from "@/hooks/use-task-progress";
+import { useQuestProgress } from "@/hooks/use-quest-progress";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Keyboard,
@@ -464,7 +464,7 @@ function AddTransactionModal({ goal, symbol, isPending, onClose, onAdd }: AddTra
 export default function GoalsScreen() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
-  const { checkProgress } = useTaskProgress();
+  const { checkProgress } = useQuestProgress();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<"active" | "archived">("active");
   const [archivedEverOpened, setArchivedEverOpened] = useState(false);
@@ -555,7 +555,7 @@ export default function GoalsScreen() {
     mutationFn: (req: { goalId: string; amount: number; type: GoalTransactionType; date: string; note?: string }) =>
       api.post<GoalDto>("/goals/transaction", req),
     onSuccess: (updatedGoal, { goalId, amount, type }) => {
-      queryClient.setQueryData<GoalDto[]>(ACTIVE_GOALS_KEY, prev =>
+      queryClient.setQueryData<GoalDto[]>(ACTIVE_GOALS_KEY, (prev): GoalDto[] =>
         (prev ?? []).map(g => {
           if (g.id !== goalId) return g;
           if (updatedGoal) return updatedGoal;
@@ -576,7 +576,7 @@ export default function GoalsScreen() {
     mutationFn: (goal: GoalDto) => api.delete(`/goals?goalId=${goal.id}`),
     onSuccess: (_, goal) => {
       const key = goal.status === "active" ? ACTIVE_GOALS_KEY : ARCHIVED_GOALS_KEY;
-      queryClient.setQueryData<GoalDto[]>(key, prev =>
+      queryClient.setQueryData<GoalDto[]>(key, (prev): GoalDto[] =>
         (prev ?? []).filter(g => g.id !== goal.id)
       );
       void checkProgress();

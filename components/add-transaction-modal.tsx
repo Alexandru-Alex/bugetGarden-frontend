@@ -1,7 +1,7 @@
 import { api } from "@/lib/api";
 import { formatDateISO } from "@/lib/date";
 import { CategoryDto } from "@/lib/types";
-import { useTaskProgress } from "@/hooks/use-task-progress";
+import { useQuestProgress } from "@/hooks/use-quest-progress";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useRef, useState } from "react";
@@ -31,7 +31,7 @@ interface Props {
 
 export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Props) {
   const queryClient = useQueryClient();
-  const { checkProgress } = useTaskProgress();
+  const { checkProgress } = useQuestProgress();
   const [modalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<ModalTab>("expenses");
   const [amount, setAmount] = useState("");

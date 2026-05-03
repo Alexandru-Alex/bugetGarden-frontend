@@ -38,6 +38,11 @@ export const styles = StyleSheet.create({
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
   },
+  scrollInner: {
+    maxWidth: 560,
+    alignSelf: "center",
+    width: "100%",
+  },
 
   // ── Section title ─────────────────────────────────────────────────────────
 
