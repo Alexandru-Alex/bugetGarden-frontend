@@ -210,11 +210,18 @@ export const styles = StyleSheet.create({
   // ── Flower card ───────────────────────────────────────────────────────────
   card: {},
   cardBody: {
-    backgroundColor: "#346739",
+    backgroundColor: "#ffffff",
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#e3e5dc",
     padding: 10,
     overflow: "hidden",
     marginBottom: 6,
+    shadowColor: "#346739",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
   cardBadge: {
     position: "absolute",
@@ -247,7 +254,7 @@ export const styles = StyleSheet.create({
   cardName: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 13,
-    color: "#ffffff",
+    color: "#1f4a25",
     textAlign: "center",
     marginTop: 8,
     marginBottom: 2,

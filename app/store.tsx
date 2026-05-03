@@ -18,6 +18,11 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // ─── Catalog ─────────────────────────────────────────────────────────────────
@@ -101,30 +106,40 @@ function FlowerCard({
   onPress: () => void;
 }) {
   const tag = flower.tag ? TAG_STYLE[flower.tag] : null;
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   return (
-    <Pressable style={[styles.card, { width: cardWidth }]} onPress={onPress}>
-      <View style={styles.cardBody}>
-        {tag && (
-          <View style={[styles.cardBadge, { backgroundColor: tag.bg }]}>
-            <Text style={[styles.cardBadgeText, { color: tag.text }]}>
-              {flower.tag}
-            </Text>
+    <Animated.View style={[styles.card, { width: cardWidth }, animStyle]}>
+      <Pressable
+        onPress={onPress}
+        onHoverIn={() => { scale.value = withTiming(1.04, { duration: 140 }); }}
+        onHoverOut={() => { scale.value = withTiming(1, { duration: 140 }); }}
+      >
+        <View style={styles.cardBody}>
+          {tag && (
+            <View style={[styles.cardBadge, { backgroundColor: tag.bg }]}>
+              <Text style={[styles.cardBadgeText, { color: tag.text }]}>
+                {flower.tag}
+              </Text>
+            </View>
+          )}
+          <View style={styles.cardImgFrame}>
+            <Image source={flower.image} style={styles.cardImg} resizeMode="contain" />
           </View>
-        )}
-        <View style={styles.cardImgFrame}>
-          <Image source={flower.image} style={styles.cardImg} resizeMode="contain" />
+          <Text style={styles.cardName}>{flower.name}</Text>
         </View>
-        <Text style={styles.cardName}>{flower.name}</Text>
-      </View>
-      <View style={styles.cardPriceRow}>
-        <Image
-          source={require("../assets/images/coin.png")}
-          style={styles.cardCoinImg}
-        />
-        <Text style={styles.cardPriceText}>{flower.price}</Text>
-      </View>
-    </Pressable>
+        <View style={styles.cardPriceRow}>
+          <Image
+            source={require("../assets/images/coin.png")}
+            style={styles.cardCoinImg}
+          />
+          <Text style={styles.cardPriceText}>{flower.price}</Text>
+        </View>
+      </Pressable>
+    </Animated.View>
   );
 }
 
