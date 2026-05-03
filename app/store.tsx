@@ -80,7 +80,7 @@ function FeatureBanner() {
           <Ionicons name="chevron-forward" size={12} color="#1f4a25" />
         </Pressable>
       </View>
-      <View style={styles.bannerImgCircle}>
+      <View style={styles.bannerImgFrame}>
         <Image
           source={require("../flowers/peony.png")}
           style={styles.bannerImg}
@@ -112,7 +112,7 @@ function FlowerCard({
             </Text>
           </View>
         )}
-        <View style={styles.cardImgCircle}>
+        <View style={styles.cardImgFrame}>
           <Image source={flower.image} style={styles.cardImg} resizeMode="contain" />
         </View>
         <Text style={styles.cardName}>{flower.name}</Text>
@@ -146,7 +146,7 @@ function BuyModal({
             ? { onClick: (e: any) => e.stopPropagation() }
             : undefined)}
         >
-          <View style={styles.modalImgCircle}>
+          <View style={styles.modalImgFrame}>
             <Image source={flower.image} style={styles.modalImg} resizeMode="contain" />
           </View>
           <Text style={styles.modalName}>{flower.name}</Text>

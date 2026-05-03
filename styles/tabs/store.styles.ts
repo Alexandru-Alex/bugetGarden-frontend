@@ -142,10 +142,10 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: "#1f4a25",
   },
-  bannerImgCircle: {
+  bannerImgFrame: {
     width: 96,
     height: 96,
-    borderRadius: 48,
+    borderRadius: 16,
     backgroundColor: "#f4efe2",
     alignItems: "center",
     justifyContent: "center",
@@ -218,10 +218,10 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
-  cardImgCircle: {
+  cardImgFrame: {
     width: "100%",
     aspectRatio: 1,
-    borderRadius: 999,
+    borderRadius: 12,
     backgroundColor: "#f4efe2",
     alignItems: "center",
     justifyContent: "center",
@@ -272,10 +272,10 @@ export const styles = StyleSheet.create({
     padding: 28,
     alignItems: "center",
   },
-  modalImgCircle: {
+  modalImgFrame: {
     width: 120,
     height: 120,
-    borderRadius: 60,
+    borderRadius: 20,
     backgroundColor: "#f4efe2",
     alignItems: "center",
     justifyContent: "center",
