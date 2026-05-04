@@ -146,6 +146,15 @@ function WebNavBar() {
 
 // ─── Mobile hamburger + drawer ────────────────────────────────────────────────
 
+function relativeTime(date: Date): string {
+  const mins = Math.floor((Date.now() - date.getTime()) / 60_000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} h ago`;
+  return `${Math.floor(hours / 24)} d ago`;
+}
+
 function MobileNavMenu() {
   const router = useRouter();
   const pathname = usePathname();
