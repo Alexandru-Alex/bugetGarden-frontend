@@ -126,9 +126,12 @@ export default function GardenScreen() {
               <Text style={styles.monthLabel}>
                 {MONTH_NAMES[viewMonth]} {viewYear}
               </Text>
-              <Pressable onPress={nextMonth} style={styles.navBtn}>
-                <Text style={styles.navArrow}>›</Text>
-              </Pressable>
+              {!isCurrentMonth && (
+                <Pressable onPress={nextMonth} style={styles.navBtn}>
+                  <Text style={styles.navArrow}>›</Text>
+                </Pressable>
+              )}
+              {isCurrentMonth && <View style={styles.navBtn} />}
             </View>
 
             {/* Grid + leaf counter */}
@@ -292,14 +295,15 @@ export default function GardenScreen() {
               </View>
             </View>
 
-            {/* Chart card */}
-            <View style={styles.chartCard}>
-              <GardenFlowersChart
-                data={MOCK_FLOWERS}
-                daysInMonth={daysInMonth}
-                todayDay={isCurrentMonth ? now.getDate() : null}
-              />
-            </View>
+          </View>
+
+          {/* Chart card — full width, outside innerWrapper */}
+          <View style={styles.chartCard}>
+            <GardenFlowersChart
+              data={MOCK_FLOWERS}
+              daysInMonth={daysInMonth}
+              todayDay={isCurrentMonth ? now.getDate() : null}
+            />
           </View>
         </ScrollView>
       </SafeAreaView>

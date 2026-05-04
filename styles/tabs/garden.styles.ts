@@ -21,7 +21,6 @@ export const styles = StyleSheet.create({
   innerWrapper: {
     width: "100%",
     maxWidth: 700,
-    flexGrow: 1,
   },
   monthNav: {
     flexDirection: "row",
@@ -67,15 +66,11 @@ export const styles = StyleSheet.create({
     right: 12,
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
-    backgroundColor: "rgba(0,0,0,0.28)",
-    borderRadius: 20,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    gap: 2,
   },
   leafIcon: {
-    width: 18,
-    height: 18,
+    width: 34,
+    height: 34,
     resizeMode: "contain",
   },
   leafCount: {
@@ -88,7 +83,8 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f4f9f1",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: 20,
+    paddingHorizontal: 24,
+    paddingTop: 20,
     paddingBottom: 48,
     flexGrow: 1,
   },
