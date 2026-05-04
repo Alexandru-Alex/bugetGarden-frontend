@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     paddingBottom: 40,
+    paddingTop: Platform.select({ web: 72, default: 60 }),
   },
   innerWrapper: {
     width: "100%",
