@@ -16,7 +16,13 @@
       "Bash(git rm *)",
       "Bash(rm \"app/\\(tabs\\)/store.tsx\")",
       "Bash(scripts/start-server.sh *)",
-      "Bash(C:\\\\Users\\\\g3d0m\\\\.claude\\\\plugins\\\\cache\\\\superpowers-dev\\\\superpowers\\\\5.0.7\\\\skills\\\\brainstorming\\\\scripts\\\\start-server.sh *)"
+      "Bash(C:\\\\Users\\\\g3d0m\\\\.claude\\\\plugins\\\\cache\\\\superpowers-dev\\\\superpowers\\\\5.0.7\\\\skills\\\\brainstorming\\\\scripts\\\\start-server.sh *)",
+      "Bash(Select-String -Pattern \"badgeEmoji|badgeGradient|LinearGradient|badge\")",
+      "Bash(Format-Table)",
+      "PowerShell(cd \"D:\\\\IdeaProjects\\\\bugetGarden-front\"; git show HEAD 2>&1 | Select-String -Pattern \"badgeEmoji|badgeGradient\" | Where-Object { $_ -notmatch \"^-\" })",
+      "Bash(ls assets/badges/)",
+      "Bash(dir assets\\\\badges)",
+      "Bash(node -e ' *)"
     ]
   }
 }

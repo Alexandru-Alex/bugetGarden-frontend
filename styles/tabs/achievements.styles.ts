@@ -81,33 +81,17 @@ export const styles = StyleSheet.create({
     elevation: 0,
   },
 
-  // ── Badge ring + gradient ─────────────────────────────────────────────────
+  // ── Badge image ───────────────────────────────────────────────────────────
 
-  badgeRing: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    borderWidth: 2.5,
-    borderColor: "#DEDEDE",
+  badgeImage: {
+    width: 80,
+    height: 80,
     flexShrink: 0,
-    backgroundColor: "#E8F4E8",
   },
   badgeImageWrapper: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    overflow: "hidden",
-  },
-  badgeImage: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 80,
+    height: 80,
+    flexShrink: 0,
   },
   badgeGreyOverlay: {
     ...StyleSheet.absoluteFillObject,

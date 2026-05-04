@@ -133,28 +133,26 @@ function AchievementRow({ achievement: a }: { achievement: AchievementDto }) {
         : styles.rowLocked,
     ]}>
       {/* Badge */}
-      <View style={[styles.badgeRing, a.unlocked && { borderColor: cfg.ring }]}>
-        {a.unlocked ? (
+      {a.unlocked ? (
+        <Image
+          source={BADGE_IMAGES[a.badge] ?? BADGE_IMAGES["badge"]}
+          style={styles.badgeImage}
+          resizeMode="contain"
+        />
+      ) : (
+        <View style={styles.badgeImageWrapper}>
           <Image
             source={BADGE_IMAGES[a.badge] ?? BADGE_IMAGES["badge"]}
-            style={styles.badgeImage}
-            resizeMode="cover"
+            style={[
+              styles.badgeImage,
+              Platform.select({ web: { filter: "grayscale(100%)" } as any }),
+            ]}
+            resizeMode="contain"
           />
-        ) : (
-          <View style={styles.badgeImageWrapper}>
-            <Image
-              source={BADGE_IMAGES[a.badge] ?? BADGE_IMAGES["badge"]}
-              style={[
-                styles.badgeImage,
-                Platform.select({ web: { filter: "grayscale(100%)" } as any }),
-              ]}
-              resizeMode="cover"
-            />
-            <View style={styles.badgeGreyOverlay} />
-            <Text style={styles.lockIcon}>🔒</Text>
-          </View>
-        )}
-      </View>
+          <View style={styles.badgeGreyOverlay} />
+          <Text style={styles.lockIcon}>🔒</Text>
+        </View>
+      )}
 
       {/* Content */}
       <View style={styles.content}>
