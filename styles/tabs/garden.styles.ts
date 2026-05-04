@@ -16,12 +16,12 @@ export const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     alignItems: "center",
-    paddingBottom: 40,
     paddingTop: Platform.select({ web: 72, default: 60 }),
   },
   innerWrapper: {
     width: "100%",
     maxWidth: 700,
+    flexGrow: 1,
   },
   monthNav: {
     flexDirection: "row",
@@ -86,14 +86,11 @@ export const styles = StyleSheet.create({
   chartCard: {
     alignSelf: "stretch",
     backgroundColor: "#f4f9f1",
-    borderRadius: 24,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     padding: 20,
-    paddingBottom: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 8,
+    paddingBottom: 48,
+    flexGrow: 1,
   },
   dayNumber: {
     fontFamily: "Nunito_700Bold",
