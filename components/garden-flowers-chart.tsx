@@ -14,6 +14,7 @@ const CHART_H = 110;
 const PADDING_TOP = 10;
 const PADDING_H = 6;
 const PLOT_H = CHART_H - PADDING_TOP;
+const BASE_Y = PADDING_TOP + PLOT_H;
 
 interface Props {
   data: Record<number, number>;
@@ -29,10 +30,9 @@ export function GardenFlowersChart({ data, daysInMonth, todayDay }: Props) {
     return vals.length ? Math.max(...vals) : 1;
   }, [data]);
 
-  const plotW = chartWidth - PADDING_H * 2;
-
   const points = useMemo(() => {
     if (!chartWidth) return [];
+    const plotW = chartWidth - PADDING_H * 2;
     return Array.from({ length: daysInMonth }, (_, i) => {
       const day = i + 1;
       const count = data[day] ?? 0;
@@ -40,32 +40,30 @@ export function GardenFlowersChart({ data, daysInMonth, todayDay }: Props) {
       const y = PADDING_TOP + PLOT_H - (count / maxCount) * PLOT_H;
       return { x, y, count, day };
     });
-  }, [chartWidth, daysInMonth, data, maxCount, plotW]);
+  }, [chartWidth, daysInMonth, data, maxCount]);
 
   const lineStr = useMemo(
     () => points.map((p) => `${p.x},${p.y}`).join(" "),
     [points],
   );
 
-  const baseY = PADDING_TOP + PLOT_H;
-
   const areaPath = useMemo(() => {
     if (!points.length) return "";
     const first = points[0];
     const last = points[points.length - 1];
     return (
-      `M${first.x},${baseY} ` +
+      `M${first.x},${BASE_Y} ` +
       points.map((p) => `L${p.x},${p.y}`).join(" ") +
-      ` L${last.x},${baseY} Z`
+      ` L${last.x},${BASE_Y} Z`
     );
-  }, [points, baseY]);
+  }, [points]);
 
   const totalFlowers = useMemo(
     () => Object.values(data).reduce((s, v) => s + v, 0),
     [data],
   );
 
-  const todayPoint = todayDay != null ? points[todayDay - 1] ?? null : null;
+  const todayPoint = todayDay != null ? (points[todayDay - 1] ?? null) : null;
 
   return (
     <View style={styles.container}>
