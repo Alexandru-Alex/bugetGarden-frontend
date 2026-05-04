@@ -92,19 +92,19 @@ export const styles = StyleSheet.create({
     padding: 3,
     flexShrink: 0,
   },
-  badgeGradient: {
+  badgeImageWrapper: {
     flex: 1,
     borderRadius: 26,
-    alignItems: "center",
-    justifyContent: "center",
+    overflow: "hidden",
   },
-  badgeGradientLocked: {
-    backgroundColor: "#E8E8E8",
-    position: "relative",
+  badgeImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 26,
   },
-  badgeEmoji: {
-    fontSize: 26,
-    lineHeight: 30,
+  badgeGreyOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(180,180,180,0.7)",
   },
   lockIcon: {
     position: "absolute",
