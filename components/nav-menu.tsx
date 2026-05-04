@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, Modal, Platform, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -235,47 +235,72 @@ function MobileNavMenu() {
         <Modal visible transparent animationType="none" onRequestClose={closeMenu}>
           <Pressable style={mobileStyles.backdrop} onPress={closeMenu} />
           <Animated.View style={[mobileStyles.drawer, drawerStyle, { paddingTop: insets.top + 20 }]}>
-            <View style={mobileStyles.drawerHeader}>
-              <Image
-                source={require("../assets/avatars/gardener_1.png")}
-                style={mobileStyles.drawerAvatar}
-              />
-              <Text style={mobileStyles.drawerTitle}>{account?.displayName ?? "user"}</Text>
-            </View>
-            <View style={mobileStyles.divider} />
-
-            {MENU_ITEMS.map(({ label, icon, path }) => (
-              <Pressable
-                key={path}
-                style={({ pressed }) => [mobileStyles.menuItem, pressed && mobileStyles.menuItemPressed]}
-                onPress={() => navigate(path)}
-              >
-                <Ionicons name={icon} size={22} color="#ffffff" />
-                <Text style={mobileStyles.menuLabel}>{label}</Text>
-              </Pressable>
-            ))}
-
-            <View style={mobileStyles.divider} />
-
-            {SECONDARY_ITEMS.map(({ label, icon, path }) => (
-              <Pressable
-                key={path}
-                style={({ pressed }) => [mobileStyles.menuItem, pressed && mobileStyles.menuItemPressed]}
-                onPress={() => navigate(path)}
-              >
-                <Ionicons name={icon} size={20} color="rgba(255,255,255,0.7)" />
-                <Text style={mobileStyles.menuLabelSecondary}>{label}</Text>
-              </Pressable>
-            ))}
-
-            <View style={mobileStyles.divider} />
-
-            <Pressable
-              style={({ pressed }) => [mobileStyles.menuItem, pressed && mobileStyles.menuItemPressed]}
-              onPress={handleLogout}
+            <ScrollView
+              style={{ flex: 1 }}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 8 }}
             >
-              <Ionicons name={LOGOUT_ITEM.icon} size={20} color="rgba(255, 120, 100, 0.9)" />
-              <Text style={mobileStyles.menuLabelLogout}>{LOGOUT_ITEM.label}</Text>
+              <View style={mobileStyles.drawerHeader}>
+                <Image
+                  source={require("../assets/avatars/gardener_1.png")}
+                  style={mobileStyles.drawerAvatar}
+                />
+                <Text style={mobileStyles.drawerTitle}>{account?.displayName ?? "user"}</Text>
+              </View>
+              <View style={mobileStyles.divider} />
+
+              {MENU_ITEMS.map(({ label, icon, path }) => (
+                <Pressable
+                  key={path}
+                  style={({ pressed }) => [mobileStyles.menuItem, pressed && mobileStyles.menuItemPressed]}
+                  onPress={() => navigate(path)}
+                >
+                  <Ionicons name={icon} size={22} color="#ffffff" />
+                  <Text style={mobileStyles.menuLabel}>{label}</Text>
+                </Pressable>
+              ))}
+
+              <View style={mobileStyles.divider} />
+
+              {SECONDARY_ITEMS.map(({ label, icon, path }) => (
+                <Pressable
+                  key={path}
+                  style={({ pressed }) => [mobileStyles.menuItem, pressed && mobileStyles.menuItemPressed]}
+                  onPress={() => navigate(path)}
+                >
+                  <Ionicons name={icon} size={20} color="rgba(255,255,255,0.7)" />
+                  <Text style={mobileStyles.menuLabelSecondary}>{label}</Text>
+                </Pressable>
+              ))}
+
+              <View style={mobileStyles.divider} />
+
+              <Pressable
+                style={({ pressed }) => [mobileStyles.menuItem, pressed && mobileStyles.menuItemPressed]}
+                onPress={handleLogout}
+              >
+                <Ionicons name={LOGOUT_ITEM.icon} size={20} color="rgba(255, 120, 100, 0.9)" />
+                <Text style={mobileStyles.menuLabelLogout}>{LOGOUT_ITEM.label}</Text>
+              </Pressable>
+            </ScrollView>
+
+            {/* Sync footer */}
+            <View style={mobileStyles.syncDivider} />
+            <Pressable
+              style={({ pressed }) => [
+                mobileStyles.menuItem,
+                pressed && mobileStyles.menuItemPressed,
+                { marginBottom: insets.bottom },
+              ]}
+              onPress={handleSync}
+            >
+              <Animated.View style={syncIconStyle}>
+                <Ionicons name="sync-outline" size={20} color="rgba(255,255,255,0.7)" />
+              </Animated.View>
+              <View>
+                <Text style={mobileStyles.menuLabelSecondary}>Sync</Text>
+                <Text style={mobileStyles.syncSubLabel}>{syncLabel}</Text>
+              </View>
             </Pressable>
           </Animated.View>
         </Modal>
@@ -514,5 +539,15 @@ const mobileStyles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontSize: 15,
     color: "rgba(255, 120, 100, 0.9)",
+  },
+  syncDivider: {
+    height: 1,
+    backgroundColor: "rgba(255,255,255,0.25)",
+    marginBottom: 4,
+  },
+  syncSubLabel: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "rgba(255,255,255,0.45)",
   },
 });
