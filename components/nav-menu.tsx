@@ -214,9 +214,7 @@ function MobileNavMenu() {
   const handleSync = () => {
     rotation.value = withTiming(rotation.value + 360, { duration: 600 });
     queryClient.invalidateQueries();
-    const now = new Date();
-    setLastSync(now);
-    setSyncLabel("Just now");
+    setLastSync(new Date());
   };
 
   return (
@@ -236,9 +234,9 @@ function MobileNavMenu() {
           <Pressable style={mobileStyles.backdrop} onPress={closeMenu} />
           <Animated.View style={[mobileStyles.drawer, drawerStyle, { paddingTop: insets.top + 20 }]}>
             <ScrollView
-              style={{ flex: 1 }}
+              style={mobileStyles.drawerScroll}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 8 }}
+              contentContainerStyle={mobileStyles.drawerScrollContent}
             >
               <View style={mobileStyles.drawerHeader}>
                 <Image
@@ -290,7 +288,7 @@ function MobileNavMenu() {
               style={({ pressed }) => [
                 mobileStyles.menuItem,
                 pressed && mobileStyles.menuItemPressed,
-                { marginBottom: insets.bottom },
+                { marginBottom: Math.max(insets.bottom, 8) },
               ]}
               onPress={handleSync}
             >
@@ -540,9 +538,16 @@ const mobileStyles = StyleSheet.create({
     fontSize: 15,
     color: "rgba(255, 120, 100, 0.9)",
   },
+  drawerScroll: {
+    flex: 1,
+  },
+  drawerScrollContent: {
+    paddingBottom: 8,
+  },
   syncDivider: {
     height: 1,
     backgroundColor: "rgba(255,255,255,0.25)",
+    marginTop: 4,
     marginBottom: 4,
   },
   syncSubLabel: {
