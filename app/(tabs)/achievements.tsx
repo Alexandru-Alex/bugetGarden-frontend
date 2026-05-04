@@ -7,8 +7,20 @@ import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Platform, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Image, Platform, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const BADGE_IMAGES: Record<string, number> = {
+  badge:   require("@/assets/badges/badge.png"),
+  badge_1: require("@/assets/badges/badge_1.png"),
+  badge_2: require("@/assets/badges/badge_2.png"),
+  badge_3: require("@/assets/badges/badge_3.png"),
+  badge_4: require("@/assets/badges/badge_4.png"),
+  badge_5: require("@/assets/badges/badge_5.png"),
+  badge_6: require("@/assets/badges/badge_6.png"),
+  badge_7: require("@/assets/badges/badge_7.png"),
+  badge_8: require("@/assets/badges/badge_8.png"),
+};
 
 const DIFFICULTY: Record<string, {
   emoji: string;
@@ -131,17 +143,20 @@ function AchievementRow({ achievement: a }: { achievement: AchievementDto }) {
       {/* Badge */}
       <View style={[styles.badgeRing, a.unlocked && { borderColor: cfg.ring }]}>
         {a.unlocked ? (
-          <LinearGradient
-            colors={cfg.gradient}
-            start={{ x: 0.15, y: 0 }}
-            end={{ x: 0.85, y: 1 }}
-            style={styles.badgeGradient}
-          >
-            <Text style={styles.badgeEmoji}>{cfg.emoji}</Text>
-          </LinearGradient>
+          <Image
+            source={BADGE_IMAGES[a.badge] ?? BADGE_IMAGES["badge"]}
+            style={styles.badgeImage}
+          />
         ) : (
-          <View style={[styles.badgeGradient, styles.badgeGradientLocked]}>
-            <Text style={[styles.badgeEmoji, { opacity: 0.28 }]}>{cfg.emoji}</Text>
+          <View style={styles.badgeImageWrapper}>
+            <Image
+              source={BADGE_IMAGES[a.badge] ?? BADGE_IMAGES["badge"]}
+              style={[
+                styles.badgeImage,
+                Platform.select({ web: { filter: "grayscale(100%)" } as any }),
+              ]}
+            />
+            <View style={styles.badgeGreyOverlay} />
             <Text style={styles.lockIcon}>🔒</Text>
           </View>
         )}
