@@ -28,6 +28,7 @@ export interface TasksProgressResponse {
 export interface AchievementDto {
   id: string;
   title: string;
+  badge: string;
   currentCount: number;
   targetCount: number;
   unlocked: boolean;
