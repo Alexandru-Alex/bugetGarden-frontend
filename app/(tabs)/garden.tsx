@@ -22,7 +22,6 @@ import Svg, { Polygon } from "react-native-svg";
 const MAX_CELL_SIZE = 100;
 const ROWS = 7;
 const COLS = 7;
-const INNER_ROWS = 6;
 const INNER_COLS = 6;
 
 const MONTH_NAMES = [
@@ -190,7 +189,6 @@ export default function GardenScreen() {
                       }
 
                       const day = (row - 1) * INNER_COLS + (col - 1) + 1;
-                      const isOutOfMonth = day > daysInMonth;
                       const hasFlower = flowers.has(day);
                       const flowerIndex = flowers.get(day) ?? 0;
                       const isHovered = hovered === day;
