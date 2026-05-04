@@ -89,18 +89,16 @@ export const styles = StyleSheet.create({
     borderRadius: 32,
     borderWidth: 2.5,
     borderColor: "#DEDEDE",
-    padding: 3,
     flexShrink: 0,
+    overflow: "hidden",
   },
   badgeImageWrapper: {
     flex: 1,
-    borderRadius: 26,
     overflow: "hidden",
   },
   badgeImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 26,
   },
   badgeGreyOverlay: {
     ...StyleSheet.absoluteFillObject,
