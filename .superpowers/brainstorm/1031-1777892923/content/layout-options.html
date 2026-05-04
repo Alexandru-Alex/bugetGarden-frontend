@@ -1,0 +1,116 @@
+<h2>Garden Page — Layout Question</h2>
+<p class="subtitle">The chart goes below the grid. How should the overall page be structured?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#2d5a27; padding:12px; border-radius:8px;">
+      <!-- Option A mockup -->
+      <div style="background:#2d5a27; border-radius:6px; padding:8px; font-family:sans-serif;">
+        <!-- Nav bar -->
+        <div style="background:#1b4d1b; border-radius:6px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="color:#9FCB98; font-size:10px;">☰</div>
+          <div style="color:#fff; font-size:10px; font-weight:bold;">My Garden</div>
+          <div style="color:#9FCB98; font-size:10px;">👤</div>
+        </div>
+        <!-- Month nav -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:8px;">
+          <div style="color:#9FCB98; font-size:14px;">‹</div>
+          <div style="color:#fff; font-size:11px; font-weight:bold;">May 2026</div>
+          <div style="color:#9FCB98; font-size:14px;">›</div>
+        </div>
+        <!-- Garden grid placeholder -->
+        <div style="background:#346739; border-radius:8px; height:90px; display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
+          <div style="color:#9FCB98; font-size:22px;">🌱</div>
+          <div style="color:#9FCB98; font-size:9px; margin-left:6px;">Isometric Grid</div>
+        </div>
+        <!-- Chart card -->
+        <div style="background:#fff; border-radius:8px; padding:8px;">
+          <div style="font-size:9px; font-weight:bold; color:#1b4d1b; margin-bottom:2px;">Flowers This Month</div>
+          <div style="color:#346739; font-size:8px; margin-bottom:6px;">Total: <span style="color:#346739; font-weight:bold;">12 flowers</span></div>
+          <!-- Bar chart mock -->
+          <div style="display:flex; align-items:flex-end; gap:2px; height:28px;">
+            <div style="flex:1; background:#d6f0c8; border-radius:2px; height:30%"></div>
+            <div style="flex:1; background:#79AE6F; border-radius:2px; height:80%"></div>
+            <div style="flex:1; background:#d6f0c8; border-radius:2px; height:20%"></div>
+            <div style="flex:1; background:#79AE6F; border-radius:2px; height:60%"></div>
+            <div style="flex:1; background:#346739; border-radius:2px; height:100%"></div>
+            <div style="flex:1; background:#79AE6F; border-radius:2px; height:70%"></div>
+            <div style="flex:1; background:#d6f0c8; border-radius:2px; height:40%"></div>
+            <div style="flex:1; background:#9FCB98; border-radius:2px; height:50%"></div>
+            <div style="flex:1; background:#346739; border-radius:2px; height:90%"></div>
+            <div style="flex:1; background:#d6f0c8; border-radius:2px; height:10%"></div>
+            <div style="flex:1; background:#79AE6F; border-radius:2px; height:65%"></div>
+            <div style="flex:1; background:#9FCB98; border-radius:2px; height:45%"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:3px;">
+            <div style="font-size:7px; color:#999;">1</div>
+            <div style="font-size:7px; color:#999;">15</div>
+            <div style="font-size:7px; color:#999;">31</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Full green background</h3>
+      <p>Green background throughout. Month nav + grid on green, chart in white card below. Similar to reference design. Clean separation between garden and stats.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f0f9ec; padding:12px; border-radius:8px; border: 1px solid #d6f0c8;">
+      <!-- Option B mockup -->
+      <div style="font-family:sans-serif;">
+        <!-- Nav bar -->
+        <div style="background:#1b4d1b; border-radius:6px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="color:#9FCB98; font-size:10px;">☰</div>
+          <div style="color:#fff; font-size:10px; font-weight:bold;">My Garden</div>
+          <div style="color:#9FCB98; font-size:10px;">👤</div>
+        </div>
+        <!-- Single big card -->
+        <div style="background:#fff; border-radius:10px; padding:8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <!-- Month nav inside card -->
+          <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:8px; background:#d6f0c8; border-radius:6px; padding:4px 8px;">
+            <div style="color:#4a9e2f; font-size:14px;">‹</div>
+            <div style="color:#1b4d1b; font-size:11px; font-weight:bold;">May 2026</div>
+            <div style="color:#4a9e2f; font-size:14px;">›</div>
+          </div>
+          <!-- Garden grid placeholder -->
+          <div style="background:#346739; border-radius:8px; height:85px; display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
+            <div style="color:#9FCB98; font-size:22px;">🌱</div>
+            <div style="color:#9FCB98; font-size:9px; margin-left:6px;">Isometric Grid</div>
+          </div>
+          <!-- Divider -->
+          <div style="height:1px; background:#e8f5e0; margin:8px 0;"></div>
+          <!-- Chart section inside same card -->
+          <div style="font-size:9px; font-weight:bold; color:#1b4d1b; margin-bottom:2px;">Flowers This Month</div>
+          <div style="color:#346739; font-size:8px; margin-bottom:6px;">Total: <span style="font-weight:bold;">12 flowers</span></div>
+          <div style="display:flex; align-items:flex-end; gap:2px; height:28px;">
+            <div style="flex:1; background:#d6f0c8; border-radius:2px; height:30%"></div>
+            <div style="flex:1; background:#79AE6F; border-radius:2px; height:80%"></div>
+            <div style="flex:1; background:#d6f0c8; border-radius:2px; height:20%"></div>
+            <div style="flex:1; background:#79AE6F; border-radius:2px; height:60%"></div>
+            <div style="flex:1; background:#346739; border-radius:2px; height:100%"></div>
+            <div style="flex:1; background:#79AE6F; border-radius:2px; height:70%"></div>
+            <div style="flex:1; background:#d6f0c8; border-radius:2px; height:40%"></div>
+            <div style="flex:1; background:#9FCB98; border-radius:2px; height:50%"></div>
+            <div style="flex:1; background:#346739; border-radius:2px; height:90%"></div>
+            <div style="flex:1; background:#d6f0c8; border-radius:2px; height:10%"></div>
+            <div style="flex:1; background:#79AE6F; border-radius:2px; height:65%"></div>
+            <div style="flex:1; background:#9FCB98; border-radius:2px; height:45%"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:3px;">
+            <div style="font-size:7px; color:#999;">1</div>
+            <div style="font-size:7px; color:#999;">15</div>
+            <div style="font-size:7px; color:#999;">31</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Single white card</h3>
+      <p>Light green background. One big card contains everything: month nav, grid, divider, then chart. Current style extended. Unified, contained feel.</p>
+    </div>
+  </div>
+
+</div>

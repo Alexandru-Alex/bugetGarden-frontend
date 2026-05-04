@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garden Page — Design v2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a3a1a; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 32px 16px; }
+
+  .phone {
+    width: 340px;
+    background: #346739;
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    border: 3px solid #2a5430;
+  }
+
+  .nav-bar {
+    background: #1b4d1b;
+    padding: 14px 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-icon { color: #9FCB98; font-size: 18px; }
+  .nav-title { color: #fff; font-size: 14px; font-weight: 700; }
+
+  .month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 14px 0 10px;
+  }
+  .month-arrow { color: #9FCB98; font-size: 22px; font-weight: bold; }
+  .month-label { color: #fff; font-size: 15px; font-weight: 700; }
+
+  .garden-area {
+    padding: 0 16px 16px;
+    position: relative;
+  }
+  .garden-grid-placeholder {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, #2d5a27 0%, #346739 40%, #3d7a42 100%);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid rgba(159,203,152,0.2);
+    position: relative;
+  }
+  .garden-emoji-row { display: flex; gap: 4px; }
+  .garden-emoji-row span { font-size: 20px; }
+  .garden-label { color: rgba(159,203,152,0.7); font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* Leaf counter — bottom right of garden area */
+  .leaf-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 20px;
+    padding: 4px 10px 4px 6px;
+  }
+  .leaf-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+  .leaf-count {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .scroll-area {
+    background: #f4f9f1;
+    border-radius: 24px 24px 0 0;
+    padding: 20px 16px 28px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .chart-title { font-size: 13px; font-weight: 700; color: #1b4d1b; }
+  .chart-info { color: #9FCB98; font-size: 13px; }
+  .chart-total { font-size: 11px; color: #5a8a3c; margin-bottom: 14px; }
+  .chart-total span { color: #346739; font-weight: 700; }
+
+  .chart-inner { position: relative; height: 80px; }
+
+  svg.line-chart { width: 100%; height: 100%; overflow: visible; }
+
+  .legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; background: #79AE6F; }
+  .legend-dot.today { background: #346739; }
+  .legend-text { font-size: 8px; color: #7aa870; }
+</style>
+</head>
+<body>
+<div style="display:flex; flex-direction:column; align-items:center; gap:24px; width:100%;">
+  <div style="color:#9FCB98; font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase;">Garden Page — Design v2</div>
+
+  <div class="phone">
+    <div class="nav-bar">
+      <span class="nav-icon">☰</span>
+      <span class="nav-title">My Garden</span>
+      <span class="nav-icon">👤</span>
+    </div>
+
+    <div class="month-nav">
+      <span class="month-arrow">‹</span>
+      <span class="month-label">May 2026</span>
+      <span class="month-arrow">›</span>
+    </div>
+
+    <div class="garden-area">
+      <div class="garden-grid-placeholder">
+        <div class="garden-emoji-row">
+          <span>🌸</span><span>🌺</span><span>🌼</span><span>🌸</span><span>🌿</span>
+        </div>
+        <div class="garden-label">Isometric garden grid (unchanged)</div>
+
+        <!-- Leaf counter bottom-right inside grid -->
+        <div class="leaf-counter">
+          <img class="leaf-icon" src="http://localhost:58000/assets/leaf_w.png" onerror="this.style.display='none'; this.nextSibling.style.display='inline'"/>
+          <span style="display:none; font-size:14px;">🌿</span>
+          <span class="leaf-count">12</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="chart-header">
+        <div class="chart-title">Flowers This Month</div>
+        <div class="chart-info">ⓘ</div>
+      </div>
+      <div class="chart-total">Total: <span>12 flowers planted</span></div>
+
+      <div class="chart-inner">
+        <svg class="line-chart" viewBox="0 0 292 80" preserveAspectRatio="none">
+          <line x1="0" y1="0"  x2="292" y2="0"  stroke="#e8f5e0" stroke-width="1"/>
+          <line x1="0" y1="26" x2="292" y2="26" stroke="#e8f5e0" stroke-width="1"/>
+          <line x1="0" y1="53" x2="292" y2="53" stroke="#e8f5e0" stroke-width="1"/>
+          <line x1="0" y1="79" x2="292" y2="79" stroke="#e8f5e0" stroke-width="1"/>
+
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#79AE6F" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#79AE6F" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+
+          <path d="M0,79 L9,79 L19,53 L28,79 L37,26 L47,53 L56,79 L65,53 L74,26 L84,53 L93,79 L102,26 L112,0 L121,26 L130,53 L139,26 L149,79 L158,53 L167,79 L177,26 L186,53 L195,79 L204,53 L214,26 L223,53 L232,26 L241,0 L251,26 L260,53 L269,79 L279,53 L292,79 L292,79 Z"
+                fill="url(#areaGrad)"/>
+
+          <polyline points="0,79 9,79 19,53 28,79 37,26 47,53 56,79 65,53 74,26 84,53 93,79 102,26 112,0 121,26 130,53 139,26 149,79 158,53 167,79 177,26 186,53 195,79 204,53 214,26 223,53 232,26 241,0 251,26 260,53 269,79 279,53"
+                fill="none" stroke="#79AE6F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+
+          <circle cx="37" cy="26" r="4" fill="#346739" stroke="#fff" stroke-width="1.5"/>
+
+          <circle cx="19" cy="53" r="2.5" fill="#79AE6F" stroke="#fff" stroke-width="1"/>
+          <circle cx="74" cy="26" r="2.5" fill="#79AE6F" stroke="#fff" stroke-width="1"/>
+          <circle cx="102" cy="26" r="2.5" fill="#79AE6F" stroke="#fff" stroke-width="1"/>
+          <circle cx="112" cy="0"  r="2.5" fill="#9FCB98" stroke="#fff" stroke-width="1"/>
+          <circle cx="232" cy="26" r="2.5" fill="#79AE6F" stroke="#fff" stroke-width="1"/>
+          <circle cx="241" cy="0"  r="2.5" fill="#9FCB98" stroke="#fff" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; margin-top:4px;">
+        <span style="font-size:7px; color:#aac4a0;">1</span>
+        <span style="font-size:7px; color:#aac4a0;">8</span>
+        <span style="font-size:7px; color:#aac4a0;">15</span>
+        <span style="font-size:7px; color:#aac4a0;">22</span>
+        <span style="font-size:7px; color:#aac4a0;">31</span>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot"></div>
+          <span class="legend-text">flowers planted</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot today"></div>
+          <span class="legend-text">today</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="color:#7aa870; font-size:11px; text-align:center; max-width:340px;">
+    Leaf icon + count in bottom-right of garden area. No pill counter below.
+  </div>
+</div>
+</body>
+</html>

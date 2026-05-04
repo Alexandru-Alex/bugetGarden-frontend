@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garden Page — Full Design Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a3a1a; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 32px 16px; }
+
+  .phone {
+    width: 340px;
+    background: #346739;
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    border: 3px solid #2a5430;
+    position: relative;
+  }
+
+  /* Nav bar */
+  .nav-bar {
+    background: #1b4d1b;
+    padding: 14px 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-icon { color: #9FCB98; font-size: 18px; }
+  .nav-title { color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; }
+
+  /* Month navigator */
+  .month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 14px 0 10px;
+  }
+  .month-arrow { color: #9FCB98; font-size: 22px; font-weight: bold; cursor: pointer; }
+  .month-label { color: #fff; font-size: 15px; font-weight: 700; letter-spacing: 0.3px; }
+
+  /* Garden area */
+  .garden-area {
+    padding: 0 16px 16px;
+    display: flex;
+    justify-content: center;
+  }
+  .garden-grid-placeholder {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, #2d5a27 0%, #346739 40%, #3d7a42 100%);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid rgba(159, 203, 152, 0.2);
+  }
+  .garden-emoji-row { display: flex; gap: 4px; }
+  .garden-emoji-row span { font-size: 20px; }
+  .garden-label { color: rgba(159,203,152,0.8); font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* Scroll area / chart card */
+  .scroll-area {
+    background: #f4f9f1;
+    border-radius: 24px 24px 0 0;
+    padding: 20px 16px 28px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .chart-title { font-size: 13px; font-weight: 700; color: #1b4d1b; }
+  .chart-info { color: #9FCB98; font-size: 13px; }
+
+  .chart-total { font-size: 11px; color: #5a8a3c; margin-bottom: 14px; }
+  .chart-total span { color: #346739; font-weight: 700; }
+
+  /* Line chart */
+  .chart-wrap { position: relative; height: 80px; margin-bottom: 6px; }
+  svg.line-chart { width: 100%; height: 100%; overflow: visible; }
+
+  /* Y axis labels */
+  .y-labels {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-right: 4px;
+  }
+  .y-label { font-size: 7px; color: #aac4a0; }
+
+  .chart-inner { margin-left: 14px; position: relative; height: 80px; }
+
+  /* X axis */
+  .x-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 14px;
+    margin-top: 2px;
+  }
+  .x-label { font-size: 7px; color: #aac4a0; }
+
+  /* Counter pill */
+  .counter-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #e8f5e0;
+    border-radius: 20px;
+    padding: 6px 14px;
+    margin-top: 14px;
+    align-self: flex-start;
+    width: fit-content;
+  }
+  .counter-text { font-size: 11px; color: #346739; font-weight: 600; }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; background: #79AE6F; }
+  .legend-dot.today { background: #346739; }
+  .legend-text { font-size: 8px; color: #7aa870; }
+</style>
+</head>
+<body>
+<div style="display:flex; flex-direction:column; align-items:center; gap:24px; width:100%;">
+  <div style="color:#9FCB98; font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase;">Garden Page — Full Design</div>
+
+  <div class="phone">
+    <!-- Nav -->
+    <div class="nav-bar">
+      <span class="nav-icon">☰</span>
+      <span class="nav-title">My Garden</span>
+      <span class="nav-icon">👤</span>
+    </div>
+
+    <!-- Month nav -->
+    <div class="month-nav">
+      <span class="month-arrow">‹</span>
+      <span class="month-label">May 2026</span>
+      <span class="month-arrow">›</span>
+    </div>
+
+    <!-- Garden grid -->
+    <div class="garden-area">
+      <div class="garden-grid-placeholder">
+        <div class="garden-emoji-row">
+          <span>🌸</span><span>🌺</span><span>🌼</span><span>🌸</span><span>🌿</span>
+        </div>
+        <div class="garden-label">Isometric garden grid (unchanged)</div>
+      </div>
+    </div>
+
+    <!-- Chart card -->
+    <div class="scroll-area">
+      <div class="chart-header">
+        <div class="chart-title">Flowers This Month</div>
+        <div class="chart-info">ⓘ</div>
+      </div>
+      <div class="chart-total">Total: <span>12 flowers planted</span></div>
+
+      <!-- Chart -->
+      <div class="chart-inner">
+        <svg class="line-chart" viewBox="0 0 292 80" preserveAspectRatio="none">
+          <!-- Grid lines -->
+          <line x1="0" y1="0"  x2="292" y2="0"  stroke="#e8f5e0" stroke-width="1"/>
+          <line x1="0" y1="26" x2="292" y2="26" stroke="#e8f5e0" stroke-width="1"/>
+          <line x1="0" y1="53" x2="292" y2="53" stroke="#e8f5e0" stroke-width="1"/>
+          <line x1="0" y1="79" x2="292" y2="79" stroke="#e8f5e0" stroke-width="1"/>
+
+          <!-- Area fill -->
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#79AE6F" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#79AE6F" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+
+          <!-- mocked data: days 1-31, flower counts 0-3 -->
+          <!-- path: area fill -->
+          <path d="M0,79 L9,79 L19,53 L28,79 L37,26 L47,53 L56,79 L65,53 L74,26 L84,53 L93,79 L102,26 L112,0 L121,26 L130,53 L139,26 L149,79 L158,53 L167,79 L177,26 L186,53 L195,79 L204,53 L214,26 L223,53 L232,26 L241,0 L251,26 L260,53 L269,79 L279,53 L292,79 L292,79 Z"
+                fill="url(#areaGrad)"/>
+
+          <!-- line -->
+          <polyline points="0,79 9,79 19,53 28,79 37,26 47,53 56,79 65,53 74,26 84,53 93,79 102,26 112,0 121,26 130,53 139,26 149,79 158,53 167,79 177,26 186,53 195,79 204,53 214,26 223,53 232,26 241,0 251,26 260,53 269,79 279,53"
+                fill="none" stroke="#79AE6F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+
+          <!-- today marker (day 4) -->
+          <circle cx="37" cy="26" r="4" fill="#346739" stroke="#fff" stroke-width="1.5"/>
+
+          <!-- dots on data points -->
+          <circle cx="19" cy="53" r="2.5" fill="#79AE6F" stroke="#fff" stroke-width="1"/>
+          <circle cx="74" cy="26" r="2.5" fill="#79AE6F" stroke="#fff" stroke-width="1"/>
+          <circle cx="102" cy="26" r="2.5" fill="#79AE6F" stroke="#fff" stroke-width="1"/>
+          <circle cx="112" cy="0"  r="2.5" fill="#9FCB98" stroke="#fff" stroke-width="1"/>
+          <circle cx="232" cy="26" r="2.5" fill="#79AE6F" stroke="#fff" stroke-width="1"/>
+          <circle cx="241" cy="0"  r="2.5" fill="#9FCB98" stroke="#fff" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- Y labels -->
+      <div style="display:flex; justify-content:space-between; margin-left:0; margin-top:4px;">
+        <span style="font-size:7px; color:#aac4a0;">1</span>
+        <span style="font-size:7px; color:#aac4a0;">8</span>
+        <span style="font-size:7px; color:#aac4a0;">15</span>
+        <span style="font-size:7px; color:#aac4a0;">22</span>
+        <span style="font-size:7px; color:#aac4a0;">31</span>
+      </div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot"></div>
+          <span class="legend-text">flowers planted</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot today"></div>
+          <span class="legend-text">today</span>
+        </div>
+      </div>
+
+      <!-- Counter -->
+      <div style="display:flex; justify-content:center; margin-top:12px;">
+        <div class="counter-pill">
+          <span>🌸</span>
+          <span class="counter-text">12 / 31 flowers planted</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="color:#7aa870; font-size:11px; text-align:center; max-width:340px;">
+    Y-axis = flowers per day (0–3). X-axis = days 1–31.<br>
+    Dark green dot = today. Mocked data for now.
+  </div>
+</div>
+</body>
+</html>
