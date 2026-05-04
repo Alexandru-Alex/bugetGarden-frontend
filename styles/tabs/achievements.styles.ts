@@ -91,14 +91,13 @@ export const styles = StyleSheet.create({
     borderColor: "#DEDEDE",
     flexShrink: 0,
     overflow: "hidden",
+    backgroundColor: "#E8F4E8",
   },
   badgeImageWrapper: {
-    flex: 1,
-    overflow: "hidden",
+    ...StyleSheet.absoluteFillObject,
   },
   badgeImage: {
-    width: "100%",
-    height: "100%",
+    ...StyleSheet.absoluteFillObject,
   },
   badgeGreyOverlay: {
     ...StyleSheet.absoluteFillObject,

@@ -138,6 +138,7 @@ function AchievementRow({ achievement: a }: { achievement: AchievementDto }) {
           <Image
             source={BADGE_IMAGES[a.badge] ?? BADGE_IMAGES["badge"]}
             style={styles.badgeImage}
+            resizeMode="cover"
           />
         ) : (
           <View style={styles.badgeImageWrapper}>
@@ -147,6 +148,7 @@ function AchievementRow({ achievement: a }: { achievement: AchievementDto }) {
                 styles.badgeImage,
                 Platform.select({ web: { filter: "grayscale(100%)" } as any }),
               ]}
+              resizeMode="cover"
             />
             <View style={styles.badgeGreyOverlay} />
             <Text style={styles.lockIcon}>🔒</Text>
