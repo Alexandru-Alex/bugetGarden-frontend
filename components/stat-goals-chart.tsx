@@ -4,8 +4,8 @@ import { Circle, Line, Polygon, Polyline, Svg, Text as SvgText } from "react-nat
 
 export interface GoalsPeriodItem {
   label: string;
-  deposited: number;
-  withdrawn: number;
+  deposited: number | null;
+  withdrawn: number | null;
 }
 
 export type GoalsDotType = "deposited" | "withdrawn";
@@ -23,14 +23,14 @@ const PADDING_TOP = 12;
 const PADDING_BOTTOM = 24;
 const PLOT_H = CHART_H - PADDING_TOP - PADDING_BOTTOM;
 
-function toY(value: number, maxValue: number): number {
-  return PADDING_TOP + PLOT_H - Math.max(2, (value / maxValue) * PLOT_H);
+function toY(value: number | null, maxValue: number): number {
+  return PADDING_TOP + PLOT_H - Math.max(2, ((value ?? 0) / maxValue) * PLOT_H);
 }
 
 export function StatGoalsChart({ data, onDotPress }: Props) {
   const maxValue = useMemo(() => {
     let m = 0;
-    for (const d of data) m = Math.max(m, d.deposited, d.withdrawn);
+    for (const d of data) m = Math.max(m, d.deposited ?? 0, d.withdrawn ?? 0);
     return m || 1;
   }, [data]);
 
