@@ -23,6 +23,7 @@ const MAX_CELL_SIZE = 100;
 const ROWS = 7;
 const COLS = 7;
 const INNER_COLS = 6;
+const FLOWER_COUNT = 5;
 
 const MONTH_NAMES = [
   "January", "February", "March", "April",
@@ -73,7 +74,6 @@ export default function GardenScreen() {
     [],
   );
 
-  const FLOWER_COUNT = 5;
   const [flowers, setFlowers] = useState<Map<number, number>>(new Map());
   const [hovered, setHovered] = useState<number | null>(null);
 
@@ -189,6 +189,7 @@ export default function GardenScreen() {
                       }
 
                       const day = (row - 1) * INNER_COLS + (col - 1) + 1;
+                      if (day > daysInMonth) return null;
                       const hasFlower = flowers.has(day);
                       const flowerIndex = flowers.get(day) ?? 0;
                       const isHovered = hovered === day;
