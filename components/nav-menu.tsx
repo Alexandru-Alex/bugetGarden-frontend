@@ -167,6 +167,10 @@ function MobileNavMenu() {
     staleTime: Infinity,
   });
   const translateX = useSharedValue(-DRAWER_WIDTH);
+  const rotation = useSharedValue(0);
+  const syncIconStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [syncLabel, setSyncLabel] = useState("Never synced");
 
@@ -205,6 +209,14 @@ function MobileNavMenu() {
     await logout();
     queryClient.clear();
     setTimeout(() => router.replace("/landing" as any), 220);
+  };
+
+  const handleSync = () => {
+    rotation.value = withTiming(rotation.value + 360, { duration: 600 });
+    queryClient.invalidateQueries();
+    const now = new Date();
+    setLastSync(now);
+    setSyncLabel("Just now");
   };
 
   return (
