@@ -23,8 +23,6 @@ const BADGE_IMAGES: Record<string, number> = {
 };
 
 const DIFFICULTY: Record<string, {
-  emoji: string;
-  gradient: [string, string];
   ring: string;
   fillColor: string;
   coinsColor: string;
@@ -32,8 +30,6 @@ const DIFFICULTY: Record<string, {
   shadowColor: string;
 }> = {
   easy: {
-    emoji: "🌱",
-    gradient: ["#D8F3DC", "#95D5B2"],
     ring: "#74C69D",
     fillColor: "#52B788",
     coinsColor: "#2D6A4F",
@@ -41,8 +37,6 @@ const DIFFICULTY: Record<string, {
     shadowColor: "#52B788",
   },
   medium: {
-    emoji: "🌿",
-    gradient: ["#FFF9C4", "#FFE082"],
     ring: "#FFD54F",
     fillColor: "#F9A825",
     coinsColor: "#E65100",
@@ -50,8 +44,6 @@ const DIFFICULTY: Record<string, {
     shadowColor: "#F9C74F",
   },
   hard: {
-    emoji: "🌳",
-    gradient: ["#2D6A4F", "#1B4332"],
     ring: "#52B788",
     fillColor: "#40916C",
     coinsColor: "#1B4332",
