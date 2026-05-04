@@ -146,6 +146,8 @@ function WebNavBar() {
 
 // ─── Mobile hamburger + drawer ────────────────────────────────────────────────
 
+let _lastSync: Date | null = null;
+
 function relativeTime(date: Date): string {
   const mins = Math.floor((Date.now() - date.getTime()) / 60_000);
   if (mins < 1) return "Just now";
@@ -171,15 +173,16 @@ function MobileNavMenu() {
   const syncIconStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
-  const [lastSync, setLastSync] = useState<Date | null>(null);
-  const [syncLabel, setSyncLabel] = useState("Never synced");
+  const [syncLabel, setSyncLabel] = useState(
+    _lastSync ? relativeTime(_lastSync) : "Never synced"
+  );
 
   useEffect(() => {
-    if (!lastSync) return;
-    setSyncLabel(relativeTime(lastSync));
-    const id = setInterval(() => setSyncLabel(relativeTime(lastSync)), 30_000);
+    const id = setInterval(() => {
+      if (_lastSync) setSyncLabel(relativeTime(_lastSync));
+    }, 30_000);
     return () => clearInterval(id);
-  }, [lastSync]);
+  }, []);
 
   const openMenu = () => {
     setOpen(true);
@@ -214,7 +217,8 @@ function MobileNavMenu() {
   const handleSync = () => {
     rotation.value = withTiming(rotation.value + 360, { duration: 600 });
     queryClient.invalidateQueries();
-    setLastSync(new Date());
+    _lastSync = new Date();
+    setSyncLabel("Just now");
   };
 
   return (
