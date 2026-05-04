@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Modal, Platform, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated, {
   Easing,
@@ -167,6 +167,15 @@ function MobileNavMenu() {
     staleTime: Infinity,
   });
   const translateX = useSharedValue(-DRAWER_WIDTH);
+  const [lastSync, setLastSync] = useState<Date | null>(null);
+  const [syncLabel, setSyncLabel] = useState("Never synced");
+
+  useEffect(() => {
+    if (!lastSync) return;
+    setSyncLabel(relativeTime(lastSync));
+    const id = setInterval(() => setSyncLabel(relativeTime(lastSync)), 30_000);
+    return () => clearInterval(id);
+  }, [lastSync]);
 
   const openMenu = () => {
     setOpen(true);
