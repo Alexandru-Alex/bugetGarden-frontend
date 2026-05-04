@@ -189,11 +189,11 @@ export default function GardenScreen() {
                       }
 
                       const day = (row - 1) * INNER_COLS + (col - 1) + 1;
-                      if (day > daysInMonth) return null;
-                      const hasFlower = flowers.has(day);
+                      const isOutOfMonth = day > daysInMonth;
+                      const hasFlower = !isOutOfMonth && flowers.has(day);
                       const flowerIndex = flowers.get(day) ?? 0;
                       const isHovered = hovered === day;
-                      const isFuture = isFutureMonth;
+                      const isFuture = isFutureMonth || isOutOfMonth;
 
                       const cubeVariant = hasFlower
                         ? "flower"
