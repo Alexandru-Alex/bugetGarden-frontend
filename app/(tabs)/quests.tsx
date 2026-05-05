@@ -2,12 +2,12 @@ import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { TASKS_MONTH_KEY, TASKS_TODAY_KEY } from "@/hooks/use-quest-progress";
 import { getStoredToken } from "@/lib/api";
-import { fetchMonthTasks, fetchTodayTasks, TaskDto } from "@/lib/quests-api";
+import { claimTaskReward, fetchMonthTasks, fetchTodayTasks, TaskDto } from "@/lib/quests-api";
 import { styles } from "@/styles/tabs/quests.styles";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -19,13 +19,39 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const TAB_PERIOD = { daily: "DAILY", monthly: "MONTHLY" } as const;
+
 export default function QuestsScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<"daily" | "monthly">("daily");
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     getStoredToken().then(setToken);
   }, []);
+
+  useEffect(() => {
+    return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
+  }, []);
+
+  const showToast = useCallback((msg: string) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToastMsg(msg);
+    toastTimer.current = setTimeout(() => setToastMsg(null), 3000);
+  }, []);
+
+  const rewardMutation = useMutation({
+    mutationFn: () => claimTaskReward(TAB_PERIOD[activeTab]),
+    onSuccess: (data) => {
+      showToast(`Congratulations! You received ${data.coins} coins 🎉`);
+    },
+  });
+
+  const handleTabChange = useCallback((tab: "daily" | "monthly") => {
+    setActiveTab(tab);
+    rewardMutation.reset();
+  }, [rewardMutation]);
 
   const dailyQuery = useQuery({
     queryKey: TASKS_TODAY_KEY,
@@ -59,6 +85,11 @@ export default function QuestsScreen() {
         colors={["#2A4A2E", "#346739", "#79AE6F"]}
         style={[styles.gradient, Platform.OS === "web" && { paddingTop: 56 }]}
       >
+        {toastMsg && (
+          <View style={styles.toast} pointerEvents="none">
+            <Text style={styles.toastText}>{toastMsg}</Text>
+          </View>
+        )}
         <SafeAreaView edges={["top"]} style={styles.safeArea}>
           <View style={[styles.inner, Platform.OS === "web" && styles.innerWeb]}>
           <View style={styles.headerSection}>
@@ -71,7 +102,7 @@ export default function QuestsScreen() {
               <Pressable
                 key={tab}
                 style={[styles.tab, activeTab === tab && styles.tabActive]}
-                onPress={() => setActiveTab(tab)}
+                onPress={() => handleTabChange(tab)}
               >
                 <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
                   {tab === "daily" ? "Daily" : "Monthly"}
@@ -101,7 +132,12 @@ export default function QuestsScreen() {
 
                 {tasks.length > 0 && (
                   <View style={styles.questsContainer}>
-                    <SummaryCard completed={completed} total={tasks.length} />
+                    <SummaryCard
+                      completed={completed}
+                      total={tasks.length}
+                      rewardClaimed={rewardMutation.isSuccess}
+                      onChestPress={() => rewardMutation.mutate()}
+                    />
                     {tasks.map((task) => (
                       <QuestCard key={task.id} task={task} />
                     ))}
@@ -132,9 +168,19 @@ const chestImages = [
   require("@/assets/images/chest_quests_3.png"),
 ];
 
-function SummaryCard({ completed, total }: { completed: number; total: number }) {
+function SummaryCard({
+  completed,
+  total,
+  rewardClaimed,
+  onChestPress,
+}: {
+  completed: number;
+  total: number;
+  rewardClaimed: boolean;
+  onChestPress: () => void;
+}) {
   const chestIndex = Math.min(Math.max(completed, 1), 3);
-  const isPressable = completed >= 3;
+  const isPressable = completed >= 3 && !rewardClaimed;
 
   return (
     <View style={styles.summaryCard}>
@@ -148,7 +194,8 @@ function SummaryCard({ completed, total }: { completed: number; total: number })
       </View>
       <Pressable
         disabled={!isPressable}
-        style={({ pressed }) => [isPressable && pressed && { opacity: 0.75 }]}
+        onPress={onChestPress}
+        style={({ pressed }) => ({ opacity: isPressable && pressed ? 0.75 : rewardClaimed ? 0.5 : 1 })}
       >
         <Image
           source={chestImages[chestIndex - 1]}

@@ -202,6 +202,25 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
+  // ── Toast ─────────────────────────────────────────────────────────────────
+  toast: {
+    position: "absolute",
+    top: 120,
+    alignSelf: "center",
+    backgroundColor: "rgba(30,60,30,0.92)",
+    borderRadius: 20,
+    paddingHorizontal: 22,
+    paddingVertical: 12,
+    zIndex: 100,
+    maxWidth: 320,
+  },
+  toastText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+
   // ── Empty / Loading ───────────────────────────────────────────────────────
   emptyText: {
     fontFamily: "Nunito_700Bold",

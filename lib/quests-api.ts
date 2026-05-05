@@ -1,4 +1,4 @@
-import { BASE_URL, getStoredToken } from "@/lib/api";
+import { api, BASE_URL, getStoredToken } from "@/lib/api";
 
 export interface TaskDto {
   id: string;
@@ -71,4 +71,8 @@ export async function fetchAchievements(): Promise<AchievementDto[]> {
   });
   if (!res.ok) throw new Error("Failed to fetch achievements");
   return res.json();
+}
+
+export async function claimTaskReward(period: "DAILY" | "MONTHLY"): Promise<{ coins: number }> {
+  return api.post<{ coins: number }>(`/tasks/reward?period=${period}`, {});
 }
