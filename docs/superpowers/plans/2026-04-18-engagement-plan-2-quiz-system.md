@@ -15,10 +15,10 @@
 ### Task 1: Quiz DTOs
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/dto/quiz/QuizQuestionDto.java`
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/dto/quiz/QuizSessionResponseDto.java`
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/dto/quiz/SubmitQuizRequest.java`
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/dto/quiz/SubmitQuizResponseDto.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/dto/quiz/QuizQuestionDto.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/dto/quiz/QuizSessionResponseDto.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/dto/quiz/SubmitQuizRequest.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/dto/quiz/SubmitQuizResponseDto.java`
 
 - [ ] **Step 1: Create `QuizQuestionDto`**
 
@@ -95,7 +95,7 @@ public class SubmitQuizResponseDto {
 - [ ] **Step 5: Compile check**
 
 ```bash
-cd budgetGarden-backend && ./mvnw compile -q
+cd moneyGarden-backend && ./mvnw compile -q
 ```
 
 Expected: BUILD SUCCESS, no errors.
@@ -112,7 +112,7 @@ git commit -m "feat: add quiz DTOs"
 ### Task 2: `QuizRepository`
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/repository/quiz/QuizRepository.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/repository/quiz/QuizRepository.java`
 
 - [ ] **Step 1: Create the repository**
 
@@ -217,7 +217,7 @@ git commit -m "feat: add QuizRepository"
 ### Task 3: `QuizService`
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/QuizService.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/QuizService.java`
 
 Coin formula: `floor(15 + (correctAnswers / totalQuestions) * 15)` → min 15, max 30 coins.
 
@@ -348,7 +348,7 @@ git commit -m "feat: add QuizService with coin award logic"
 ### Task 4: `QuizController`
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/controller/QuizController.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/controller/QuizController.java`
 
 - [ ] **Step 1: Create the controller**
 

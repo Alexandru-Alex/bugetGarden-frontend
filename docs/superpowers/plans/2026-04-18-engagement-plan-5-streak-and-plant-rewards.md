@@ -15,9 +15,9 @@
 ### Task 1: Plant reward on financial entry
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/PlantRewardService.java`
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/financial/FinancialService.java`
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/dto/financial/SaveTransactionResponseDto.java` (create if not exists)
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/PlantRewardService.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/financial/FinancialService.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/dto/financial/SaveTransactionResponseDto.java` (create if not exists)
 
 - [ ] **Step 1: Create `SaveTransactionResponseDto`**
 
@@ -173,7 +173,7 @@ public SaveTransactionResponseDto saveTransaction(@RequestBody RequestTransactio
 - [ ] **Step 5: Compile check**
 
 ```bash
-cd budgetGarden-backend && ./mvnw compile -q
+cd moneyGarden-backend && ./mvnw compile -q
 ```
 
 Expected: BUILD SUCCESS.
@@ -232,10 +232,10 @@ The streak bonus applies when the user has completed all three daily activities 
 The bonus is a one-time award of **additional coins equal to 50% of daily coins earned**, awarded when the last activity is completed. We track this via a `daily_streak_bonus` reference_type in `gold_coin_transactions`.
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/StreakBonusService.java`
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/financial/FinancialService.java`
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/QuizService.java`
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/QuestService.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/StreakBonusService.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/financial/FinancialService.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/QuizService.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/QuestService.java`
 
 - [ ] **Step 1: Create `StreakBonusService`**
 

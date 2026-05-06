@@ -15,7 +15,7 @@
 ### Task 1: Enable Spring Scheduling
 
 **Files:**
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/BugetGardenApplication.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/BugetGardenApplication.java`
 
 - [ ] **Step 1: Add `@EnableScheduling`**
 
@@ -38,7 +38,7 @@ public class BugetGardenApplication {
 - [ ] **Step 2: Compile check**
 
 ```bash
-cd budgetGarden-backend && ./mvnw compile -q
+cd moneyGarden-backend && ./mvnw compile -q
 ```
 
 Expected: BUILD SUCCESS.
@@ -55,9 +55,9 @@ git commit -m "feat: enable Spring scheduling"
 ### Task 2: Update `last_activity_at` on user actions
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/repository/garden/GardenRepository.java`
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/financial/FinancialService.java`
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/QuizService.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/repository/garden/GardenRepository.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/financial/FinancialService.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/QuizService.java`
 
 - [ ] **Step 1: Create `GardenRepository`**
 
@@ -176,7 +176,7 @@ git commit -m "feat: touch garden last_activity_at on entry add and quiz submit"
 ### Task 3: Scheduled health job
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/scheduler/GardenHealthScheduler.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/scheduler/GardenHealthScheduler.java`
 
 - [ ] **Step 1: Create the scheduler**
 
@@ -225,9 +225,9 @@ git commit -m "feat: add daily scheduled job to update plant health"
 ### Task 4: Revive endpoint
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/dto/garden/ReviveResponseDto.java`
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/GardenHealthService.java`
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/controller/GardenController.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/dto/garden/ReviveResponseDto.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/GardenHealthService.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/controller/GardenController.java`
 
 Revive cost: **20 coins** per wilted plant.
 

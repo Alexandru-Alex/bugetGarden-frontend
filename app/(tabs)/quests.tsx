@@ -2,9 +2,10 @@ import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { TASKS_MONTH_KEY, TASKS_TODAY_KEY } from "@/hooks/use-quest-progress";
 import { getStoredToken } from "@/lib/api";
+import { ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
 import { claimTaskReward, fetchMonthTasks, fetchTodayTasks, TaskDto } from "@/lib/quests-api";
 import { styles } from "@/styles/tabs/quests.styles";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -22,6 +23,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const TAB_PERIOD = { daily: "DAILY", monthly: "MONTHLY" } as const;
 
 export default function QuestsScreen() {
+  const queryClient = useQueryClient();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<"daily" | "monthly">("daily");
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -45,6 +47,7 @@ export default function QuestsScreen() {
     mutationFn: () => claimTaskReward(TAB_PERIOD[activeTab]),
     onSuccess: (data) => {
       showToast(`Congratulations! You received ${data.coins} coins 🎉`);
+      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
     },
   });
 

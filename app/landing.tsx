@@ -135,8 +135,8 @@ function ArcWord({ word, r, fontSize, charSpacing }: {
 
 function ArcTitle() {
   return (
-    <Svg width={SVG_W} height={SVG_H} style={{ overflow: "visible" }}>
-      <ArcWord word="Budget" r={R_OUT} fontSize={58} charSpacing={38} />
+    <Svg width={SVG_W} height={SVG_H} style={{ overflow: "visible" }} pointerEvents="none">
+      <ArcWord word="Money"  r={R_OUT} fontSize={58} charSpacing={38} />
       <ArcWord word="Garden" r={R_IN}  fontSize={50} charSpacing={32} />
     </Svg>
   );
@@ -342,7 +342,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
             <Text style={auth.subtitle}>
               {mode === "login"
                 ? "Sign in to your garden"
-                : "Create your BudgetGarden"}
+                : "Create your MoneyGarden"}
             </Text>
 
             {/* Tab switcher */}
@@ -548,7 +548,7 @@ export default function LandingScreen() {
       </View>
 
       <SafeAreaView style={styles.safe}>
-        <Animated.View style={[styles.content, contentStyle]}>
+        <Animated.View style={[styles.content, contentStyle, Platform.OS === "web" && { userSelect: "none" } as object]}>
           <View style={styles.flowerTreeRow}>
             <RoseFlower size={48} delay={400} />
           </View>

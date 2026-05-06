@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Redesign the Quests screen to use a full-screen green gradient with floating white cards, matching the Forest-app reference design while keeping BudgetGarden's palette and typography.
+**Goal:** Redesign the Quests screen to use a full-screen green gradient with floating white cards, matching the Forest-app reference design while keeping MoneyGarden's palette and typography.
 
 **Architecture:** Replace the current two-tone header+card structure with a full-screen `LinearGradient` wrapping everything. All content (header, tabs, summary card, quest cards) floats on top of the gradient. Only two files change: the styles file (full rewrite) and the screen component (full restructure).
 

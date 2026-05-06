@@ -2,7 +2,7 @@
 
 ## Goal
 
-Redesign the Quests screen to match a reference design (Forest-app style) while staying true to the BudgetGarden green palette and Nunito typography. The overall layout switches from a two-tone (gradient header + white card) structure to a full-screen gradient with floating white cards.
+Redesign the Quests screen to match a reference design (Forest-app style) while staying true to the MoneyGarden green palette and Nunito typography. The overall layout switches from a two-tone (gradient header + white card) structure to a full-screen gradient with floating white cards.
 
 ## Decisions Made
 

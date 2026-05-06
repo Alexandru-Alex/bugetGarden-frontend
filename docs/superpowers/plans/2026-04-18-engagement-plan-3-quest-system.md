@@ -15,8 +15,8 @@
 ### Task 1: Quest DTOs
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/dto/quest/QuestDto.java`
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/dto/quest/ClaimQuestResponseDto.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/dto/quest/QuestDto.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/dto/quest/ClaimQuestResponseDto.java`
 
 - [ ] **Step 1: Create `QuestDto`**
 
@@ -62,7 +62,7 @@ public class ClaimQuestResponseDto {
 - [ ] **Step 3: Compile check**
 
 ```bash
-cd budgetGarden-backend && ./mvnw compile -q
+cd moneyGarden-backend && ./mvnw compile -q
 ```
 
 Expected: BUILD SUCCESS.
@@ -79,7 +79,7 @@ git commit -m "feat: add quest DTOs"
 ### Task 2: `QuestRepository`
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/repository/quest/QuestRepository.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/repository/quest/QuestRepository.java`
 
 - [ ] **Step 1: Create the repository**
 
@@ -278,7 +278,7 @@ git commit -m "feat: add QuestRepository"
 ### Task 3: `QuestService`
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/QuestService.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/QuestService.java`
 
 - [ ] **Step 1: Create the service**
 
@@ -381,8 +381,8 @@ git commit -m "feat: add QuestService"
 ### Task 4: Hook QuestService into FinancialService and QuizService
 
 **Files:**
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/financial/FinancialService.java`
-- Modify: `budgetGarden-backend/src/main/java/com/example/bugetGarden/service/QuizService.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/financial/FinancialService.java`
+- Modify: `moneyGarden-backend/src/main/java/com/example/bugetGarden/service/QuizService.java`
 
 - [ ] **Step 1: Add `QuestService` to `FinancialService`**
 
@@ -435,7 +435,7 @@ git commit -m "feat: trigger quest progress on entry add and quiz complete"
 ### Task 5: `QuestController`
 
 **Files:**
-- Create: `budgetGarden-backend/src/main/java/com/example/bugetGarden/controller/QuestController.java`
+- Create: `moneyGarden-backend/src/main/java/com/example/bugetGarden/controller/QuestController.java`
 
 - [ ] **Step 1: Create the controller**
 

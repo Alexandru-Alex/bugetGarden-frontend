@@ -102,7 +102,7 @@ export default function HomeScreen() {
                 </View>
 
                 <ThemedText type="title" style={styles.mainTitle}>
-                  BudgetGarden
+                  MoneyGarden
                 </ThemedText>
 
                 <ThemedText style={styles.subtitle}>

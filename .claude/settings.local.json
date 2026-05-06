@@ -22,7 +22,10 @@
       "PowerShell(cd \"D:\\\\IdeaProjects\\\\bugetGarden-front\"; git show HEAD 2>&1 | Select-String -Pattern \"badgeEmoji|badgeGradient\" | Where-Object { $_ -notmatch \"^-\" })",
       "Bash(ls assets/badges/)",
       "Bash(dir assets\\\\badges)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "PowerShell(git *)",
+      "Bash(node *)",
+      "Bash(cd D:\\\\\\\\IdeaProjects\\\\\\\\bugetGarden-front)"
     ]
   }
 }
