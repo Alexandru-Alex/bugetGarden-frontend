@@ -100,6 +100,7 @@ export default function GardenScreen() {
   const { data: gardenData } = useQuery<GardenDto>({
     queryKey: ["garden", viewMonth + 1, viewYear],
     queryFn: () => api.get(`/garden?month=${viewMonth + 1}&year=${viewYear}`),
+    staleTime: Infinity,
     enabled: !!token,
   });
 
@@ -115,11 +116,11 @@ export default function GardenScreen() {
     return result;
   }, [plantedCells]);
 
-  function showToast(msg: string) {
+  const showToast = useCallback((msg: string) => {
     if (toastTimer.current) clearTimeout(toastTimer.current);
     setToastMsg(msg);
     toastTimer.current = setTimeout(() => setToastMsg(null), 3000);
-  }
+  }, []);
 
   const prevMonth = () => {
     if (viewMonth === 0) { setViewYear((y) => y - 1); setViewMonth(11); }
@@ -133,6 +134,7 @@ export default function GardenScreen() {
 
   const handleCellPress = useCallback((day: number) => {
     if (isFutureMonth) return;
+    if (day > daysInMonth) return;
     if (!gardenData) return;
     const cell = gardenData.cells.find((c) => c.day === day);
     if (cell?.planted) {
@@ -141,7 +143,7 @@ export default function GardenScreen() {
     }
     setSelectedDay(day);
     setSheetVisible(true);
-  }, [isFutureMonth, gardenData]);
+  }, [isFutureMonth, gardenData, showToast, daysInMonth]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
