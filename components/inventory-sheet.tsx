@@ -30,7 +30,7 @@ interface InventoryItemDto {
 
 interface Props {
   visible: boolean;
-  day: number | null;
+  day: number;
   gardenId: string;
   month: number;
   year: number;
@@ -116,7 +116,7 @@ export function InventorySheet({
       setInventoryEnabled(true);
       translateY.value = withTiming(0, { duration: 280 });
     }
-  }, [visible]);
+  }, [visible, translateY]);
 
   const animStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
@@ -142,7 +142,7 @@ export function InventorySheet({
             <Text style={styles.emptyText}>No flowers in inventory</Text>
             <Pressable
               style={styles.shopBtn}
-              onPress={() => { onClose(); router.push("/store"); }}
+              onPress={() => animateClose(() => { onClose(); router.push("/store"); })}
             >
               <Text style={styles.shopBtnText}>Go to Shop</Text>
             </Pressable>

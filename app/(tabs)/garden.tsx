@@ -97,6 +97,12 @@ export default function GardenScreen() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
+  }, []);
+
   const { data: gardenData } = useQuery<GardenDto>({
     queryKey: ["garden", viewMonth + 1, viewYear],
     queryFn: () => api.get(`/garden?month=${viewMonth + 1}&year=${viewYear}`),
@@ -363,7 +369,7 @@ export default function GardenScreen() {
         </View>
       )}
 
-      {gardenData && (
+      {gardenData && selectedDay !== null && (
         <InventorySheet
           visible={sheetVisible}
           day={selectedDay}
