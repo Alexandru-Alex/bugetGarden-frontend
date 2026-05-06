@@ -404,6 +404,14 @@ export const styles = StyleSheet.create({
     color: "#1f4a25",
     marginBottom: 8,
   },
+  modalDescription: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13,
+    color: "#5a7a5e",
+    textAlign: "center",
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
   modalPriceRow: {
     flexDirection: "row",
     alignItems: "center",

@@ -226,6 +226,7 @@ function BuyModal({
             />
           </View>
           <Text style={styles.modalName}>{flower.name}</Text>
+          <Text style={styles.modalDescription}>{flower.description}</Text>
           <View style={styles.modalPriceRow}>
             <Image
               source={require("../assets/images/coin.png")}
