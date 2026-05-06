@@ -247,7 +247,7 @@ export default function GardenScreen() {
                         ? "flower"
                         : isHovered
                           ? "hovered"
-                          : !isCurrentMonth
+                          : isFutureMonth
                             ? "future"
                             : "normal";
 
@@ -262,7 +262,7 @@ export default function GardenScreen() {
                             width: CELL_SIZE,
                             height: CELL_SIZE,
                             overflow: "visible",
-                            opacity: !isCurrentMonth ? 0.55 : 1,
+                            opacity: isFutureMonth ? 0.55 : 1,
                             transform: isHovered ? [{ translateY: -3 }] : [],
                           }}
                         >
@@ -322,7 +322,7 @@ export default function GardenScreen() {
                           <Pressable
                             onPress={() => handleCellPress(day)}
                             // @ts-ignore
-                            onHoverIn={() => isCurrentMonth && setHovered(day)}
+                            onHoverIn={() => !isFutureMonth && setHovered(day)}
                             // @ts-ignore
                             onHoverOut={() => setHovered(null)}
                             android_ripple={null}
