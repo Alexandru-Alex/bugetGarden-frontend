@@ -118,7 +118,11 @@ export default function GardenScreen() {
 
   const chartData = useMemo(() => {
     const result: Record<number, number> = {};
-    plantedCells.forEach((_, day) => { result[day] = 1; });
+    plantedCells.forEach((cell) => {
+      if (!cell.plantedAt) return;
+      const day = new Date(cell.plantedAt).getDate();
+      result[day] = (result[day] ?? 0) + 1;
+    });
     return result;
   }, [plantedCells]);
 
