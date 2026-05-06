@@ -1,13 +1,16 @@
+// app/store.tsx
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
+import { flowerImage } from "@/lib/flower-images";
 import { styles } from "@/styles/tabs/store.styles";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Modal,
   Platform,
@@ -25,39 +28,26 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// ─── Catalog ─────────────────────────────────────────────────────────────────
+// ─── Types ───────────────────────────────────────────────────────────────────
 
-type FlowerTag = "new" | "rare" | "legendary" | "sale";
-
-interface Flower {
-  id: number;
+interface ShopItemDto {
+  id: string;
   name: string;
+  description: string;
+  imageUrl: string;
   price: number;
-  tag?: FlowerTag;
-  image: number;
+  rarity: string;
+  unlockActionType: string;
+  unlockTargetCount: number;
+  userProgress: number;
+  isUnlocked: boolean;
+  ownedQuantity: number;
 }
 
-const TAG_STYLE: Record<FlowerTag, { bg: string; text: string }> = {
-  new:       { bg: "#f2c94c", text: "#5a3c0a" },
-  rare:      { bg: "#fff0c8", text: "#8a6310" },
-  legendary: { bg: "#1f4a25", text: "#f2c94c" },
-  sale:      { bg: "#d17a4a", text: "#ffffff" },
+const RARITY_STYLE: Record<string, { bg: string; text: string }> = {
+  RARE:      { bg: "#fff0c8", text: "#8a6310" },
+  LEGENDARY: { bg: "#1f4a25", text: "#f2c94c" },
 };
-
-const CATALOG: Flower[] = [
-  { id: 1,  name: "Rose",     price: 120, tag: "new",       image: require("../flowers/rose_v2.png") },
-  { id: 2,  name: "Tulip",    price: 80,                    image: require("../flowers/Tulip.png") },
-  { id: 3,  name: "Lavender", price: 60,                    image: require("../flowers/Lavender.png") },
-  { id: 4,  name: "Peony",    price: 150, tag: "rare",      image: require("../flowers/peony.png") },
-  { id: 5,  name: "Bluebell", price: 50,                    image: require("../flowers/bluebell_v3.png") },
-  { id: 6,  name: "Marigold", price: 70,                    image: require("../flowers/marigold.png") },
-  { id: 7,  name: "Daisy",    price: 40,  tag: "sale",      image: require("../flowers/daisy.png") },
-  { id: 8,  name: "Cosmos",   price: 95,  tag: "new",       image: require("../flowers/Cosmos.png") },
-  { id: 9,  name: "Hibiscus", price: 180, tag: "legendary", image: require("../flowers/hibiscus.png") },
-  { id: 10, name: "Poppy",    price: 75,                    image: require("../flowers/Poppy_v2.png") },
-  { id: 11, name: "Iris",     price: 85,                    image: require("../flowers/bluebell_v3.png") },
-  { id: 12, name: "Lily",     price: 110,                   image: require("../flowers/daisy.png") },
-];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -156,11 +146,11 @@ function FlowerCard({
   cardWidth,
   onPress,
 }: {
-  flower: Flower;
+  flower: ShopItemDto;
   cardWidth: number;
   onPress: () => void;
 }) {
-  const tag = flower.tag ? TAG_STYLE[flower.tag] : null;
+  const tag = RARITY_STYLE[flower.rarity] ?? null;
   const scale = useSharedValue(1);
   const animStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -169,20 +159,35 @@ function FlowerCard({
   return (
     <Animated.View style={[styles.card, { width: cardWidth }, animStyle]}>
       <Pressable
-        onPress={onPress}
-        onHoverIn={() => { scale.value = withTiming(1.04, { duration: 140 }); }}
+        onPress={flower.isUnlocked ? onPress : undefined}
+        onHoverIn={() => { if (flower.isUnlocked) scale.value = withTiming(1.04, { duration: 140 }); }}
         onHoverOut={() => { scale.value = withTiming(1, { duration: 140 }); }}
+        style={!flower.isUnlocked ? { opacity: 0.5 } : undefined}
       >
         <View style={styles.cardBody}>
           {tag && (
             <View style={[styles.cardBadge, { backgroundColor: tag.bg }]}>
               <Text style={[styles.cardBadgeText, { color: tag.text }]}>
-                {flower.tag}
+                {flower.rarity.toLowerCase()}
               </Text>
             </View>
           )}
           <View style={styles.cardImgFrame}>
-            <Image source={flower.image} style={styles.cardImg} resizeMode="contain" />
+            <Image
+              source={flowerImage(flower.imageUrl)}
+              style={styles.cardImg}
+              resizeMode="contain"
+            />
+            {!flower.isUnlocked && (
+              <View style={{
+                position: "absolute",
+                top: 0, left: 0, right: 0, bottom: 0,
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+                <Ionicons name="lock-closed" size={28} color="rgba(0,0,0,0.5)" />
+              </View>
+            )}
           </View>
           <Text style={styles.cardName}>{flower.name}</Text>
         </View>
@@ -202,10 +207,12 @@ function BuyModal({
   flower,
   onBuy,
   onClose,
+  isPending,
 }: {
-  flower: Flower;
+  flower: ShopItemDto;
   onBuy: () => void;
   onClose: () => void;
+  isPending: boolean;
 }) {
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
@@ -217,7 +224,11 @@ function BuyModal({
             : undefined)}
         >
           <View style={styles.modalImgFrame}>
-            <Image source={flower.image} style={styles.modalImg} resizeMode="contain" />
+            <Image
+              source={flowerImage(flower.imageUrl)}
+              style={styles.modalImg}
+              resizeMode="contain"
+            />
           </View>
           <Text style={styles.modalName}>{flower.name}</Text>
           <View style={styles.modalPriceRow}>
@@ -227,10 +238,13 @@ function BuyModal({
             />
             <Text style={styles.modalPrice}>{flower.price}</Text>
           </View>
-          <Pressable style={styles.modalBuyBtn} onPress={onBuy}>
-            <Text style={styles.modalBuyBtnText}>Buy</Text>
+          <Pressable style={styles.modalBuyBtn} onPress={onBuy} disabled={isPending}>
+            {isPending
+              ? <ActivityIndicator size="small" color="#fff" />
+              : <Text style={styles.modalBuyBtnText}>Buy</Text>
+            }
           </Pressable>
-          <Pressable style={styles.modalCancelBtn} onPress={onClose}>
+          <Pressable style={styles.modalCancelBtn} onPress={onClose} disabled={isPending}>
             <Text style={styles.modalCancelText}>Cancel</Text>
           </Pressable>
         </Pressable>
@@ -244,11 +258,13 @@ function BuyModal({
 export default function StoreScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [search, setSearch] = useState("");
-  const [selectedFlower, setSelectedFlower] = useState<Flower | null>(null);
-  const [toastVisible, setToastVisible] = useState(false);
+  const [selectedFlower, setSelectedFlower] = useState<ShopItemDto | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [gridWidth, setGridWidth] = useState(0);
   const [gridOffsetY, setGridOffsetY] = useState(0);
   const { width: screenWidth } = useWindowDimensions();
+  const queryClient = useQueryClient();
 
   const isWide = Platform.OS === "web" && screenWidth >= 600;
   const cols = screenWidth >= 600 ? 4 : 2;
@@ -257,6 +273,10 @@ export default function StoreScreen() {
 
   useEffect(() => { getStoredToken().then(setToken); }, []);
 
+  useEffect(() => {
+    return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
+  }, []);
+
   const { data: account } = useQuery<{ goldCoins: number }>({
     queryKey: ["account"],
     queryFn: () => api.get("/accounts"),
@@ -264,28 +284,52 @@ export default function StoreScreen() {
     enabled: !!token,
   });
 
+  const { data: shopData = [] } = useQuery<ShopItemDto[]>({
+    queryKey: ["shop"],
+    queryFn: () => api.get("/shop"),
+    staleTime: Infinity,
+    enabled: !!token,
+  });
+
+  const { mutate: buyFlower, isPending } = useMutation({
+    mutationFn: (itemId: string) => api.post(`/shop/${itemId}/buy`, {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["shop"] });
+      queryClient.invalidateQueries({ queryKey: ["account"] });
+      setSelectedFlower(null);
+      showToast("Flower purchased! 🌸");
+    },
+    onError: (err: Error) => {
+      setSelectedFlower(null);
+      showToast(err.message || "Purchase failed");
+    },
+  });
+
+  function showToast(msg: string) {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToastMsg(msg);
+    toastTimer.current = setTimeout(() => setToastMsg(null), 3000);
+  }
+
+  const owned = shopData.filter(i => i.ownedQuantity > 0).length;
+  const total = shopData.length;
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return CATALOG;
-    return CATALOG.filter(f => f.name.toLowerCase().includes(q));
-  }, [search]);
+    if (!q) return shopData;
+    return shopData.filter(f => f.name.toLowerCase().includes(q));
+  }, [search, shopData]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
-
-  const handleBuy = () => {
-    setSelectedFlower(null);
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 3000);
-  };
 
   return (
     <PageTransition style={styles.root}>
       <NavMenu />
 
-      {toastVisible && (
+      {toastMsg !== null && (
         <View style={styles.toast}>
-          <Text style={styles.toastText}>Flower purchased! 🌸</Text>
+          <Text style={styles.toastText}>{toastMsg}</Text>
         </View>
       )}
 
@@ -360,7 +404,7 @@ export default function StoreScreen() {
             </View>
             <View style={[styles.sideCol, { marginTop: gridOffsetY }]}>
               <DailyBonusCard />
-              <ProgressCard owned={0} total={CATALOG.length} />
+              <ProgressCard owned={owned} total={total} />
             </View>
           </View>
         ) : (
@@ -368,7 +412,7 @@ export default function StoreScreen() {
             <FeatureBanner />
             <View style={styles.infoRow}>
               <DailyBonusCard />
-              <ProgressCard owned={0} total={CATALOG.length} />
+              <ProgressCard owned={owned} total={total} />
             </View>
             <View style={styles.searchBar}>
               <Ionicons name="search-outline" size={16} color="#8a968c" />
@@ -404,8 +448,9 @@ export default function StoreScreen() {
       {selectedFlower && (
         <BuyModal
           flower={selectedFlower}
-          onBuy={handleBuy}
+          onBuy={() => buyFlower(selectedFlower.id)}
           onClose={() => setSelectedFlower(null)}
+          isPending={isPending}
         />
       )}
     </PageTransition>
