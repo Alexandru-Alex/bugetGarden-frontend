@@ -332,6 +332,15 @@ export const styles = StyleSheet.create({
     width: "88%",
     height: "88%",
   },
+  cardLockOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   cardName: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 13,

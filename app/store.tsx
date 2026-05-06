@@ -179,12 +179,7 @@ function FlowerCard({
               resizeMode="contain"
             />
             {!flower.isUnlocked && (
-              <View style={{
-                position: "absolute",
-                top: 0, left: 0, right: 0, bottom: 0,
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
+              <View style={styles.cardLockOverlay}>
                 <Ionicons name="lock-closed" size={28} color="rgba(0,0,0,0.5)" />
               </View>
             )}
