@@ -308,7 +308,7 @@ export default function StoreScreen() {
     toastTimer.current = setTimeout(() => setToastMsg(null), 3000);
   }
 
-  const owned = shopData.filter(i => i.ownedQuantity > 0).length;
+  const owned = shopData.filter(i => i.isUnlocked).length;
   const total = shopData.length;
 
   const filtered = useMemo(() => {
