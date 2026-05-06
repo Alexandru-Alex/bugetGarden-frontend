@@ -95,4 +95,20 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
   },
+  toast: {
+    position: "absolute",
+    top: 120,
+    alignSelf: "center",
+    backgroundColor: "rgba(31,46,31,0.92)",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    zIndex: 100,
+  },
+  toastText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+    color: "#fff",
+    textAlign: "center",
+  },
 });
