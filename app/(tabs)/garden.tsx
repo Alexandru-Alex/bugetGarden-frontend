@@ -1,15 +1,18 @@
 // app/(tabs)/garden.tsx
+import { InventorySheet } from "@/components/inventory-sheet";
 import { GardenFlowersChart } from "@/components/garden-flowers-chart";
 import { GrassCube } from "@/components/grass-cube";
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
-import { RoseFlower } from "@/components/rose-flower";
-import { getStoredToken } from "@/lib/api";
+import { api, getStoredToken } from "@/lib/api";
+import { flowerImage } from "@/lib/flower-images";
 import { styles } from "@/styles/tabs/garden.styles";
+import { useQuery } from "@tanstack/react-query";
+import { Image } from "expo-image";
 import { Redirect } from "expo-router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Image,
+  Image as RNImage,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -23,7 +26,6 @@ const MAX_CELL_SIZE = 100;
 const ROWS = 7;
 const COLS = 7;
 const INNER_COLS = 6;
-const FLOWER_COUNT = 5;
 
 const MONTH_NAMES = [
   "January", "February", "March", "April",
@@ -31,10 +33,25 @@ const MONTH_NAMES = [
   "September", "October", "November", "December",
 ];
 
-const MOCK_FLOWERS: Record<number, number> = {
-  2: 1, 4: 2, 8: 1, 9: 3, 12: 2, 13: 1,
-  16: 3, 18: 1, 23: 2, 24: 1, 27: 3, 29: 1,
-};
+interface PlantedFlowerDto {
+  name: string;
+  imageUrl: string;
+  rarity: string;
+}
+
+interface GardenCellDto {
+  day: number;
+  planted: boolean;
+  plantedAt: string | null;
+  flower: PlantedFlowerDto | null;
+}
+
+interface GardenDto {
+  id: string;
+  month: number;
+  year: number;
+  cells: GardenCellDto[];
+}
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
@@ -74,35 +91,57 @@ export default function GardenScreen() {
     [],
   );
 
-  const [flowers, setFlowers] = useState<Map<number, number>>(new Map());
   const [hovered, setHovered] = useState<number | null>(null);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [sheetVisible, setSheetVisible] = useState(false);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const toggleFlower = useCallback((day: number) => {
-    setFlowers((prev) => {
-      const next = new Map(prev);
-      const current = next.get(day);
-      if (current === undefined) {
-        next.set(day, 0);
-      } else if (current < FLOWER_COUNT - 1) {
-        next.set(day, current + 1);
-      } else {
-        next.delete(day);
-      }
-      return next;
-    });
-  }, []);
+  const { data: gardenData } = useQuery<GardenDto>({
+    queryKey: ["garden", viewMonth + 1, viewYear],
+    queryFn: () => api.get(`/garden?month=${viewMonth + 1}&year=${viewYear}`),
+    enabled: !!token,
+  });
+
+  const plantedCells = useMemo(() => {
+    const map = new Map<number, GardenCellDto>();
+    gardenData?.cells.forEach((c) => { if (c.planted) map.set(c.day, c); });
+    return map;
+  }, [gardenData]);
+
+  const chartData = useMemo(() => {
+    const result: Record<number, number> = {};
+    plantedCells.forEach((_, day) => { result[day] = 1; });
+    return result;
+  }, [plantedCells]);
+
+  function showToast(msg: string) {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToastMsg(msg);
+    toastTimer.current = setTimeout(() => setToastMsg(null), 3000);
+  }
 
   const prevMonth = () => {
-    setFlowers(new Map());
-    if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); }
-    else setViewMonth(m => m - 1);
+    if (viewMonth === 0) { setViewYear((y) => y - 1); setViewMonth(11); }
+    else setViewMonth((m) => m - 1);
   };
 
   const nextMonth = () => {
-    setFlowers(new Map());
-    if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
-    else setViewMonth(m => m + 1);
+    if (viewMonth === 11) { setViewYear((y) => y + 1); setViewMonth(0); }
+    else setViewMonth((m) => m + 1);
   };
+
+  const handleCellPress = useCallback((day: number) => {
+    if (isFutureMonth) return;
+    if (!gardenData) return;
+    const cell = gardenData.cells.find((c) => c.day === day);
+    if (cell?.planted) {
+      showToast("This flower cannot be moved");
+      return;
+    }
+    setSelectedDay(day);
+    setSheetVisible(true);
+  }, [isFutureMonth, gardenData]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
@@ -176,7 +215,7 @@ export default function GardenScreen() {
                               overflow: "visible",
                             }}
                           >
-                            <Image
+                            <RNImage
                               source={src}
                               style={{
                                 position: "absolute",
@@ -192,16 +231,15 @@ export default function GardenScreen() {
                       }
 
                       const day = (row - 1) * INNER_COLS + (col - 1) + 1;
-                      const hasFlower = flowers.has(day);
-                      const flowerIndex = flowers.get(day) ?? 0;
+                      const cell = plantedCells.get(day);
+                      const hasFlower = !!cell;
                       const isHovered = hovered === day;
-                      const isFuture = isFutureMonth;
 
                       const cubeVariant = hasFlower
                         ? "flower"
                         : isHovered
                           ? "hovered"
-                          : isFuture
+                          : isFutureMonth
                             ? "future"
                             : "normal";
 
@@ -216,13 +254,13 @@ export default function GardenScreen() {
                             width: CELL_SIZE,
                             height: CELL_SIZE,
                             overflow: "visible",
-                            opacity: isFuture ? 0.55 : 1,
+                            opacity: isFutureMonth ? 0.55 : 1,
                             transform: isHovered ? [{ translateY: -3 }] : [],
                           }}
                         >
                           <GrassCube size={CELL_SIZE} variant={cubeVariant} />
 
-                          {hasFlower && (
+                          {hasFlower && cell.flower && (
                             <View
                               pointerEvents="none"
                               style={{
@@ -232,7 +270,11 @@ export default function GardenScreen() {
                                 width: CELL_SIZE + 16,
                               }}
                             >
-                              <RoseFlower size={CELL_SIZE - 4} flowerIndex={flowerIndex} />
+                              <Image
+                                source={flowerImage(cell.flower.imageUrl)}
+                                style={{ width: CELL_SIZE - 4, height: CELL_SIZE - 4 }}
+                                contentFit="contain"
+                              />
                             </View>
                           )}
 
@@ -270,13 +312,19 @@ export default function GardenScreen() {
                           )}
 
                           <Pressable
-                            onPress={() => !isFuture && toggleFlower(day)}
+                            onPress={() => handleCellPress(day)}
                             // @ts-ignore
-                            onHoverIn={() => !isFuture && setHovered(day)}
+                            onHoverIn={() => !isFutureMonth && setHovered(day)}
                             // @ts-ignore
                             onHoverOut={() => setHovered(null)}
                             android_ripple={null}
-                            style={{ position: "absolute", top: CELL_SIZE * 0.05, left: CELL_SIZE * 0.22, width: CELL_SIZE * 0.56, height: CELL_SIZE * 0.35 }}
+                            style={{
+                              position: "absolute",
+                              top: CELL_SIZE * 0.05,
+                              left: CELL_SIZE * 0.22,
+                              width: CELL_SIZE * 0.56,
+                              height: CELL_SIZE * 0.35,
+                            }}
                           />
                         </View>
                       );
@@ -287,26 +335,43 @@ export default function GardenScreen() {
 
               {/* Leaf counter */}
               <View style={styles.leafCounter} pointerEvents="none">
-                <Image
+                <RNImage
                   source={require("../../assets/images/leaf_w.png")}
                   style={styles.leafIcon}
                 />
-                <Text style={styles.leafCount}>{flowers.size}</Text>
+                <Text style={styles.leafCount}>{plantedCells.size}</Text>
               </View>
             </View>
-
           </View>
 
           {/* Chart card — full width, outside innerWrapper */}
           <View style={styles.chartCard}>
             <GardenFlowersChart
-              data={MOCK_FLOWERS}
+              data={chartData}
               daysInMonth={daysInMonth}
               todayDay={isCurrentMonth ? now.getDate() : null}
             />
           </View>
         </ScrollView>
       </SafeAreaView>
+
+      {toastMsg !== null && (
+        <View style={styles.toast} pointerEvents="none">
+          <Text style={styles.toastText}>{toastMsg}</Text>
+        </View>
+      )}
+
+      {gardenData && (
+        <InventorySheet
+          visible={sheetVisible}
+          day={selectedDay}
+          gardenId={gardenData.id}
+          month={viewMonth + 1}
+          year={viewYear}
+          onClose={() => setSheetVisible(false)}
+          onPlantError={() => showToast("Something went wrong")}
+        />
+      )}
     </PageTransition>
   );
 }
