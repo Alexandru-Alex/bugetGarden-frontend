@@ -291,6 +291,7 @@ export default function StoreScreen() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shop"] });
       queryClient.invalidateQueries({ queryKey: ["account"] });
+      queryClient.invalidateQueries({ queryKey: ["inventory"] });
       setSelectedFlower(null);
       showToast("Flower purchased! 🌸");
     },
