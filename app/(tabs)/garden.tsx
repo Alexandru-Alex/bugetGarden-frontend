@@ -139,7 +139,7 @@ export default function GardenScreen() {
   };
 
   const handleCellPress = useCallback((day: number) => {
-    if (isFutureMonth) return;
+    if (!isCurrentMonth) return;
     if (day > daysInMonth) return;
     if (!gardenData) return;
     const cell = gardenData.cells.find((c) => c.day === day);
@@ -149,7 +149,7 @@ export default function GardenScreen() {
     }
     setSelectedDay(day);
     setSheetVisible(true);
-  }, [isFutureMonth, gardenData, showToast, daysInMonth]);
+  }, [isCurrentMonth, gardenData, showToast, daysInMonth]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
@@ -247,7 +247,7 @@ export default function GardenScreen() {
                         ? "flower"
                         : isHovered
                           ? "hovered"
-                          : isFutureMonth
+                          : !isCurrentMonth
                             ? "future"
                             : "normal";
 
@@ -262,7 +262,7 @@ export default function GardenScreen() {
                             width: CELL_SIZE,
                             height: CELL_SIZE,
                             overflow: "visible",
-                            opacity: isFutureMonth ? 0.55 : 1,
+                            opacity: !isCurrentMonth ? 0.55 : 1,
                             transform: isHovered ? [{ translateY: -3 }] : [],
                           }}
                         >
@@ -322,7 +322,7 @@ export default function GardenScreen() {
                           <Pressable
                             onPress={() => handleCellPress(day)}
                             // @ts-ignore
-                            onHoverIn={() => !isFutureMonth && setHovered(day)}
+                            onHoverIn={() => isCurrentMonth && setHovered(day)}
                             // @ts-ignore
                             onHoverOut={() => setHovered(null)}
                             android_ripple={null}
