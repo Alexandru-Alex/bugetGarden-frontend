@@ -140,7 +140,6 @@ export default function GardenScreen() {
 
   const handleCellPress = useCallback((day: number) => {
     if (!isCurrentMonth) return;
-    if (day > daysInMonth) return;
     if (!gardenData) return;
     const cell = gardenData.cells.find((c) => c.day === day);
     if (cell?.planted) {
@@ -149,7 +148,7 @@ export default function GardenScreen() {
     }
     setSelectedDay(day);
     setSheetVisible(true);
-  }, [isCurrentMonth, gardenData, showToast, daysInMonth]);
+  }, [isCurrentMonth, gardenData, showToast]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
@@ -239,7 +238,6 @@ export default function GardenScreen() {
                       }
 
                       const day = (row - 1) * INNER_COLS + (col - 1) + 1;
-                      const isOutOfRange = day > daysInMonth;
                       const cell = plantedCells.get(day);
                       const hasFlower = !!cell;
                       const isHovered = hovered === day;
@@ -248,7 +246,7 @@ export default function GardenScreen() {
                         ? "flower"
                         : isHovered
                           ? "hovered"
-                          : (isFutureMonth || isOutOfRange)
+                          : isFutureMonth
                             ? "future"
                             : "normal";
 
@@ -263,7 +261,7 @@ export default function GardenScreen() {
                             width: CELL_SIZE,
                             height: CELL_SIZE,
                             overflow: "visible",
-                            opacity: (isFutureMonth || isOutOfRange) ? 0.55 : 1,
+                            opacity: isFutureMonth ? 0.55 : 1,
                             transform: isHovered ? [{ translateY: -3 }] : [],
                           }}
                         >
@@ -323,7 +321,7 @@ export default function GardenScreen() {
                           <Pressable
                             onPress={() => handleCellPress(day)}
                             // @ts-ignore
-                            onHoverIn={() => !isFutureMonth && !isOutOfRange && setHovered(day)}
+                            onHoverIn={() => !isFutureMonth && setHovered(day)}
                             // @ts-ignore
                             onHoverOut={() => setHovered(null)}
                             android_ripple={null}
