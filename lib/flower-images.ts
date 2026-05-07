@@ -13,6 +13,12 @@ const FLOWER_IMAGES: Record<string, ImageSourcePropType> = {
   "hibiscus.png":    require("../flowers/hibiscus.png"),
   "Poppy_v2.png":    require("../flowers/Poppy_v2.png"),
   "Daffodil.png":    require("../flowers/Daffodil.png"),
+  "yellow_tulip.png":    require("../flowers/yellow_tulip.png"),
+    "sunflower.png":    require("../flowers/sunflower.png"),
+  "red_tulip.png":    require("../flowers/red_tulip.png"),
+  "lily.png":         require("../flowers/lily.png"),
+
+
 };
 
 export function flowerImage(imageUrl: string): ImageSourcePropType {
