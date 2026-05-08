@@ -337,11 +337,11 @@ export default function StoreScreen() {
         <SafeAreaView edges={["top"]}>
           <View style={[styles.headerInner, (Platform.OS !== "web" || screenWidth < 600) && styles.headerInnerMobile]}>
             <View
-              style={[styles.headerText, (Platform.OS !== "web" || screenWidth >= 600) && styles.headerTextWeb]}
-              pointerEvents={Platform.OS !== "web" || screenWidth >= 600 ? "none" : "auto"}
+              style={[styles.headerText, (Platform.OS === "web" && screenWidth >= 600) && styles.headerTextWeb]}
+              pointerEvents={Platform.OS === "web" && screenWidth >= 600 ? "none" : "auto"}
             >
-              <Text style={styles.headerTitle}>Shop the garden</Text>
-              <Text style={styles.headerSubtitle}>Fresh seasonal blooms and rare hybrids.</Text>
+              <Text style={[styles.headerTitle, isWide && styles.headerTitleWeb]} numberOfLines={1} adjustsFontSizeToFit>Shop the garden</Text>
+              <Text style={styles.headerSubtitle} numberOfLines={1} adjustsFontSizeToFit>Fresh seasonal blooms and rare hybrids.</Text>
             </View>
             <View style={styles.coinWidget}>
               <Image

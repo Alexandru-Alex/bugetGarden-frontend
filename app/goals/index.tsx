@@ -1,6 +1,7 @@
 import { NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
+import { currencySymbolFor } from "@/lib/currency";
 import { formatDateISO, formatMonthISO } from "@/lib/date";
 import { DatePickerField } from "@/components/date-picker-field";
 import { MonthPickerField } from "@/components/month-picker-field";
@@ -75,12 +76,6 @@ interface CreateGoalRequest {
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
-function currencySymbolFor(currency?: string): string {
-  const upper = currency?.toUpperCase();
-  if (upper === "EUR") return "€";
-  if (upper === "GBP") return "£";
-  return "$";
-}
 
 function formatAmount(n: number): string {
   return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });

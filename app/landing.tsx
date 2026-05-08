@@ -198,6 +198,11 @@ function AuthModal({ visible, onClose, onSuccess }: {
       setError("");
       const { GoogleSignin } = require("@react-native-google-signin/google-signin");
       await GoogleSignin.hasPlayServices();
+      // Close modal before launching native intent — RN Modal has higher Android
+      // Z-order than the Google account picker, so picker appears behind if modal stays open.
+      onClose();
+      await new Promise(resolve => setTimeout(resolve, 150));
+      await GoogleSignin.signOut().catch(() => {});
       await GoogleSignin.signIn();
       const tokens = await GoogleSignin.getTokens();
       await handleGoogleToken(tokens.accessToken);

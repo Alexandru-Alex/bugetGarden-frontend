@@ -25,7 +25,14 @@
       "Bash(node -e ' *)",
       "PowerShell(git *)",
       "Bash(node *)",
-      "Bash(cd D:\\\\\\\\IdeaProjects\\\\\\\\bugetGarden-front)"
+      "Bash(cd D:\\\\\\\\IdeaProjects\\\\\\\\bugetGarden-front)",
+      "Bash(findstr /n \"multiple\\\\|linking\\\\|NavigationContainer\")",
+      "Bash(findstr *)",
+      "Bash(powershell *)",
+      "PowerShell(java *)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Microsoft\\\\jdk-17.0.18.8-hotspot\"; npx expo run:android)",
+      "Bash(C:\\\\Users\\\\g3d0m\\\\.claude\\\\plugins\\\\cache\\\\superpowers-dev\\\\superpowers\\\\5.0.7\\\\scripts\\\\start-server.sh *)",
+      "Bash(C:/Users/g3d0m/.claude/plugins/cache/superpowers-dev/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh *)"
     ]
   }
 }

@@ -24,6 +24,8 @@ export const styles = StyleSheet.create({
   },
   headerText: {
     flex: 1,
+    paddingRight: 12,
+    alignItems: "center",
   },
   headerTextWeb: {
     flex: undefined,
@@ -31,17 +33,23 @@ export const styles = StyleSheet.create({
     left: 16,
     right: 16,
     alignItems: "center",
+    paddingRight: 0,
   },
   headerTitle: {
     fontFamily: "Nunito_900Black",
-    fontSize: 28,
+    fontSize: 22,
     color: "#ffffff",
     marginBottom: 4,
+    textAlign: "center",
+  },
+  headerTitleWeb: {
+    fontSize: 28,
   },
   headerSubtitle: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 13,
+    fontSize: 17,
     color: "#9FCB98",
+    textAlign: "center",
   },
   coinWidget: {
     flexDirection: "row",

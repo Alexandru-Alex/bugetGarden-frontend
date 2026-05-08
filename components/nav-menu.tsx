@@ -529,17 +529,17 @@ const mobileStyles = StyleSheet.create({
   },
   menuLabel: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 17,
+    fontSize: 15,
     color: "#ffffff",
   },
   menuLabelSecondary: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 15,
-    color: "rgba(255,255,255,0.7)",
+    fontSize: 13,
+    color: "#ffffff",
   },
   menuLabelLogout: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 15,
+    fontSize: 13,
     color: "rgba(255, 120, 100, 0.9)",
   },
   drawerScroll: {

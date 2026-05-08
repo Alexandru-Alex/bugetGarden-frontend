@@ -6,6 +6,7 @@ import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
+import { currencySymbolFor } from "@/lib/currency";
 import { PAGE_SIZE, PagedResponse } from "@/lib/types";
 import { styles } from "@/styles/tabs/statistics.styles";
 import { sharedStyles } from "@/styles/shared.styles";
@@ -82,13 +83,6 @@ function toReferenceDate(label: string, period: StatPeriod): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-
-function currencySymbolFor(currency?: string) {
-  const upper = currency?.toUpperCase();
-  if (upper === "EUR") return "€";
-  if (upper === "GBP") return "£";
-  return "$";
-}
 
 export default function StatisticsScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);

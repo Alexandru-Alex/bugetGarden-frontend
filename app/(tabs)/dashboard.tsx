@@ -3,6 +3,7 @@ import { DatePickerField } from "@/components/date-picker-field";
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
+import { currencySymbolFor } from "@/lib/currency";
 import { formatDateISO } from "@/lib/date";
 import { NavTransition } from "@/lib/nav-direction";
 import { CategoryDto } from "@/lib/types";
@@ -50,12 +51,6 @@ function buildSummaryPath(
   return `/financial-entries/summary?${t}&period=${period.toUpperCase()}`;
 }
 
-function currencySymbolFor(currency?: string) {
-  const upper = currency?.toUpperCase();
-  if (upper === "EUR") return "€";
-  if (upper === "GBP") return "£";
-  return "$";
-}
 
 function formatAmount(amount: number) {
   return amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });

@@ -1,5 +1,8 @@
 import { Platform, StyleSheet } from "react-native";
 
+export const ITEM_H = 48;
+export const PICKER_H = ITEM_H * 3;
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -77,46 +80,138 @@ export const styles = StyleSheet.create({
     textTransform: "uppercase",
     paddingLeft: 4,
   },
-  currencyRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  currencyOption: {
-    flex: 1,
+  // Trigger row
+  currencyTrigger: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
     borderWidth: 1.5,
     borderColor: "#9FCB98",
     borderRadius: 14,
-    paddingVertical: 11,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     backgroundColor: "#ffffff",
+    gap: 8,
   },
-  currencyOptionSelected: {
+  currencyTriggerOpen: {
     backgroundColor: "#346739",
     borderColor: "#346739",
   },
-  currencyOptionPressed: {
+  currencyTriggerPressed: {
     backgroundColor: "#f0f8ee",
   },
-  currencySymbol: {
+  currencyTriggerSymbol: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 18,
-    color: "#79AE6F",
+    color: "#346739",
+    minWidth: 28,
   },
-  currencySymbolSelected: {
-    color: "#ffffff",
-  },
-  currencyName: {
+  currencyTriggerCode: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 14,
-    color: "#79AE6F",
+    fontSize: 15,
+    color: "#346739",
+    flex: 1,
     letterSpacing: 0.3,
   },
-  currencyNameSelected: {
+  currencyTriggerTextOpen: {
     color: "#ffffff",
   },
+  // Wheel picker
+  wheelContainer: {
+    height: PICKER_H,
+    borderWidth: 1.5,
+    borderColor: "#9FCB98",
+    borderRadius: 14,
+    overflow: "hidden",
+  },
+  wheelHighlight: {
+    position: "absolute",
+    top: ITEM_H,
+    left: 0,
+    right: 0,
+    height: ITEM_H,
+    borderTopWidth: 1.5,
+    borderBottomWidth: 1.5,
+    borderColor: "#9FCB98",
+  },
+  wheelScroll: {
+    flex: 1,
+  },
+  wheelContent: {
+    paddingVertical: ITEM_H,
+  },
+  wheelItem: {
+    height: ITEM_H,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    gap: 10,
+  },
+  wheelSymbol: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 18,
+    color: "#346739",
+    minWidth: 32,
+  },
+  wheelCode: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "#346739",
+    letterSpacing: 0.3,
+  },
+  wheelFadeTop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: ITEM_H,
+    zIndex: 2,
+  },
+  wheelFadeBottom: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: ITEM_H,
+    zIndex: 2,
+  },
+  // Web flat picker
+  webPickerContainer: {
+    borderWidth: 1.5,
+    borderColor: "#9FCB98",
+    borderRadius: 14,
+    overflow: "hidden",
+    maxHeight: ITEM_H * 5,
+  },
+  webPickerScroll: {
+    flex: 1,
+  },
+  webPickerItem: {
+    height: ITEM_H,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    gap: 10,
+  },
+  webPickerItemSelected: {
+    backgroundColor: "#346739",
+  },
+  webPickerSymbol: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 18,
+    color: "#346739",
+    minWidth: 32,
+  },
+  webPickerCode: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "#346739",
+    flex: 1,
+    letterSpacing: 0.3,
+  },
+  webPickerTextSelected: {
+    color: "#ffffff",
+  },
+  // Button
   btn: {
     backgroundColor: "#346739",
     borderRadius: 16,

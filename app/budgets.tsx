@@ -1,6 +1,7 @@
 import { NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
+import { currencySymbolFor } from "@/lib/currency";
 import { CategoryDto } from "@/lib/types";
 import { styles } from "@/styles/budgets.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -60,12 +61,6 @@ function formatAmount(n: number): string {
   return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function currencySymbolFor(currency?: string): string {
-  const upper = currency?.toUpperCase();
-  if (upper === "EUR") return "€";
-  if (upper === "GBP") return "£";
-  return "$";
-}
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 

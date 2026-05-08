@@ -13,7 +13,9 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Platform } from "react-native";
+import { LogBox, Platform } from "react-native";
+
+LogBox.ignoreLogs(["Looks like you have configured linking in multiple places"]);
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -52,7 +54,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <Stack initialRouteName={__DEV__ && Platform.OS === "android" ? "hello" : "landing"}>
+          <Stack initialRouteName="landing">
             <Stack.Screen name="landing" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="hello" options={{ headerShown: false }} />

@@ -8,8 +8,6 @@ const FLOWER_IMAGES = [
   require("../flowers/Poppy_v2.png"),
   require("../flowers/Lavender.png"),
   require("../flowers/Cosmos.png"),
-  require("../flowers/Tulip.png"),
-  require("../flowers/Daffodil.png"),
 ];
 
 interface RoseFlowerProps {

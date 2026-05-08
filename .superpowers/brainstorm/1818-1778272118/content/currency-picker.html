@@ -1,0 +1,77 @@
+<h2>Currency picker — care variantă îți place?</h2>
+<p class="subtitle">Ambele pornesc de la un rând colapsat cu moneda selectată. Diferența e cum se deschid.</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:20px;background:#f8fdf8">
+      <!-- Collapsed state -->
+      <div style="background:#fff;border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid #9FCB98;margin-bottom:10px;font-family:sans-serif">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px;font-weight:800;color:#346739">$</span>
+          <span style="font-size:14px;font-weight:700;color:#346739">USD</span>
+        </div>
+        <span style="color:#9FCB98;font-size:18px">▼</span>
+      </div>
+      <!-- Expanded dropdown list -->
+      <div style="background:#fff;border-radius:14px;border:1.5px solid #9FCB98;overflow:hidden;font-family:sans-serif">
+        <div style="padding:10px 16px;display:flex;align-items:center;gap:10px;background:#346739">
+          <span style="font-size:16px;font-weight:800;color:#fff">$</span>
+          <span style="font-size:13px;font-weight:700;color:#fff">USD</span>
+          <span style="margin-left:auto;color:#9FCB98;font-size:12px">✓</span>
+        </div>
+        <div style="padding:10px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid #f0f8ee">
+          <span style="font-size:16px;font-weight:800;color:#79AE6F">€</span>
+          <span style="font-size:13px;font-weight:700;color:#79AE6F">EUR</span>
+        </div>
+        <div style="padding:10px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid #f0f8ee">
+          <span style="font-size:16px;font-weight:800;color:#79AE6F">£</span>
+          <span style="font-size:13px;font-weight:700;color:#79AE6F">GBP</span>
+        </div>
+        <div style="padding:10px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid #f0f8ee">
+          <span style="font-size:16px;font-weight:800;color:#79AE6F">lei</span>
+          <span style="font-size:13px;font-weight:700;color:#79AE6F">RON</span>
+        </div>
+        <div style="padding:8px 16px;text-align:center;color:#9FCB98;font-size:11px;border-top:1px solid #f0f8ee">+ 16 more ↕ scroll</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Dropdown list</h3>
+      <p>Apesi pe rând → se extinde o listă verticală scrollabilă direct în card. Simplu, familiar, funcționează perfect pe web și mobile.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:20px;background:#f8fdf8">
+      <!-- Collapsed state -->
+      <div style="background:#fff;border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid #9FCB98;margin-bottom:10px;font-family:sans-serif">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px;font-weight:800;color:#346739">$</span>
+          <span style="font-size:14px;font-weight:700;color:#346739">USD</span>
+        </div>
+        <span style="color:#9FCB98;font-size:18px">⊞</span>
+      </div>
+      <!-- Wheel picker -->
+      <div style="background:#fff;border-radius:14px;border:1.5px solid #9FCB98;padding:0;overflow:hidden;font-family:sans-serif;position:relative">
+        <div style="padding:8px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f0f8ee;color:#9FCB98;font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase">CURRENCY</div>
+        <!-- faded top -->
+        <div style="height:36px;background:linear-gradient(to bottom,rgba(255,255,255,0.95),rgba(255,255,255,0));position:relative;z-index:2;margin-bottom:-36px"></div>
+        <div style="padding:0 16px">
+          <div style="padding:8px 0;color:#c8e0c4;font-size:13px;display:flex;gap:8px;align-items:center"><span style="font-weight:800">lei</span><span>RON</span></div>
+          <div style="padding:8px 0;color:#c8e0c4;font-size:13px;display:flex;gap:8px;align-items:center"><span style="font-weight:800">¥</span><span>JPY</span></div>
+          <!-- selected item highlighted -->
+          <div style="padding:10px 12px;background:#346739;border-radius:10px;color:#fff;font-size:14px;display:flex;gap:8px;align-items:center;margin:2px 0"><span style="font-weight:800;font-size:18px">$</span><span style="font-weight:700">USD</span></div>
+          <div style="padding:8px 0;color:#c8e0c4;font-size:13px;display:flex;gap:8px;align-items:center"><span style="font-weight:800">€</span><span>EUR</span></div>
+          <div style="padding:8px 0;color:#c8e0c4;font-size:13px;display:flex;gap:8px;align-items:center"><span style="font-weight:800">£</span><span>GBP</span></div>
+        </div>
+        <!-- faded bottom -->
+        <div style="height:36px;background:linear-gradient(to top,rgba(255,255,255,0.95),rgba(255,255,255,0));position:relative;z-index:2;margin-top:-36px"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Wheel picker</h3>
+      <p>Apesi pe rând → apare un picker cu efect de roată. Scroll snap, 5 iteme vizibile, cel selectat în mijloc highlightat. Feel nativ iOS.</p>
+    </div>
+  </div>
+
+</div>
