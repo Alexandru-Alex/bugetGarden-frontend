@@ -2,6 +2,7 @@ import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
+import { MONTH_LABELS_SHORT } from "@/lib/date";
 import { styles } from "@/styles/tabs/score.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
@@ -23,22 +24,40 @@ interface Category {
   score: number;
 }
 
-const CATEGORIES: Category[] = [
-  { name: "Logging Streak",         weight: 35, type: "behavioral", score: 78  },
-  { name: "Category Coverage",      weight: 20, type: "behavioral", score: 85  },
-  { name: "Budget Setup",           weight: 15, type: "behavioral", score: 100 },
-  { name: "Savings Rate",           weight: 18, type: "result",     score: 62  },
-  { name: "Daily Budget Adherence", weight: 12, type: "result",     score: 55  },
-];
+export interface MonthlyScoreDto {
+  month: number;
+  year: number;
+  finalScore: number;
+  loggingStreak: number;
+  categoryCoverage: number;
+  savingRate: number;
+  budgetSetup: number;
+  dailyAdherence: number;
+}
 
-const SCORE_HISTORY = [
-  { label: "W1", score: 58 },
-  { label: "W2", score: 63 },
-  { label: "W3", score: 67 },
-  { label: "W4", score: 70 },
-  { label: "W5", score: 73 },
-  { label: "W6", score: 77 },
-];
+export interface DailyScoreDto {
+  scoreDate: string;
+  scoreDelta: number;
+  scoreTotal: number;
+  incomeTotal: string;
+  expenseTotal: string;
+}
+
+function buildCategories(dto: MonthlyScoreDto): Category[] {
+  return [
+    { name: "Logging Streak",         weight: 35, type: "behavioral", score: dto.loggingStreak    },
+    { name: "Category Coverage",      weight: 20, type: "behavioral", score: dto.categoryCoverage },
+    { name: "Budget Setup",           weight: 15, type: "behavioral", score: dto.budgetSetup      },
+    { name: "Savings Rate",           weight: 18, type: "result",     score: dto.savingRate       },
+    { name: "Daily Budget Adherence", weight: 12, type: "result",     score: dto.dailyAdherence   },
+  ];
+}
+
+function computeGroupScore(cats: Category[], type: CategoryType): number {
+  const filtered  = cats.filter(c => c.type === type);
+  const totalW    = filtered.reduce((s, c) => s + c.weight, 0);
+  return Math.round(filtered.reduce((s, c) => s + c.score * c.weight, 0) / totalW);
+}
 
 const TIPS = [
   {
@@ -63,14 +82,6 @@ const TIPS = [
 
 const BEHAVIORAL_COLOR = "#4E9AF1";
 const RESULT_COLOR     = "#346739";
-const WEEKLY_CHANGE    = 4;
-
-const B_CATS      = CATEGORIES.filter(c => c.type === "behavioral");
-const R_CATS      = CATEGORIES.filter(c => c.type === "result");
-const B_TOTAL_W   = B_CATS.reduce((s, c) => s + c.weight, 0);
-const R_TOTAL_W   = R_CATS.reduce((s, c) => s + c.weight, 0);
-const BEHAVIORAL_SCORE = Math.round(B_CATS.reduce((s, c) => s + c.score * c.weight, 0) / B_TOTAL_W);
-const RESULT_SCORE     = Math.round(R_CATS.reduce((s, c) => s + c.score * c.weight, 0) / R_TOTAL_W);
 
 function scoreColor(score: number) {
   if (score >= 80) return "#346739";
@@ -181,38 +192,53 @@ function smoothPath(pts: { x: number; y: number }[]) {
   return d;
 }
 
-function ScoreHistory() {
+interface ChartPoint {
+  label: string;
+  score: number;
+  showLabel: boolean;
+}
+
+function ScoreHistory({ data, subtitle }: { data: ChartPoint[]; subtitle?: string }) {
   const [cw, setCw] = useState(0);
 
   const pts = useMemo(() => {
-    if (cw === 0) return [];
-    return SCORE_HISTORY.map((d, i) => ({
-      x: CHART_PAD_X + (i * (cw - 2 * CHART_PAD_X)) / (SCORE_HISTORY.length - 1),
+    if (cw === 0 || data.length < 2) return [];
+    return data.map((d, i) => ({
+      x: CHART_PAD_X + (i * (cw - 2 * CHART_PAD_X)) / (data.length - 1),
       y: CHART_PAD_TOP + (1 - d.score / 100) * CHART_H,
       score: d.score,
       label: d.label,
+      showLabel: d.showLabel,
       color: scoreColor(d.score),
-      isCurrent: i === SCORE_HISTORY.length - 1,
+      isCurrent: i === data.length - 1,
     }));
-  }, [cw]);
+  }, [cw, data]);
 
   const linePath = useMemo(() => smoothPath(pts), [pts]);
   const areaPath = useMemo(() => {
     if (pts.length === 0) return "";
     const bottom = CHART_PAD_TOP + CHART_H;
-    return `${smoothPath(pts)} L ${pts[pts.length - 1].x} ${bottom} L ${pts[0].x} ${bottom} Z`;
-  }, [pts]);
+    return `${linePath} L ${pts[pts.length - 1].x} ${bottom} L ${pts[0].x} ${bottom} Z`;
+  }, [linePath, pts]);
 
-  const latestColor = scoreColor(SCORE_HISTORY[SCORE_HISTORY.length - 1].score);
+  const latestColor = data.length > 0 ? scoreColor(data[data.length - 1].score) : "#346739";
+  const hasData = data.length >= 2;
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Score Trend</Text>
+      <View style={styles.sectionTitleRow}>
+        <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>Score Trend</Text>
+        {subtitle && <Text style={styles.sectionSubtitle}>{subtitle}</Text>}
+      </View>
       <View
         style={styles.trendChart}
         onLayout={e => setCw(Math.floor(e.nativeEvent.layout.width))}
       >
-        {cw > 0 && (
+        {!hasData ? (
+          <View style={styles.trendEmptyInner}>
+            <Text style={styles.trendEmptyText}>Log entries to start tracking your daily score.</Text>
+          </View>
+        ) : cw > 0 && (
           <>
           <Svg width={cw} height={CHART_TOTAL_H}>
             <Defs>
@@ -222,10 +248,8 @@ function ScoreHistory() {
               </SvgLinearGradient>
             </Defs>
 
-            {/* Area fill */}
             <Path d={areaPath} fill="url(#areaGrad)" />
 
-            {/* Curve */}
             <Path
               d={linePath}
               fill="none"
@@ -238,15 +262,18 @@ function ScoreHistory() {
 
             {pts.map((pt, i) => (
               <React.Fragment key={i}>
-                <Circle cx={pt.x} cy={pt.y} r={pt.isCurrent ? 9 : 6} fill={pt.color} opacity={0.12} />
-                <Circle cx={pt.x} cy={pt.y} r={pt.isCurrent ? 6 : 4} fill={pt.color} />
+                {pt.showLabel && (
+                  <>
+                    <Circle cx={pt.x} cy={pt.y} r={pt.isCurrent ? 9 : 6} fill={pt.color} opacity={0.12} />
+                    <Circle cx={pt.x} cy={pt.y} r={pt.isCurrent ? 6 : 4} fill={pt.color} />
+                  </>
+                )}
                 {pt.isCurrent && <Circle cx={pt.x} cy={pt.y} r={2.5} fill="white" />}
               </React.Fragment>
             ))}
           </Svg>
 
-          {/* Score labels — RN Text for custom font */}
-          {pts.map(pt => (
+          {pts.filter(pt => pt.showLabel).map(pt => (
             <Text
               key={`s-${pt.label}`}
               style={[
@@ -259,8 +286,7 @@ function ScoreHistory() {
             </Text>
           ))}
 
-          {/* Week labels */}
-          {pts.map(pt => (
+          {pts.filter(pt => pt.showLabel).map(pt => (
             <Text
               key={`w-${pt.label}`}
               style={[
@@ -316,6 +342,11 @@ export default function ScoreScreen() {
     getStoredToken().then(setToken);
   }, []);
 
+  const [month, year] = useMemo(() => {
+    const now = new Date();
+    return [now.getMonth() + 1, now.getFullYear()] as const;
+  }, []);
+
   const { data: account } = useQuery<AccountDto>({
     queryKey: ACCOUNT_QUERY_KEY,
     queryFn: () => api.get<AccountDto>("/accounts"),
@@ -323,12 +354,77 @@ export default function ScoreScreen() {
     staleTime: Infinity,
   });
 
+  const { data: monthly } = useQuery<MonthlyScoreDto>({
+    queryKey: ["budget-score", "monthly", month, year],
+    queryFn: () => api.get<MonthlyScoreDto>(`/budget-score/monthly?month=${month}&year=${year}`),
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: history } = useQuery<MonthlyScoreDto[]>({
+    queryKey: ["budget-score", "history", year],
+    queryFn: () => api.get<MonthlyScoreDto[]>(`/budget-score/history?year=${year}`),
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: dailyScores } = useQuery<DailyScoreDto[]>({
+    queryKey: ["budget-score", "daily", month, year],
+    queryFn: () => api.get<DailyScoreDto[]>(`/budget-score/daily?month=${month}&year=${year}`),
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const dailyPoints = useMemo((): ChartPoint[] => {
+    if (!dailyScores || dailyScores.length === 0) return [];
+    return [...dailyScores]
+      .sort((a, b) => new Date(a.scoreDate).getTime() - new Date(b.scoreDate).getTime())
+      .map(d => ({
+        label:     String(new Date(d.scoreDate).getDate()),
+        score:     d.scoreTotal,
+        showLabel: true,
+      }));
+  }, [dailyScores]);
+
+  const prevMonthScore = useMemo(() => {
+    if (!history) return null;
+    const prev = history.find(h => h.month === month - 1 && h.year === year);
+    return prev?.finalScore ?? null;
+  }, [history, month, year]);
+
+  const { categories, behavioralScore, resultScore } = useMemo(() => {
+    if (!monthly) return { categories: [], behavioralScore: 0, resultScore: 0 };
+    const cats = buildCategories(monthly);
+    return {
+      categories:     cats,
+      behavioralScore: computeGroupScore(cats, "behavioral"),
+      resultScore:     computeGroupScore(cats, "result"),
+    };
+  }, [monthly]);
+
+  const dailyDelta = useMemo(() => {
+    if (!dailyScores || dailyScores.length === 0) return { todayScore: null, yesterdayScore: null, dailyDelta: null };
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const yest = new Date(now); yest.setDate(now.getDate() - 1);
+    const yesterdayStr = yest.toISOString().slice(0, 10);
+    const todayEntry     = dailyScores.find(d => d.scoreDate.startsWith(todayStr));
+    const yesterdayEntry = dailyScores.find(d => d.scoreDate.startsWith(yesterdayStr));
+    const t = todayEntry?.scoreTotal ?? null;
+    const y = yesterdayEntry?.scoreTotal ?? null;
+    return t != null && y != null ? t - y : null;
+  }, [dailyScores]);
+
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
 
-  const total = account?.totalScore ?? 77;
+  const total = monthly?.finalScore ?? account?.totalScore ?? 0;
   const color = scoreColor(total);
   const grade = scoreGrade(total);
+
+  const monthChange = prevMonthScore != null ? total - prevMonthScore : null;
+
+  const trendSubtitle = MONTH_LABELS_SHORT[month - 1] + " " + year;
 
   return (
     <PageTransition style={styles.root}>
@@ -359,13 +455,17 @@ export default function ScoreScreen() {
             {/* Left panel — right-aligned */}
             <View style={[styles.sidePanel, styles.sidePanelLeft]}>
               <View style={styles.sideStat}>
-                <Text style={styles.sideStatValue}>{BEHAVIORAL_SCORE}</Text>
+                <Text style={styles.sideStatValue}>{behavioralScore}</Text>
                 <Text style={styles.sideStatLabel}>Behavioral</Text>
               </View>
               <View style={styles.sideDivider} />
               <View style={styles.sideStat}>
-                <Text style={[styles.sideStatValue, { color: "#346739" }]}>+{WEEKLY_CHANGE}</Text>
-                <Text style={styles.sideStatLabel}>This week</Text>
+                <Text style={[styles.sideStatValue, {
+                  color: dailyDelta == null ? "#1A2A1A" : dailyDelta >= 0 ? "#346739" : "#F43F5E"
+                }]}>
+                  {dailyDelta == null ? "—" : (dailyDelta >= 0 ? "+" : "") + dailyDelta}
+                </Text>
+                <Text style={styles.sideStatLabel}>vs yesterday</Text>
               </View>
             </View>
 
@@ -380,7 +480,7 @@ export default function ScoreScreen() {
               </View>
               <View style={styles.sideDivider} />
               <View style={styles.sideStat}>
-                <Text style={styles.sideStatValue}>{RESULT_SCORE}</Text>
+                <Text style={styles.sideStatValue}>{resultScore}</Text>
                 <Text style={styles.sideStatLabel}>Results</Text>
               </View>
             </View>
@@ -392,19 +492,21 @@ export default function ScoreScreen() {
             styles.sectionsContainer,
             width > 500 && { maxWidth: Math.floor(width * 0.5) },
           ]}>
-            <View style={styles.catSection}>
-              <Text style={styles.sectionTitle}>Category Breakdown</Text>
-              <View style={styles.catGrid}>
-                {CATEGORIES.slice(0, 4).map(cat => (
-                  <CategoryCard key={cat.name} {...cat} />
-                ))}
+            {categories.length >= 5 && (
+              <View style={styles.catSection}>
+                <Text style={styles.sectionTitle}>Category Breakdown</Text>
+                <View style={styles.catGrid}>
+                  {categories.slice(0, 4).map(cat => (
+                    <CategoryCard key={cat.name} {...cat} />
+                  ))}
+                </View>
+                <View style={styles.catGridCenter}>
+                  <CategoryCard {...categories[4]} />
+                </View>
               </View>
-              <View style={styles.catGridCenter}>
-                <CategoryCard {...CATEGORIES[4]} />
-              </View>
-            </View>
+            )}
 
-            <ScoreHistory />
+            <ScoreHistory data={dailyPoints} subtitle={trendSubtitle} />
             <ImprovementTips />
           </View>
         </View>

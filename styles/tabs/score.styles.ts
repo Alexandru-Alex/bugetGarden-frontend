@@ -63,6 +63,7 @@ export const styles = StyleSheet.create({
   sidePanel: {
     flex: 1,
     gap: 10,
+    alignSelf: "stretch",
   },
   sidePanelLeft: {
     alignItems: "flex-end",
@@ -76,6 +77,7 @@ export const styles = StyleSheet.create({
   sideStatValue: {
     fontFamily: "Nunito_900Black",
     fontSize: 20,
+    lineHeight: 26,
     color: "#1A2A1A",
   },
   sideStatGrade: {
@@ -123,12 +125,23 @@ export const styles = StyleSheet.create({
     marginTop: 28,
   },
   catSection: {},
+  sectionTitleRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 8,
+    marginBottom: 14,
+  },
   sectionTitle: {
     fontFamily: "Nunito_900Black",
     fontSize: 16,
     color: "#1A2A1A",
-    marginBottom: 14,
     letterSpacing: 0.2,
+    marginBottom: 14,
+  },
+  sectionSubtitle: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "#79AE6F",
   },
 
   // ── Category grid ─────────────────────────────────────────────────────────
@@ -205,6 +218,16 @@ export const styles = StyleSheet.create({
 
   // ── Score trend chart ─────────────────────────────────────────────────────
 
+  trendEmptyInner: {
+    paddingVertical: 28,
+    alignItems: "center",
+  },
+  trendEmptyText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+    color: "#79AE6F",
+    textAlign: "center",
+  },
   trendChart: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
