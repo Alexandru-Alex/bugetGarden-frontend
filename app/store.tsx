@@ -60,7 +60,7 @@ function secondsUntilMidnight(): number {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function FeatureBanner() {
+function FeatureBanner({ imageUrl }: { imageUrl?: string }) {
   return (
     <LinearGradient
       colors={["#2A4A2E", "#1f4a25"]}
@@ -84,13 +84,15 @@ function FeatureBanner() {
           <Ionicons name="chevron-forward" size={12} color="#1f4a25" />
         </Pressable>
       </View>
-      <View style={styles.bannerImgFrame}>
-        <Image
-          source={require("../flowers/peony.png")}
-          style={styles.bannerImg}
-          resizeMode="contain"
-        />
-      </View>
+      {imageUrl && (
+        <View style={styles.bannerImgFrame}>
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.bannerImg}
+            resizeMode="contain"
+          />
+        </View>
+      )}
     </LinearGradient>
   );
 }
@@ -308,14 +310,17 @@ export default function StoreScreen() {
     toastTimer.current = setTimeout(() => setToastMsg(null), 3000);
   }
 
-  const owned = shopData.filter(i => i.isUnlocked).length;
-  const total = shopData.length;
+  const bannerImageUrl = shopData.find(i => i.name === "Banner_flower")?.imageUrl;
+  const listData = useMemo(() => shopData.filter(i => i.name !== "Banner_flower"), [shopData]);
+
+  const owned = listData.filter(i => i.isUnlocked).length;
+  const total = listData.length;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return shopData;
-    return shopData.filter(f => f.name.toLowerCase().includes(q));
-  }, [search, shopData]);
+    if (!q) return listData;
+    return listData.filter(f => f.name.toLowerCase().includes(q));
+  }, [search, listData]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
@@ -367,7 +372,7 @@ export default function StoreScreen() {
           <View style={styles.webContentRow}>
             <View style={styles.webSpacer} />
             <View style={[styles.inner, styles.innerWeb]}>
-              <FeatureBanner />
+              <FeatureBanner imageUrl={bannerImageUrl} />
               <View style={styles.searchBar}>
                 <Ionicons name="search-outline" size={16} color="#8a968c" />
                 <TextInput

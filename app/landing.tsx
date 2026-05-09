@@ -1,6 +1,5 @@
 import { FlowerPetals } from "@/components/flower-petals";
 import { GrassWave } from "@/components/grass-wave";
-import { RoseFlower } from "@/components/rose-flower";
 import { ThemedText } from "@/components/themed-text";
 import { api, saveToken } from "@/lib/api";
 import { useFocusStyle } from "@/lib/use-focus-style";
@@ -554,10 +553,6 @@ export default function LandingScreen() {
 
       <SafeAreaView style={styles.safe}>
         <Animated.View style={[styles.content, contentStyle, Platform.OS === "web" && { userSelect: "none" } as object]}>
-          <View style={styles.flowerTreeRow}>
-            <RoseFlower size={48} delay={400} />
-          </View>
-
           <ArcTitle />
 
           <View style={styles.taglineWrap}>
