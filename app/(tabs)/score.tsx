@@ -410,9 +410,10 @@ export default function ScoreScreen() {
     const yesterdayStr = yest.toISOString().slice(0, 10);
     const todayEntry     = dailyScores.find(d => d.scoreDate.startsWith(todayStr));
     const yesterdayEntry = dailyScores.find(d => d.scoreDate.startsWith(yesterdayStr));
-    const t = todayEntry?.scoreTotal ?? null;
-    const y = yesterdayEntry?.scoreTotal ?? null;
-    return t != null && y != null ? t - y : null;
+    const t = todayEntry?.scoreTotal != null ? Number(todayEntry.scoreTotal) : null;
+    const y = yesterdayEntry?.scoreTotal != null ? Number(yesterdayEntry.scoreTotal) : null;
+    if (t == null || y == null || isNaN(t) || isNaN(y)) return null;
+    return t - y;
   }, [dailyScores]);
 
   if (token === undefined) return null;
