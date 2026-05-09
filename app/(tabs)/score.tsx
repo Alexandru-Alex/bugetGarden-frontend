@@ -403,7 +403,7 @@ export default function ScoreScreen() {
   }, [monthly]);
 
   const dailyDelta = useMemo(() => {
-    if (!dailyScores || dailyScores.length === 0) return { todayScore: null, yesterdayScore: null, dailyDelta: null };
+    if (!dailyScores || dailyScores.length === 0) return null;
     const now = new Date();
     const todayStr = now.toISOString().slice(0, 10);
     const yest = new Date(now); yest.setDate(now.getDate() - 1);
