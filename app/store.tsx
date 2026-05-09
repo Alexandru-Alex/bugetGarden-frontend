@@ -87,7 +87,7 @@ function FeatureBanner({ imageUrl }: { imageUrl?: string }) {
       {imageUrl && (
         <View style={styles.bannerImgFrame}>
           <Image
-            source={{ uri: imageUrl }}
+            source={flowerImage(imageUrl)}
             style={styles.bannerImg}
             resizeMode="contain"
           />
