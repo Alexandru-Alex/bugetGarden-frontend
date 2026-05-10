@@ -15,6 +15,8 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { LogBox, Platform } from "react-native";
 
+const isWeb = Platform.OS === "web";
+
 LogBox.ignoreLogs(["Looks like you have configured linking in multiple places"]);
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
@@ -54,7 +56,8 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <Stack initialRouteName="landing">
+          <Stack initialRouteName={isWeb ? "index" : "landing"}>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="landing" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="hello" options={{ headerShown: false }} />

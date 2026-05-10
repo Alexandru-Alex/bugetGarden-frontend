@@ -34,10 +34,9 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import type { AnimatedStyle, SharedValue } from "react-native-reanimated";
-import type { ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Svg, { Path as SvgPath, Text as SvgText } from "react-native-svg";
+import { ArcTitle } from "@/components/arc-title";
+import Svg, { Path as SvgPath } from "react-native-svg";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -56,8 +55,6 @@ const { width: W, height: H } = Dimensions.get("window");
 
 const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
 
-const isWeb = Platform.OS === "web";
-
 class GrassBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean }
@@ -68,81 +65,6 @@ class GrassBoundary extends React.Component<
     if (this.state.hasError) return null;
     return this.props.children;
   }
-}
-
-// Arc text layout — fără TextPath, fiecare caracter pozitionat matematic
-const SVG_W = W - 16;
-const R_OUT = 180;
-const R_IN  =  92;
-const CX = SVG_W / 2;
-const CY = R_OUT + 60;
-const SVG_H = CY + 12;
-
-// Pozitia si rotatia unui caracter la distanta `s` pe arc de raza `r`
-// Arcul merge de la θ=π (stanga) la θ=0 (dreapta), trecand prin θ=π/2 (sus)
-function charOnArc(s: number, r: number) {
-  const θ = Math.PI - s / r;
-  return {
-    x: CX + r * Math.cos(θ),
-    y: CY - r * Math.sin(θ),
-    rot: 90 - θ * (180 / Math.PI),
-  };
-}
-
-function ArcWord({ word, r, fontSize, charSpacing }: {
-  word: string; r: number; fontSize: number; charSpacing: number;
-}) {
-  const totalWidth = (word.length - 1) * charSpacing;
-  const midArc = (Math.PI * r) / 2;
-  const startArc = midArc - totalWidth / 2;
-
-  const chars = word.split('').map((char, i) => {
-    const { x, y, rot } = charOnArc(startArc + i * charSpacing, r);
-    return { char, x, y, rot };
-  });
-
-  return (
-    <>
-      {/* Shadow */}
-      {chars.map(({ char, x, y, rot }, i) => (
-        <SvgText key={`sh-${i}`} x={x} y={y} fontSize={fontSize}
-          fontFamily="Pacifico_400Regular" textAnchor="middle"
-          fill="rgba(90,40,0,0.85)" stroke="rgba(90,40,0,0.85)"
-          strokeWidth={14} strokeLinejoin="round"
-          transform={`rotate(${rot}, ${x}, ${y})`}>
-          {char}
-        </SvgText>
-      ))}
-      {/* Glow */}
-      {chars.map(({ char, x, y, rot }, i) => (
-        <SvgText key={`gl-${i}`} x={x} y={y} fontSize={fontSize}
-          fontFamily="Pacifico_400Regular" textAnchor="middle"
-          fill="rgba(240,175,40,0.35)" stroke="rgba(240,175,40,0.35)"
-          strokeWidth={6} strokeLinejoin="round"
-          transform={`rotate(${rot}, ${x}, ${y})`}>
-          {char}
-        </SvgText>
-      ))}
-      {/* Main */}
-      {chars.map(({ char, x, y, rot }, i) => (
-        <SvgText key={`m-${i}`} x={x} y={y} fontSize={fontSize}
-          fontFamily="Pacifico_400Regular" textAnchor="middle"
-          fill="#FFE566" stroke="#FFE566" strokeWidth={2.5} strokeLinejoin="round"
-          transform={`rotate(${rot}, ${x}, ${y})`}>
-          {char}
-        </SvgText>
-      ))}
-    </>
-  );
-}
-
-function ArcTitle() {
-  return (
-    <Svg width={SVG_W} height={SVG_H} style={{ overflow: "visible" }} pointerEvents="none">
-      <ArcWord word="Money"  r={R_OUT} fontSize={58} charSpacing={38} />
-      <ArcWord word="Garden" r={R_IN}  fontSize={50} charSpacing={32} />
-    </Svg>
-  );
 }
 
 // ─── Auth Modal ─────────────────────────────────────────────────────────────
@@ -415,7 +337,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
         onSuccess(false);
       }
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+      setError(e instanceof Error ? e.message : "Ceva nu a mers. Încearcă din nou.");
     } finally {
       setLoading(false);
     }
@@ -576,248 +498,6 @@ function AuthModal({ visible, onClose, onSuccess }: {
 
 // ─── Landing Screen ──────────────────────────────────────────────────────────
 
-type LandingAnimProps = {
-  contentStyle: AnimatedStyle<ViewStyle>;
-  btnStyle: AnimatedStyle<ViewStyle>;
-  pulseRingStyle: AnimatedStyle<ViewStyle>;
-  time: SharedValue<number>;
-  onGetStarted: () => void;
-};
-
-function MobileLanding({ contentStyle, btnStyle, pulseRingStyle, time, onGetStarted }: LandingAnimProps) {
-  return (
-    <>
-      <View style={StyleSheet.absoluteFill}>
-        <Image source={BG_IMAGE} style={{ width: W, height: H }} resizeMode="cover" />
-        <GrassBoundary>
-          <GrassWave time={time} />
-        </GrassBoundary>
-      </View>
-      <View style={styles.overlay} />
-      <View style={styles.petalsLayer} pointerEvents="none">
-        <FlowerPetals />
-      </View>
-      <SafeAreaView style={styles.safe}>
-        {/* userSelect:"none" applied in HeroSection (web) — not needed on mobile */}
-        <Animated.View style={[styles.content, contentStyle]}>
-          <ArcTitle />
-          <View style={styles.taglineWrap}>
-            <ThemedText style={styles.tagline}>Save smartly, grow your garden</ThemedText>
-          </View>
-          <Animated.View style={[styles.btnWrapper, btnStyle]}>
-            <Pressable
-              style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaButtonPressed]}
-              onPress={onGetStarted}
-            >
-              <Animated.View style={[styles.pulseRing, pulseRingStyle]} />
-              <Text style={styles.ctaText}>Get Started 🌿</Text>
-            </Pressable>
-          </Animated.View>
-        </Animated.View>
-      </SafeAreaView>
-    </>
-  );
-}
-
-function HeroSection({ contentStyle, btnStyle, pulseRingStyle, time, onGetStarted }: LandingAnimProps) {
-  return (
-    <View style={styles.heroSection}>
-      <View style={styles.heroBg}>
-        <Image source={BG_IMAGE} style={{ width: "100%" as any, height: "100%" as any }} resizeMode="cover" />
-        <GrassBoundary>
-          <GrassWave time={time} />
-        </GrassBoundary>
-      </View>
-      <View style={styles.overlay} />
-      <View style={styles.petalsLayer} pointerEvents="none">
-        <FlowerPetals />
-      </View>
-      <Animated.View style={[styles.content, contentStyle, Platform.select({ web: { userSelect: "none" } as any })]}>
-        <ArcTitle />
-        <View style={styles.taglineWrap}>
-          <ThemedText style={styles.tagline}>Track your money, grow your garden</ThemedText>
-        </View>
-        <Animated.View style={[styles.btnWrapper, btnStyle]}>
-          <Pressable
-            style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaButtonPressed]}
-            onPress={onGetStarted}
-          >
-            <Animated.View style={[styles.pulseRing, pulseRingStyle]} />
-            <Text style={styles.ctaText}>Get Started 🌿</Text>
-          </Pressable>
-        </Animated.View>
-      </Animated.View>
-    </View>
-  );
-}
-
-function StickyAppBtn({ onPress }: { onPress: () => void }) {
-  const scale = useSharedValue(1);
-  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
-  return (
-    <View style={styles.stickyAppBtn}>
-      <Animated.View style={animStyle}>
-        <Pressable
-          style={styles.appBtnPressable}
-          onPress={onPress}
-          // @ts-ignore — onHoverIn/onHoverOut are React Native Web-specific
-          onHoverIn={() => { scale.value = withTiming(1.05, { duration: 150 }); }}
-          // @ts-ignore
-          onHoverOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
-        >
-          <Text style={styles.appBtnText}>App →</Text>
-        </Pressable>
-      </Animated.View>
-    </View>
-  );
-}
-
-function WebLanding({ onGetStarted, contentStyle, btnStyle, pulseRingStyle, time }: LandingAnimProps) {
-  return (
-    <>
-      <StickyAppBtn onPress={onGetStarted} />
-      <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
-        <HeroSection
-          contentStyle={contentStyle}
-          btnStyle={btnStyle}
-          pulseRingStyle={pulseRingStyle}
-          time={time}
-          onGetStarted={onGetStarted}
-        />
-        <FeatureSection
-          icon="💰"
-          title="Dynamic Budget Score"
-          body="See your financial health in real-time. Every transaction updates your score instantly — so you always know where you stand."
-          mockup={<ScoreMockup />}
-          tinted
-        />
-        <FeatureSection
-          icon="🪙"
-          title="Earn Coins"
-          body="Save money, earn virtual coins. Spend them in the Garden Shop or unlock milestones on your financial roadmap."
-          mockup={<CoinsMockup />}
-          reversed
-        />
-        <FeatureSection
-          icon="🌿"
-          title="Grow Your Garden"
-          body="Every saving plants a new tree. Watch your garden bloom as your finances grow — a living reflection of your progress."
-          mockup={<GardenMockup />}
-          tinted
-        />
-
-        {/* Final CTA */}
-        <View style={styles.ctaSection}>
-          <Text style={styles.ctaSectionTitle}>Start your garden today</Text>
-          <Text style={styles.ctaSectionSub}>
-            Track spending. Earn coins. Grow your garden.
-          </Text>
-          <Pressable
-            style={({ pressed }) => [styles.ctaSectionBtn, pressed && styles.ctaSectionBtnPressed]}
-            onPress={onGetStarted}
-          >
-            <Text style={styles.ctaSectionBtnText}>Get Started 🌿</Text>
-          </Pressable>
-        </View>
-
-        {/* Footer */}
-        <View style={styles.footerSection}>
-          <Text style={styles.footerText}>© 2026 Money Garden</Text>
-        </View>
-      </ScrollView>
-    </>
-  );
-}
-
-function PhoneMockup({ children }: { children: React.ReactNode }) {
-  return (
-    <View style={styles.phoneFrame}>
-      <View style={styles.phoneNotch} />
-      <View style={styles.phoneScreen}>{children}</View>
-    </View>
-  );
-}
-
-function FeatureSection({
-  icon,
-  title,
-  body,
-  mockup,
-  reversed = false,
-  tinted = false,
-}: {
-  icon: string;
-  title: string;
-  body: string;
-  mockup: React.ReactNode;
-  reversed?: boolean;
-  tinted?: boolean;
-}) {
-  const textCol = (
-    <View style={styles.featureTextCol}>
-      <Text style={styles.featureIcon}>{icon}</Text>
-      <Text style={styles.featureTitle}>{title}</Text>
-      <Text style={styles.featureBody}>{body}</Text>
-    </View>
-  );
-  const mockCol = <View style={styles.featureMockCol}>{mockup}</View>;
-
-  return (
-    <View style={[styles.featureSection, tinted && styles.featureSectionTinted]}>
-      <View style={styles.featureRow}>
-        {reversed ? <>{mockCol}{textCol}</> : <>{textCol}{mockCol}</>}
-      </View>
-    </View>
-  );
-}
-
-function ScoreMockup() {
-  return (
-    <PhoneMockup>
-      <Text style={styles.mockHeader}>Budget Score</Text>
-      <Text style={styles.mockScoreValue}>87</Text>
-      <View style={styles.mockBarBg}>
-        <View style={[styles.mockBarFill, { width: "87%" as any }]} />
-      </View>
-      <Text style={styles.mockScoreTag}>Great job! 🌿 Keep it up</Text>
-    </PhoneMockup>
-  );
-}
-
-function CoinsMockup() {
-  return (
-    <PhoneMockup>
-      <Text style={styles.mockHeader}>Coins Earned</Text>
-      {[
-        { emoji: "🪙", amount: "+50 coins", label: "Groceries saving" },
-        { emoji: "🪙", amount: "+30 coins", label: "Budget goal hit" },
-        { emoji: "🪙", amount: "+20 coins", label: "No dining out" },
-      ].map((item) => (
-        <View key={item.label} style={styles.mockCoinRow}>
-          <Text style={styles.mockCoinEmoji}>{item.emoji}</Text>
-          <View style={styles.mockCoinRight}>
-            <Text style={styles.mockCoinAmount}>{item.amount}</Text>
-            <Text style={styles.mockCoinSub}>{item.label}</Text>
-          </View>
-        </View>
-      ))}
-    </PhoneMockup>
-  );
-}
-
-function GardenMockup() {
-  return (
-    <PhoneMockup>
-      <Text style={styles.mockHeader}>My Garden</Text>
-      <View style={styles.mockGardenGrid}>
-        {["🌲","🌸","🌳","🌿","🌺","🍃","🌲","🌷","🌻"].map((emoji, i) => (
-          <Text key={`${emoji}-${i}`} style={styles.mockGardenEmoji}>{emoji}</Text>
-        ))}
-      </View>
-    </PhoneMockup>
-  );
-}
-
 export default function LandingScreen() {
   const router = useRouter();
   const [authVisible, setAuthVisible] = useState(false);
@@ -878,12 +558,48 @@ export default function LandingScreen() {
   }));
 
   return (
-    <View style={[styles.container, isWeb && styles.containerWeb]}>
-      {isWeb ? (
-        <WebLanding onGetStarted={() => setAuthVisible(true)} contentStyle={contentStyle} btnStyle={btnStyle} pulseRingStyle={pulseRingStyle} time={time} />
-      ) : (
-        <MobileLanding contentStyle={contentStyle} btnStyle={btnStyle} pulseRingStyle={pulseRingStyle} time={time} onGetStarted={() => setAuthVisible(true)} />
-      )}
+    <View style={styles.container}>
+      <View style={StyleSheet.absoluteFill}>
+        <Image
+          source={BG_IMAGE}
+          style={{ width: W, height: H }}
+          resizeMode="cover"
+        />
+        <GrassBoundary>
+          <GrassWave time={time} />
+        </GrassBoundary>
+      </View>
+
+      <View style={styles.overlay} />
+      <View style={styles.petalsLayer} pointerEvents="none">
+        <FlowerPetals />
+      </View>
+
+      <SafeAreaView style={styles.safe}>
+        <Animated.View style={[styles.content, contentStyle, Platform.OS === "web" && { userSelect: "none" } as object]}>
+          <ArcTitle />
+
+          <View style={styles.taglineWrap}>
+            <ThemedText style={styles.tagline}>
+              Save smartly, grow your garden
+            </ThemedText>
+          </View>
+
+          <Animated.View style={[styles.btnWrapper, btnStyle]}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.ctaButton,
+                pressed && styles.ctaButtonPressed,
+              ]}
+              onPress={() => setAuthVisible(true)}
+            >
+              <Animated.View style={[styles.pulseRing, pulseRingStyle]} />
+              <Text style={styles.ctaText}>Get Started 🌿</Text>
+            </Pressable>
+          </Animated.View>
+        </Animated.View>
+      </SafeAreaView>
+
       <AuthModal
         visible={authVisible}
         onClose={() => setAuthVisible(false)}
