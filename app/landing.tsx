@@ -550,15 +550,17 @@ function AuthModal({ visible, onClose, onSuccess }: {
               <Text style={auth.googleText}>Continue with Google</Text>
             </Pressable>
 
-            {/* Apple button */}
-            <Pressable
-              style={({ pressed }) => [auth.appleBtn, pressed && auth.appleBtnPressed]}
-              onPress={() => alert("Apple Sign In coming soon!")}
-              disabled={loading}
-            >
-              <Ionicons name="logo-apple" size={20} color="#000000" />
-              <Text style={auth.appleText}>Sign in with Apple</Text>
-            </Pressable>
+            {/* Apple button — hidden on Android (Apple SDK not available) */}
+            {Platform.OS !== "android" && (
+              <Pressable
+                style={({ pressed }) => [auth.appleBtn, pressed && auth.appleBtnPressed]}
+                onPress={handleAppleSignIn}
+                disabled={loading || (Platform.OS === "web" && !appleRequest)}
+              >
+                <Ionicons name="logo-apple" size={20} color="#000000" />
+                <Text style={auth.appleText}>Sign in with Apple</Text>
+              </Pressable>
+            )}
           </ScrollView>
         </Animated.View>
       </KeyboardAvoidingView>
