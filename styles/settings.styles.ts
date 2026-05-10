@@ -202,4 +202,46 @@ export const styles = StyleSheet.create({
     height: 74,
     borderRadius: 37,
   },
+  manageCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 4,
+    marginTop: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  manageCardTitle: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 13,
+    color: "#6b7f6b",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: 10,
+  },
+  manageRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 14,
+  },
+  manageRowPressed: {
+    opacity: 0.7,
+  },
+  manageRowDisabled: {
+    opacity: 0.4,
+  },
+  manageRowLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    color: "#1a2e1b",
+    flex: 1,
+  },
+  manageRowLabelDisabled: {
+    color: "#b0b8b0",
+  },
 });
