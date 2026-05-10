@@ -1,0 +1,109 @@
+<h2>Settings Page — Layout</h2>
+<p class="subtitle">Mobile mockup of the proposed layout. Does this look right?</p>
+
+<div style="display:flex; gap:32px; justify-content:center; flex-wrap:wrap; margin-top:24px;">
+
+  <!-- Mobile phone frame -->
+  <div style="width:320px;">
+    <div style="background:#f2f5f2; border-radius:24px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.18); border:1px solid #dde8dd;">
+
+      <!-- Status bar -->
+      <div style="background:#346739; height:28px; display:flex; align-items:center; justify-content:flex-end; padding:0 16px;">
+        <span style="color:rgba(255,255,255,0.7); font-size:11px;">9:41</span>
+      </div>
+
+      <!-- Hamburger nav (mobile) -->
+      <div style="background:#346739; position:relative; height:40px; display:flex; align-items:center; padding:0 16px;">
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="width:18px; height:2px; background:#fff; border-radius:2px;"></div>
+          <div style="width:18px; height:2px; background:#fff; border-radius:2px;"></div>
+          <div style="width:18px; height:2px; background:#fff; border-radius:2px;"></div>
+        </div>
+      </div>
+
+      <!-- Page content -->
+      <div style="background:#f2f5f2; padding:20px 16px 24px;">
+
+        <!-- Title -->
+        <div style="margin-bottom:20px; padding-top:4px;">
+          <span style="font-family:sans-serif; font-weight:900; font-size:24px; color:#1a2e1b; letter-spacing:-0.5px;">Settings</span>
+        </div>
+
+        <!-- Shop banner -->
+        <div style="
+          background: linear-gradient(135deg, #2A4A2E 0%, #346739 60%, #4a8050 100%);
+          border-radius:16px;
+          padding:16px;
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          margin-bottom:20px;
+          cursor:pointer;
+          box-shadow:0 2px 12px rgba(52,103,57,0.3);
+        ">
+          <div style="flex:1; padding-right:12px;">
+            <div style="font-family:sans-serif; font-weight:700; font-size:13px; color:#9FCB98; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">Shop</div>
+            <div style="font-family:sans-serif; font-weight:800; font-size:15px; color:#ffffff; line-height:1.3; margin-bottom:8px;">Visit the shop to buy flowers for your garden</div>
+            <div style="display:inline-flex; align-items:center; gap:4px; background:rgba(255,255,255,0.15); border-radius:20px; padding:4px 10px;">
+              <span style="font-family:sans-serif; font-size:12px; color:#ffffff; font-weight:700;">Go to Store</span>
+              <span style="color:#FFE566; font-size:12px;">›</span>
+            </div>
+          </div>
+          <!-- Coin image placeholder -->
+          <div style="
+            width:56px; height:56px;
+            background:radial-gradient(circle at 35% 35%, #FFE566, #f0a800);
+            border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow:0 2px 8px rgba(0,0,0,0.25);
+            flex-shrink:0;
+            font-size:28px;
+          ">🪙</div>
+        </div>
+
+        <!-- Profile card -->
+        <div style="
+          background:#ffffff;
+          border-radius:16px;
+          padding:16px;
+          display:flex;
+          align-items:center;
+          gap:14px;
+          box-shadow:0 1px 6px rgba(0,0,0,0.07);
+        ">
+          <!-- Avatar -->
+          <div style="
+            width:56px; height:56px;
+            border-radius:28px;
+            background:#c8dfc8;
+            border:2.5px solid #79AE6F;
+            display:flex; align-items:center; justify-content:center;
+            font-size:28px;
+            flex-shrink:0;
+            overflow:hidden;
+          ">🌿</div>
+          <!-- Name + email -->
+          <div style="flex:1; min-width:0;">
+            <div style="font-family:sans-serif; font-weight:800; font-size:16px; color:#1a2e1b; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Alexandru Alex</div>
+            <div style="font-family:sans-serif; font-size:13px; color:#6b7f6b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">g3d0manz00@gmail.com</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:10px; font-size:12px; color:#888;">Mobile view</div>
+  </div>
+
+  <!-- Description -->
+  <div style="max-width:260px; padding-top:8px;">
+    <h3 style="margin-top:0;">Layout breakdown</h3>
+    <ul style="padding-left:18px; line-height:1.8; color:#444; font-size:14px;">
+      <li><strong>Title</strong> — "Settings" in large bold text</li>
+      <li><strong>Shop banner</strong> — dark green gradient, text on left, coin image on right, tapping navigates to <code>/store</code></li>
+      <li><strong>Profile row</strong> — avatar image (gardener_1.png), display name, and email from the <code>/accounts</code> API</li>
+    </ul>
+    <p style="font-size:13px; color:#666;">The coin in the banner will use the real <code>coin.png</code> asset. Avatar is <code>gardener_1.png</code>.</p>
+    <p style="font-size:13px; color:#888;">Does this cover everything, or do you want additional sections below (e.g. currency selector, logout button, account settings)?</p>
+  </div>
+
+</div>
