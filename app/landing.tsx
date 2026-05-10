@@ -619,8 +619,57 @@ function MobileLanding({ contentStyle, btnStyle, pulseRingStyle, time, onGetStar
   );
 }
 
-function WebLanding(_props: LandingAnimProps): null {
-  return null;
+function HeroSection({ contentStyle, btnStyle, pulseRingStyle, time, onGetStarted }: LandingAnimProps) {
+  return (
+    <View style={styles.heroSection}>
+      <View style={styles.heroBg}>
+        <Image source={BG_IMAGE} style={{ width: "100%" as any, height: "100%" as any }} resizeMode="cover" />
+        <GrassBoundary>
+          <GrassWave time={time} />
+        </GrassBoundary>
+      </View>
+      <View style={[StyleSheet.absoluteFill, styles.overlay]} />
+      <View style={[StyleSheet.absoluteFill, styles.petalsLayer]} pointerEvents="none">
+        <FlowerPetals />
+      </View>
+      <Animated.View style={[styles.content, contentStyle, { userSelect: "none" } as object]}>
+        <ArcTitle />
+        <View style={styles.taglineWrap}>
+          <ThemedText style={styles.tagline}>Track your money, grow your garden</ThemedText>
+        </View>
+        <Animated.View style={[styles.btnWrapper, btnStyle]}>
+          <Pressable
+            style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaButtonPressed]}
+            onPress={onGetStarted}
+          >
+            <Animated.View style={[styles.pulseRing, pulseRingStyle]} />
+            <Text style={styles.ctaText}>Get Started 🌿</Text>
+          </Pressable>
+        </Animated.View>
+      </Animated.View>
+    </View>
+  );
+}
+
+function WebLanding({ onGetStarted, contentStyle, btnStyle, pulseRingStyle, time }: LandingAnimProps) {
+  return (
+    <>
+      <View style={styles.stickyAppBtn}>
+        <Pressable style={styles.appBtnPressable} onPress={onGetStarted}>
+          <Text style={styles.appBtnText}>App →</Text>
+        </Pressable>
+      </View>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+        <HeroSection
+          contentStyle={contentStyle}
+          btnStyle={btnStyle}
+          pulseRingStyle={pulseRingStyle}
+          time={time}
+          onGetStarted={onGetStarted}
+        />
+      </ScrollView>
+    </>
+  );
 }
 
 export default function LandingScreen() {

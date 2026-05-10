@@ -91,6 +91,42 @@ export const styles = StyleSheet.create({
     fontFamily: "Nunito_800ExtraBold",
     letterSpacing: 0.6,
   },
+  stickyAppBtn: {
+    position: "fixed" as any,
+    top: 20,
+    right: 24,
+    zIndex: 100,
+  },
+  appBtnPressable: {
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderWidth: 1.5,
+    borderColor: "rgba(255,255,255,0.7)",
+    borderRadius: 24,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    ...Platform.select({ web: { backdropFilter: "blur(8px)" } as any }),
+  },
+  appBtnText: {
+    color: "#ffffff",
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 15,
+    letterSpacing: 0.4,
+  },
+  heroSection: {
+    width: "100%" as any,
+    minHeight: "100vh" as any,
+    position: "relative" as any,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden" as any,
+  },
+  heroBg: {
+    position: "absolute" as any,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
 });
 
 export const auth = StyleSheet.create({
