@@ -51,7 +51,7 @@ export default function SettingsScreen() {
         <Text style={styles.title}>Settings</Text>
 
         {/* Shop banner */}
-        <Pressable onPress={goToStore}>
+        <Pressable onPress={goToStore} style={({ pressed }) => ({ opacity: pressed ? 0.88 : 1 })}>
           <LinearGradient
             colors={["#2A4A2E", "#346739", "#4a8050"]}
             start={{ x: 0, y: 0 }}
