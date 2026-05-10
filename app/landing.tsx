@@ -628,11 +628,11 @@ function HeroSection({ contentStyle, btnStyle, pulseRingStyle, time, onGetStarte
           <GrassWave time={time} />
         </GrassBoundary>
       </View>
-      <View style={[StyleSheet.absoluteFill, styles.overlay]} />
-      <View style={[StyleSheet.absoluteFill, styles.petalsLayer]} pointerEvents="none">
+      <View style={styles.overlay} />
+      <View style={styles.petalsLayer} pointerEvents="none">
         <FlowerPetals />
       </View>
-      <Animated.View style={[styles.content, contentStyle, { userSelect: "none" } as object]}>
+      <Animated.View style={[styles.content, contentStyle, Platform.select({ web: { userSelect: "none" } as any })]}>
         <ArcTitle />
         <View style={styles.taglineWrap}>
           <ThemedText style={styles.tagline}>Track your money, grow your garden</ThemedText>
@@ -659,7 +659,7 @@ function WebLanding({ onGetStarted, contentStyle, btnStyle, pulseRingStyle, time
           <Text style={styles.appBtnText}>App →</Text>
         </Pressable>
       </View>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
         <HeroSection
           contentStyle={contentStyle}
           btnStyle={btnStyle}

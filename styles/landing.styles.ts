@@ -7,7 +7,6 @@ export const styles = StyleSheet.create({
   },
   containerWeb: {
     minHeight: "100vh" as any,
-    overflow: "hidden" as any,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -121,11 +120,13 @@ export const styles = StyleSheet.create({
     overflow: "hidden" as any,
   },
   heroBg: {
-    position: "absolute" as any,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFillObject,
+  },
+  webScroll: {
+    flex: 1,
+  },
+  webScrollContent: {
+    flexGrow: 1,
   },
 });
 
