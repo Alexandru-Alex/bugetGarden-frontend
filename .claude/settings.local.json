@@ -38,7 +38,10 @@
       "Bash(npm config *)",
       "Bash(npx @claude-flow/cli@latest hooks pre-edit --file \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\app\\\\landing.tsx\")",
       "Bash(npx @claude-flow/cli@latest hooks post-edit --file \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\app\\\\landing.tsx\" --success true)",
-      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d['expo']['plugins'], indent=2\\)\\)\")"
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d['expo']['plugins'], indent=2\\)\\)\")",
+      "Bash(.\\\\gradlew.bat app:assembleDebug --stacktrace)",
+      "PowerShell(Get-Command *)",
+      "PowerShell(& \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\android\\\\gradlew.bat\" --stop 2>&1)"
     ]
   }
 }
