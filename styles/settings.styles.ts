@@ -11,18 +11,28 @@ export const styles = StyleSheet.create({
   scroll: {
     flex: 1,
   },
+  header: {
+    paddingHorizontal: 20,
+    paddingBottom: 28,
+    alignItems: "center",
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  headerTitle: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 28,
+    color: "#ffffff",
+    textAlign: "center",
+    paddingTop: 12,
+    paddingBottom: 10,
+  },
   scrollContent: {
     paddingHorizontal: 16,
+    paddingTop: 20,
     paddingBottom: 40,
     maxWidth: 480,
     width: "100%",
     alignSelf: "center",
-  },
-  title: {
-    fontFamily: "Nunito_900Black",
-    fontSize: 28,
-    color: "#1a2e1b",
-    marginBottom: 20,
   },
   banner: {
     borderRadius: 16,

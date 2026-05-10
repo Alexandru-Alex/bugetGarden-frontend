@@ -1,5 +1,4 @@
 import { NavMenu } from "@/components/nav-menu";
-import { PageTransition } from "@/components/page-transition";
 import { AccountDto, ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/settings.styles";
@@ -8,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, useRouter, usePathname } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Image, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavTransition } from "@/lib/nav-direction";
 
@@ -38,18 +37,20 @@ export default function SettingsScreen() {
   };
 
   return (
-    <PageTransition style={styles.root}>
+    <View style={styles.root}>
       <NavMenu />
+      <LinearGradient
+        colors={["#2A4A2E", "#346739"]}
+        style={[styles.header, { paddingTop: Platform.OS === "web" ? 56 : insets.top + 56 }]}
+      >
+        <Text style={styles.headerTitle}>Settings</Text>
+      </LinearGradient>
+
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingTop: insets.top + 64 },
-        ]}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Settings</Text>
-
         {/* Shop banner */}
         <Pressable onPress={goToStore} style={({ pressed }) => ({ opacity: pressed ? 0.88 : 1 })}>
           <LinearGradient
@@ -93,6 +94,6 @@ export default function SettingsScreen() {
           </View>
         </View>
       </ScrollView>
-    </PageTransition>
+    </View>
   );
 }
