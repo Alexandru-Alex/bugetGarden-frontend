@@ -51,7 +51,6 @@ export default function SettingsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Shop banner */}
         <Pressable onPress={goToStore} style={({ pressed }) => ({ opacity: pressed ? 0.88 : 1 })}>
           <LinearGradient
             colors={["#2A4A2E", "#346739", "#4a8050"]}
@@ -77,7 +76,6 @@ export default function SettingsScreen() {
           </LinearGradient>
         </Pressable>
 
-        {/* Profile card */}
         <View style={styles.profileCard}>
           <Image
             source={require("../assets/avatars/gardener_1.png")}
