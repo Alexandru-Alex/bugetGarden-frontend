@@ -3,6 +3,14 @@ import { AccountDto, ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
 import { avatarSource, AVATAR_KEYS } from "@/lib/avatars";
 import { CURRENCIES, currencySymbolFor, type Currency } from "@/lib/currency";
+import {
+  cancelAll,
+  getSavedHour,
+  requestPermission,
+  saveHour,
+  scheduleDaily,
+  setEnabledFlag,
+} from "@/lib/notifications";
 import { styles, ITEM_H, PICKER_H } from "@/styles/settings.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -25,6 +33,9 @@ export default function SettingsScreen() {
   const [pendingCurrency, setPendingCurrency] = useState<Currency>("USD");
   const [showDecimalModal, setShowDecimalModal] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState<boolean | undefined>(undefined);
+  const [notifHour, setNotifHour] = useState(20);
+  const [notifToast, setNotifToast] = useState<string | null>(null);
+  const notifToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currencyScrollRef = useRef<ScrollView>(null);
   const [syncLabel, setSyncLabel] = useState(() => {
     const last = getLastSync();
@@ -61,6 +72,18 @@ export default function SettingsScreen() {
   useEffect(() => {
     if (account?.notification !== undefined) setNotifEnabled(account.notification);
   }, [account?.notification]);
+
+  useEffect(() => {
+    if (Platform.OS !== "web") {
+      getSavedHour().then(setNotifHour);
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (notifToastTimer.current) clearTimeout(notifToastTimer.current);
+    };
+  }, []);
 
   const { mutate: updateAvatar } = useMutation({
     mutationFn: (avatarUrl: string) => api.patch("/accounts/avatar", { avatarUrl }),
@@ -141,6 +164,34 @@ export default function SettingsScreen() {
   );
 
   const decimalExamples: Record<number, string> = { 0: "eg. 10", 1: "eg. 10.4", 2: "eg. 10.45" };
+
+  const handleNotifToggle = async (val: boolean) => {
+    if (val) {
+      const granted = await requestPermission();
+      if (!granted) {
+        setNotifEnabled(false);
+        if (notifToastTimer.current) clearTimeout(notifToastTimer.current);
+        setNotifToast("Enable notifications in your device settings");
+        notifToastTimer.current = setTimeout(() => setNotifToast(null), 3000);
+        return;
+      }
+      setNotifEnabled(true);
+      await setEnabledFlag(true);
+      await saveHour(notifHour);
+      await scheduleDaily(notifHour);
+    } else {
+      setNotifEnabled(false);
+      await setEnabledFlag(false);
+      await cancelAll();
+    }
+    updateNotification(val);
+  };
+
+  const handleHourChange = async (h: number) => {
+    setNotifHour(h);
+    await saveHour(h);
+    await scheduleDaily(h);
+  };
 
   return (
     <View style={styles.root}>
@@ -315,12 +366,32 @@ export default function SettingsScreen() {
             </View>
             <Switch
               value={notifEnabled ?? false}
-              onValueChange={(val) => { setNotifEnabled(val); updateNotification(val); }}
+              onValueChange={handleNotifToggle}
               disabled={savingNotification}
               trackColor={{ false: "#e0e0e0", true: "#9FCB98" }}
               thumbColor="#346739"
             />
           </View>
+
+          {notifEnabled && Platform.OS !== "web" && (
+            <>
+              <View style={styles.cardDivider} />
+              <View style={styles.notifTimeRow}>
+                <Text style={styles.notifTimeLabel}>Remind at:</Text>
+                <View style={styles.notifTimeControls}>
+                  <Pressable onPress={() => handleHourChange((notifHour - 1 + 24) % 24)}>
+                    <Ionicons name="chevron-back" size={20} color="#346739" />
+                  </Pressable>
+                  <Text style={styles.notifTimeValue}>
+                    {String(notifHour).padStart(2, "0")}:00
+                  </Text>
+                  <Pressable onPress={() => handleHourChange((notifHour + 1) % 24)}>
+                    <Ionicons name="chevron-forward" size={20} color="#346739" />
+                  </Pressable>
+                </View>
+              </View>
+            </>
+          )}
 
           {Platform.OS !== "web" && <View style={styles.cardDivider} />}
 
@@ -542,6 +613,12 @@ export default function SettingsScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      {notifToast !== null && (
+        <View style={styles.toast} pointerEvents="none">
+          <Text style={styles.toastText}>{notifToast}</Text>
+        </View>
+      )}
     </View>
   );
 }
