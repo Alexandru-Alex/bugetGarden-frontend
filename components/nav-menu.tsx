@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { api, logout } from "../lib/api";
 import { avatarSource } from "../lib/avatars";
 import { NavTransition } from "../lib/nav-direction";
+import { getLastSync, setLastSync, relativeTime } from "../lib/sync";
 
 const DRAWER_WIDTH = 200;
 const GREEN_DARK = "#346739";
@@ -152,16 +153,6 @@ function WebNavBar() {
 
 // ─── Mobile hamburger + drawer ────────────────────────────────────────────────
 
-let _lastSync: Date | null = null;
-
-function relativeTime(date: Date): string {
-  const mins = Math.floor((Date.now() - date.getTime()) / 60_000);
-  if (mins < 1) return "Just now";
-  if (mins < 60) return `${mins} min ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} h ago`;
-  return `${Math.floor(hours / 24)} d ago`;
-}
 
 function MobileNavMenu() {
   const router = useRouter();
@@ -179,13 +170,15 @@ function MobileNavMenu() {
   const syncIconStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
-  const [syncLabel, setSyncLabel] = useState(
-    _lastSync ? relativeTime(_lastSync) : "Never synced"
-  );
+  const [syncLabel, setSyncLabel] = useState(() => {
+    const last = getLastSync();
+    return last ? relativeTime(last) : "Never synced";
+  });
 
   useEffect(() => {
     const id = setInterval(() => {
-      if (_lastSync) setSyncLabel(relativeTime(_lastSync));
+      const last = getLastSync();
+      if (last) setSyncLabel(relativeTime(last));
     }, 30_000);
     return () => clearInterval(id);
   }, []);
@@ -223,7 +216,7 @@ function MobileNavMenu() {
   const handleSync = () => {
     rotation.value = withTiming(rotation.value + 360, { duration: 600 });
     queryClient.invalidateQueries();
-    _lastSync = new Date();
+    setLastSync(new Date());
     setSyncLabel("Just now");
   };
 

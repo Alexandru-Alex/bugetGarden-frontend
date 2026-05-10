@@ -9,13 +9,23 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, useRouter, usePathname } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Image, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavTransition } from "@/lib/nav-direction";
+import { getLastSync, setLastSync, relativeTime } from "@/lib/sync";
 
 export default function SettingsScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [localAvatarUrl, setLocalAvatarUrl] = useState<string | null>(null);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [syncLabel, setSyncLabel] = useState(() => {
+    const last = getLastSync();
+    return last ? relativeTime(last) : "Never synced";
+  });
+  const rotation = useSharedValue(0);
+  const syncIconStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const pathname = usePathname();
@@ -23,6 +33,14 @@ export default function SettingsScreen() {
 
   useEffect(() => {
     getStoredToken().then(setToken);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      const last = getLastSync();
+      if (last) setSyncLabel(relativeTime(last));
+    }, 30_000);
+    return () => clearInterval(id);
   }, []);
 
   const { data: account } = useQuery<AccountDto>({
@@ -45,6 +63,13 @@ export default function SettingsScreen() {
   const goToStore = () => {
     NavTransition.setDirection(pathname, "/store");
     router.replace("/store");
+  };
+
+  const handleSync = () => {
+    rotation.value = withTiming(rotation.value + 360, { duration: 600 });
+    queryClient.invalidateQueries();
+    setLastSync(new Date());
+    setSyncLabel("Just now");
   };
 
   const handleSelectAvatar = (key: string) => {
@@ -112,6 +137,19 @@ export default function SettingsScreen() {
             </Text>
           </View>
         </View>
+
+        <Pressable
+          style={({ pressed }) => [styles.syncCard, pressed && styles.syncCardPressed]}
+          onPress={handleSync}
+        >
+          <Animated.View style={syncIconStyle}>
+            <Ionicons name="sync-outline" size={22} color="#346739" />
+          </Animated.View>
+          <View style={styles.syncInfo}>
+            <Text style={styles.syncLabel}>Sync</Text>
+            <Text style={styles.syncSubLabel}>{syncLabel}</Text>
+          </View>
+        </Pressable>
       </ScrollView>
 
       <Modal
