@@ -6,20 +6,24 @@ const HOUR_KEY = "notif_hour";
 const ENABLED_KEY = "notif_enabled";
 const DEFAULT_HOUR = 20;
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+if (Platform.OS !== "web") {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+}
 
 export async function getSavedHour(): Promise<number> {
   if (Platform.OS === "web") return DEFAULT_HOUR;
   const stored = await SecureStore.getItemAsync(HOUR_KEY);
-  return stored !== null ? parseInt(stored, 10) : DEFAULT_HOUR;
+  if (stored === null) return DEFAULT_HOUR;
+  const parsed = parseInt(stored, 10);
+  return Number.isFinite(parsed) && parsed >= 0 && parsed <= 23 ? parsed : DEFAULT_HOUR;
 }
 
 export async function saveHour(hour: number): Promise<void> {
@@ -37,6 +41,7 @@ export async function requestPermission(): Promise<boolean> {
 
 export async function scheduleDaily(hour: number): Promise<void> {
   if (Platform.OS === "web") return;
+  const h = Math.max(0, Math.min(23, Math.floor(hour)));
   await Notifications.cancelAllScheduledNotificationsAsync();
   await Notifications.scheduleNotificationAsync({
     content: {
@@ -45,7 +50,7 @@ export async function scheduleDaily(hour: number): Promise<void> {
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
-      hour,
+      hour: h,
       minute: 0,
     },
   });
