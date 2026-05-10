@@ -263,6 +263,62 @@ export const styles = StyleSheet.create({
     width: 44,
     textAlign: "center",
   },
+  featureSectionTinted: {
+    backgroundColor: "#f8fdf8",
+  },
+  ctaSection: {
+    width: "100%" as any,
+    backgroundColor: "#f8fdf8",
+    paddingVertical: 100,
+    alignItems: "center",
+    gap: 12,
+  },
+  ctaSectionTitle: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 36,
+    color: "#346739",
+    textAlign: "center",
+  },
+  ctaSectionSub: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 16,
+    color: "#79AE6F",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  ctaSectionBtn: {
+    backgroundColor: "#346739",
+    paddingVertical: 14,
+    paddingHorizontal: 36,
+    borderRadius: 50,
+    shadowColor: "#346739",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 14,
+    elevation: 8,
+  },
+  ctaSectionBtnPressed: {
+    backgroundColor: "#2d5a30",
+    transform: [{ scale: 0.97 }],
+  },
+  ctaSectionBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 17,
+    color: "#ffffff",
+    letterSpacing: 0.4,
+  },
+  footerSection: {
+    width: "100%" as any,
+    backgroundColor: "#346739",
+    paddingVertical: 28,
+    alignItems: "center",
+  },
+  footerText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+    color: "rgba(255,255,255,0.6)",
+    letterSpacing: 0.3,
+  },
 });
 
 export const auth = StyleSheet.create({
