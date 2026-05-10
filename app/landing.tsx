@@ -34,6 +34,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import type { AnimatedStyle, SharedValue } from "react-native-reanimated";
+import type { ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path as SvgPath, Text as SvgText } from "react-native-svg";
 
@@ -53,6 +55,8 @@ function GoogleLogo({ size = 20 }: { size?: number }) {
 const { width: W, height: H } = Dimensions.get("window");
 
 const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
+
+const isWeb = Platform.OS === "web";
 
 class GrassBoundary extends React.Component<
   { children: React.ReactNode },
@@ -572,13 +576,15 @@ function AuthModal({ visible, onClose, onSuccess }: {
 
 // ─── Landing Screen ──────────────────────────────────────────────────────────
 
-function MobileLanding({ contentStyle, btnStyle, pulseRingStyle, time, onGetStarted }: {
-  contentStyle: any;
-  btnStyle: any;
-  pulseRingStyle: any;
-  time: any;
+type LandingAnimProps = {
+  contentStyle: AnimatedStyle<ViewStyle>;
+  btnStyle: AnimatedStyle<ViewStyle>;
+  pulseRingStyle: AnimatedStyle<ViewStyle>;
+  time: SharedValue<number>;
   onGetStarted: () => void;
-}) {
+};
+
+function MobileLanding({ contentStyle, btnStyle, pulseRingStyle, time, onGetStarted }: LandingAnimProps) {
   return (
     <>
       <View style={StyleSheet.absoluteFill}>
@@ -592,6 +598,7 @@ function MobileLanding({ contentStyle, btnStyle, pulseRingStyle, time, onGetStar
         <FlowerPetals />
       </View>
       <SafeAreaView style={styles.safe}>
+        {/* userSelect:"none" applied in HeroSection (web) — not needed on mobile */}
         <Animated.View style={[styles.content, contentStyle]}>
           <ArcTitle />
           <View style={styles.taglineWrap}>
@@ -612,13 +619,7 @@ function MobileLanding({ contentStyle, btnStyle, pulseRingStyle, time, onGetStar
   );
 }
 
-function WebLanding({ onGetStarted, contentStyle, btnStyle, pulseRingStyle, time }: {
-  onGetStarted: () => void;
-  contentStyle: any;
-  btnStyle: any;
-  pulseRingStyle: any;
-  time: any;
-}) {
+function WebLanding(_props: LandingAnimProps): null {
   return null;
 }
 
@@ -680,8 +681,6 @@ export default function LandingScreen() {
     transform: [{ scale: 1 + pulseRing.value * 0.55 }],
     opacity: 0.7 * (1 - pulseRing.value),
   }));
-
-  const isWeb = Platform.OS === "web";
 
   return (
     <View style={[styles.container, isWeb && styles.containerWeb]}>

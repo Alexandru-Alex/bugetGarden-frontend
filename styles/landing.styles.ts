@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
   },
   containerWeb: {
     minHeight: "100vh" as any,
-    overflow: "visible" as any,
+    overflow: "hidden" as any,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
