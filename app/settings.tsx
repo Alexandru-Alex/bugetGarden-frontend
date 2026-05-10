@@ -9,7 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, useRouter, usePathname } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Image, Modal, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Image, Linking, Modal, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, ScrollView, Switch, Text, TextInput, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavTransition } from "@/lib/nav-direction";
@@ -86,6 +86,12 @@ export default function SettingsScreen() {
       queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
       setShowDecimalModal(false);
     },
+  });
+
+  const { mutate: updateNotification } = useMutation({
+    mutationFn: (isNotification: boolean) =>
+      api.patch("/accounts", { name: null, currency: null, numberOfDecimals: null, isNotification }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY }),
   });
 
   if (token === undefined) return null;
@@ -287,6 +293,37 @@ export default function SettingsScreen() {
             <Text style={styles.appearanceRowValue}>
               {account?.numberOfDecimals ?? 2}{"  "}({decimalExamples[account?.numberOfDecimals ?? 2]})
             </Text>
+            <Ionicons name="chevron-forward" size={16} color="#9FCB98" />
+          </Pressable>
+        </View>
+
+        <View style={[styles.manageCard, { marginTop: 16 }]}>
+          <Text style={styles.manageCardTitle}>Notification</Text>
+
+          <View style={styles.cardDivider} />
+
+          <View style={styles.manageRow}>
+            <Ionicons name="notifications-outline" size={20} color="#346739" />
+            <View style={styles.notifLabelGroup}>
+              <Text style={styles.manageRowLabel}>Remind everyday</Text>
+              <Text style={styles.notifSubtext}>Remind to add expenses/income</Text>
+            </View>
+            <Switch
+              value={account?.isNotification ?? false}
+              onValueChange={(val) => updateNotification(val)}
+              trackColor={{ false: "#e0e0e0", true: "#9FCB98" }}
+              thumbColor="#346739"
+            />
+          </View>
+
+          <View style={styles.cardDivider} />
+
+          <Pressable
+            style={({ pressed }) => [styles.manageRow, pressed && styles.manageRowPressed]}
+            onPress={() => Linking.openSettings()}
+          >
+            <Ionicons name="settings-outline" size={20} color="#346739" />
+            <Text style={styles.manageRowLabel}>Notification settings</Text>
             <Ionicons name="chevron-forward" size={16} color="#9FCB98" />
           </Pressable>
         </View>
