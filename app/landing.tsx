@@ -415,7 +415,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
         onSuccess(false);
       }
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Ceva nu a mers. Încearcă din nou.");
+      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
