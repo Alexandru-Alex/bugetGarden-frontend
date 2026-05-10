@@ -321,7 +321,6 @@ function AuthModal({ visible, onClose, onSuccess }: {
           : null,
       });
     } catch (e: unknown) {
-      // ERR_REQUEST_CANCELED = user dismissed the Apple sheet — not an error
       if ((e as { code?: string }).code !== "ERR_REQUEST_CANCELED") {
         setError(e instanceof Error ? e.message : "Apple sign-in failed. Please try again.");
       }
