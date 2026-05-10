@@ -736,8 +736,8 @@ function CoinsMockup() {
         { emoji: "🪙", amount: "+50 coins", label: "Groceries saving" },
         { emoji: "🪙", amount: "+30 coins", label: "Budget goal hit" },
         { emoji: "🪙", amount: "+20 coins", label: "No dining out" },
-      ].map((item, i) => (
-        <View key={i} style={styles.mockCoinRow}>
+      ].map((item) => (
+        <View key={item.label} style={styles.mockCoinRow}>
           <Text style={styles.mockCoinEmoji}>{item.emoji}</Text>
           <View style={styles.mockCoinRight}>
             <Text style={styles.mockCoinAmount}>{item.amount}</Text>
@@ -755,7 +755,7 @@ function GardenMockup() {
       <Text style={styles.mockHeader}>My Garden</Text>
       <View style={styles.mockGardenGrid}>
         {["🌲","🌸","🌳","🌿","🌺","🍃","🌲","🌷","🌻"].map((emoji, i) => (
-          <Text key={i} style={styles.mockGardenEmoji}>{emoji}</Text>
+          <Text key={`${emoji}-${i}`} style={styles.mockGardenEmoji}>{emoji}</Text>
         ))}
       </View>
     </PhoneMockup>
