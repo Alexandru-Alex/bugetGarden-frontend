@@ -4,6 +4,7 @@ import { ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
 import { inputOutline, styles } from "@/styles/change-account.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as Crypto from "expo-crypto";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -30,7 +31,13 @@ export default function ChangeEmailScreen() {
   useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
 
   const { mutate, isPending, error, reset } = useMutation({
-    mutationFn: () => api.patch("/accounts/email", { currentPassword, newEmail }),
+    mutationFn: async () => {
+      const hashedPassword = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        currentPassword,
+      );
+      return api.patch("/accounts/email", { currentPassword: hashedPassword, newEmail });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
       setToastVisible(true);
@@ -70,20 +77,6 @@ export default function ChangeEmailScreen() {
           keyboardShouldPersistTaps="always"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.sectionLabel}>Current Password</Text>
-          <View style={styles.inputBox}>
-            <Ionicons name="lock-closed-outline" size={18} color="#79AE6F" style={styles.inputIcon} />
-            <TextInput
-              style={[styles.textInput, inputOutline]}
-              value={currentPassword}
-              onChangeText={(t) => { reset(); setCurrentPassword(t); }}
-              placeholder="Enter current password"
-              placeholderTextColor="#B8D4B8"
-              secureTextEntry
-              autoCapitalize="none"
-            />
-          </View>
-
           <Text style={styles.sectionLabel}>New Email</Text>
           <View style={styles.inputBox}>
             <Ionicons name="mail-outline" size={18} color="#79AE6F" style={styles.inputIcon} />
@@ -94,6 +87,20 @@ export default function ChangeEmailScreen() {
               placeholder="Enter new email"
               placeholderTextColor="#B8D4B8"
               keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+
+          <Text style={styles.sectionLabel}>Current Password</Text>
+          <View style={styles.inputBox}>
+            <Ionicons name="lock-closed-outline" size={18} color="#79AE6F" style={styles.inputIcon} />
+            <TextInput
+              style={[styles.textInput, inputOutline]}
+              value={currentPassword}
+              onChangeText={(t) => { reset(); setCurrentPassword(t); }}
+              placeholder="Enter current password"
+              placeholderTextColor="#B8D4B8"
+              secureTextEntry
               autoCapitalize="none"
             />
           </View>

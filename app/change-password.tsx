@@ -3,6 +3,7 @@ import { api } from "@/lib/api";
 import { inputOutline, styles } from "@/styles/change-account.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
+import * as Crypto from "expo-crypto";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -28,7 +29,13 @@ export default function ChangePasswordScreen() {
   useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
 
   const { mutate, isPending, error, reset } = useMutation({
-    mutationFn: () => api.patch("/accounts/password", { currentPassword, newPassword }),
+    mutationFn: async () => {
+      const [hashedCurrent, hashedNew] = await Promise.all([
+        Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, currentPassword),
+        Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, newPassword),
+      ]);
+      return api.patch("/accounts/password", { currentPassword: hashedCurrent, newPassword: hashedNew });
+    },
     onSuccess: () => {
       setToastVisible(true);
       toastTimer.current = setTimeout(() => {
