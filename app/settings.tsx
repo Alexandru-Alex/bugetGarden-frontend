@@ -1,6 +1,6 @@
 import { NavMenu } from "@/components/nav-menu";
 import { AccountDto, ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
-import { api, getStoredToken } from "@/lib/api";
+import { api, getStoredToken, logout } from "@/lib/api";
 import { avatarSource, AVATAR_KEYS } from "@/lib/avatars";
 import { CURRENCIES, currencySymbolFor, type Currency } from "@/lib/currency";
 import {
@@ -32,6 +32,8 @@ export default function SettingsScreen() {
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [pendingCurrency, setPendingCurrency] = useState<Currency>("USD");
   const [showDecimalModal, setShowDecimalModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState<boolean | undefined>(undefined);
   const [notifHour, setNotifHour] = useState(20);
   const [notifToast, setNotifToast] = useState<string | null>(null);
@@ -118,14 +120,28 @@ export default function SettingsScreen() {
     },
   });
 
+  const { mutate: deleteAccount, isPending: deletingAccount } = useMutation({
+    mutationFn: () => api.delete("/accounts"),
+    onSuccess: async () => {
+      setShowDeleteModal(false);
+      await logout();
+      queryClient.clear();
+      router.replace("/landing");
+    },
+  });
+
+  const handleLogout = async () => {
+    setShowLogoutModal(false);
+    await logout();
+    queryClient.clear();
+    router.replace("/landing");
+  };
+
   const { mutate: updateNotification, isPending: savingNotification } = useMutation({
     mutationFn: (notification: boolean) =>
       api.patch("/accounts", { name: null, currency: null, numberOfDecimals: null, notification }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY }),
   });
-
-  if (token === undefined) return null;
-  if (!token) return <Redirect href="/landing" />;
 
   const currentAvatarUrl = localAvatarUrl ?? account?.avatarUrl ?? "gardener_1";
   const isLocalAccount = account?.provider === "local";
@@ -197,6 +213,9 @@ export default function SettingsScreen() {
       await scheduleDaily(h);
     }, 400);
   };
+
+  if (token === undefined) return null;
+  if (!token) return <Redirect href="/landing" />;
 
   return (
     <View style={styles.root}>
@@ -410,6 +429,49 @@ export default function SettingsScreen() {
               <Ionicons name="chevron-forward" size={16} color="#9FCB98" />
             </Pressable>
           )}
+
+          {__DEV__ && Platform.OS !== "web" && (
+            <>
+              <View style={styles.cardDivider} />
+              <Pressable
+                style={({ pressed }) => [styles.manageRow, pressed && styles.manageRowPressed]}
+                onPress={async () => {
+                  const Notifications = await import("expo-notifications");
+                  await Notifications.scheduleNotificationAsync({
+                    content: { title: "Money Garden 🌱", body: "Don't forget to log your expenses and income today!" },
+                    trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 3 },
+                  });
+                }}
+              >
+                <Ionicons name="bug-outline" size={20} color="#346739" />
+                <Text style={styles.manageRowLabel}>Send test notification (3s)</Text>
+              </Pressable>
+            </>
+          )}
+        </View>
+
+        <View style={[styles.manageCard, { marginTop: 16 }]}>
+          <Text style={styles.manageCardTitle}>Others</Text>
+
+          <View style={styles.cardDivider} />
+
+          <Pressable
+            style={({ pressed }) => [styles.manageRow, pressed && styles.manageRowPressed]}
+            onPress={() => setShowLogoutModal(true)}
+          >
+            <Ionicons name="log-out-outline" size={20} color="#346739" />
+            <Text style={styles.manageRowLabel}>Log Out</Text>
+          </Pressable>
+
+          <View style={styles.cardDivider} />
+
+          <Pressable
+            style={({ pressed }) => [styles.manageRow, pressed && styles.manageRowPressed]}
+            onPress={() => setShowDeleteModal(true)}
+          >
+            <Ionicons name="trash-outline" size={20} color="#c0392b" />
+            <Text style={[styles.manageRowLabel, styles.dangerLabel]}>Delete Account</Text>
+          </Pressable>
         </View>
       </ScrollView>
 
@@ -615,6 +677,73 @@ export default function SettingsScreen() {
                 </Pressable>
               );
             })}
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={showLogoutModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowLogoutModal(false)}
+      >
+        <Pressable style={styles.modalBackdrop} onPress={() => setShowLogoutModal(false)}>
+          <Pressable
+            style={styles.confirmModal}
+            {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : undefined)}
+          >
+            <Text style={styles.confirmModalTitle}>Log Out</Text>
+            <Text style={styles.confirmModalMessage}>Are you sure you want to log out?</Text>
+            <View style={styles.nameModalButtons}>
+              <Pressable
+                style={({ pressed }) => [styles.nameModalBtn, { opacity: pressed ? 0.7 : 1 }]}
+                onPress={() => setShowLogoutModal(false)}
+              >
+                <Text style={styles.nameModalBtnLabel}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [styles.nameModalBtnPrimary, { opacity: pressed ? 0.7 : 1 }]}
+                onPress={handleLogout}
+              >
+                <Text style={styles.nameModalBtnPrimaryLabel}>Log Out</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={showDeleteModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDeleteModal(false)}
+      >
+        <Pressable style={styles.modalBackdrop} onPress={() => setShowDeleteModal(false)}>
+          <Pressable
+            style={styles.confirmModal}
+            {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : undefined)}
+          >
+            <Text style={styles.confirmModalTitle}>Delete Account</Text>
+            <Text style={styles.confirmModalMessage}>
+              This will permanently delete your account and all data. This action cannot be undone.
+            </Text>
+            <View style={styles.nameModalButtons}>
+              <Pressable
+                style={({ pressed }) => [styles.nameModalBtn, { opacity: pressed ? 0.7 : 1 }]}
+                onPress={() => setShowDeleteModal(false)}
+              >
+                <Text style={styles.nameModalBtnLabel}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [styles.confirmModalBtnDanger, { opacity: pressed || deletingAccount ? 0.7 : 1 }]}
+                onPress={() => deleteAccount()}
+                disabled={deletingAccount}
+              >
+                <Text style={styles.confirmModalBtnDangerLabel}>
+                  {deletingAccount ? "Deleting…" : "Delete"}
+                </Text>
+              </Pressable>
+            </View>
           </Pressable>
         </Pressable>
       </Modal>

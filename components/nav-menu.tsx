@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { api, logout } from "../lib/api";
+import { api } from "../lib/api";
 import { avatarSource } from "../lib/avatars";
 import { NavTransition } from "../lib/nav-direction";
 import { getLastSync, setLastSync, relativeTime } from "../lib/sync";
@@ -36,14 +36,11 @@ const SECONDARY_ITEMS = [
   { label: "Settings",     icon: "settings-outline"   as const, path: "/settings" },
 ];
 
-const LOGOUT_ITEM = { label: "Log Out", icon: "log-out-outline" as const };
-
 // ─── Web tab bar ─────────────────────────────────────────────────────────────
 
 function WebNavBar() {
   const router = useRouter();
   const pathname = usePathname();
-  const queryClient = useQueryClient();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { width } = useWindowDimensions();
   const compact = width < 500;
@@ -60,13 +57,6 @@ function WebNavBar() {
     if (pathname === path) return;
     NavTransition.setDirection(pathname, path);
     router.replace(path as any);
-  };
-
-  const handleLogout = async () => {
-    setDropdownOpen(false);
-    await logout();
-    queryClient.clear();
-    router.replace("/landing" as any);
   };
 
   return (
@@ -134,16 +124,6 @@ function WebNavBar() {
                 </Pressable>
               );
             })}
-            <View style={webStyles.dropdownDivider} />
-            <Pressable
-              style={({ pressed }) => [webStyles.dropdownItem, pressed && webStyles.dropdownItemPressed]}
-              onPress={handleLogout}
-            >
-              <Ionicons name={LOGOUT_ITEM.icon} size={17} color="#c0392b" />
-              <Text style={[webStyles.dropdownLabel, webStyles.dropdownLabelLogout]}>
-                {LOGOUT_ITEM.label}
-              </Text>
-            </Pressable>
           </View>
         </Modal>
       )}
@@ -204,13 +184,6 @@ function MobileNavMenu() {
       NavTransition.setDirection(pathname, path);
       router.replace(path as any);
     }, 220);
-  };
-
-  const handleLogout = async () => {
-    closeMenu();
-    await logout();
-    queryClient.clear();
-    setTimeout(() => router.replace("/landing" as any), 220);
   };
 
   const handleSync = () => {
@@ -274,15 +247,6 @@ function MobileNavMenu() {
                 </Pressable>
               ))}
 
-              <View style={mobileStyles.divider} />
-
-              <Pressable
-                style={({ pressed }) => [mobileStyles.menuItem, pressed && mobileStyles.menuItemPressed]}
-                onPress={handleLogout}
-              >
-                <Ionicons name={LOGOUT_ITEM.icon} size={20} color="rgba(255, 120, 100, 0.9)" />
-                <Text style={mobileStyles.menuLabelLogout}>{LOGOUT_ITEM.label}</Text>
-              </Pressable>
             </ScrollView>
 
             {/* Sync footer */}

@@ -6,10 +6,18 @@ const HOUR_KEY = "notif_hour";
 const ENABLED_KEY = "notif_enabled";
 const DEFAULT_HOUR = 20;
 
+const CHANNEL_ID = "daily-reminder";
+
+if (Platform.OS === "android") {
+  Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+    name: "Daily Reminder",
+    importance: Notifications.AndroidImportance.DEFAULT,
+  });
+}
+
 if (Platform.OS !== "web") {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
-      shouldShowAlert: true,
       shouldPlaySound: true,
       shouldSetBadge: false,
       shouldShowBanner: true,
@@ -47,6 +55,7 @@ export async function scheduleDaily(hour: number): Promise<void> {
     content: {
       title: "Money Garden 🌱",
       body: "Don't forget to log your expenses and income today!",
+      ...(Platform.OS === "android" ? { android: { channelId: CHANNEL_ID } } : {}),
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
