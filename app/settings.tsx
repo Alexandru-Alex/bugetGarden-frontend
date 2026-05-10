@@ -36,6 +36,7 @@ export default function SettingsScreen() {
   const [notifHour, setNotifHour] = useState(20);
   const [notifToast, setNotifToast] = useState<string | null>(null);
   const notifToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hourChangeDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currencyScrollRef = useRef<ScrollView>(null);
   const [syncLabel, setSyncLabel] = useState(() => {
     const last = getLastSync();
@@ -82,6 +83,7 @@ export default function SettingsScreen() {
   useEffect(() => {
     return () => {
       if (notifToastTimer.current) clearTimeout(notifToastTimer.current);
+      if (hourChangeDebounce.current) clearTimeout(hourChangeDebounce.current);
     };
   }, []);
 
@@ -187,10 +189,13 @@ export default function SettingsScreen() {
     updateNotification(val);
   };
 
-  const handleHourChange = async (h: number) => {
+  const handleHourChange = (h: number) => {
     setNotifHour(h);
-    await saveHour(h);
-    await scheduleDaily(h);
+    if (hourChangeDebounce.current) clearTimeout(hourChangeDebounce.current);
+    hourChangeDebounce.current = setTimeout(async () => {
+      await saveHour(h);
+      await scheduleDaily(h);
+    }, 400);
   };
 
   return (
