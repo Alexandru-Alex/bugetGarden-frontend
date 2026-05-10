@@ -32,7 +32,13 @@
       "PowerShell(java *)",
       "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Microsoft\\\\jdk-17.0.18.8-hotspot\"; npx expo run:android)",
       "Bash(C:\\\\Users\\\\g3d0m\\\\.claude\\\\plugins\\\\cache\\\\superpowers-dev\\\\superpowers\\\\5.0.7\\\\scripts\\\\start-server.sh *)",
-      "Bash(C:/Users/g3d0m/.claude/plugins/cache/superpowers-dev/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh *)"
+      "Bash(C:/Users/g3d0m/.claude/plugins/cache/superpowers-dev/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh *)",
+      "Bash(npm install *)",
+      "Bash(npm list *)",
+      "Bash(npm config *)",
+      "Bash(npx @claude-flow/cli@latest hooks pre-edit --file \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\app\\\\landing.tsx\")",
+      "Bash(npx @claude-flow/cli@latest hooks post-edit --file \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\app\\\\landing.tsx\" --success true)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d['expo']['plugins'], indent=2\\)\\)\")"
     ]
   }
 }
