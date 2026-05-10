@@ -5,7 +5,7 @@ import { api, saveToken } from "@/lib/api";
 import { useFocusStyle } from "@/lib/use-focus-style";
 import { auth, styles } from "@/styles/landing.styles";
 import { Ionicons } from "@expo/vector-icons";
-import { makeRedirectUri } from "expo-auth-session";
+import { makeRedirectUri, useAuthRequest, ResponseType } from "expo-auth-session";
 import * as Google from "expo-auth-session/providers/google";
 import * as Crypto from "expo-crypto";
 import { useRouter } from "expo-router";
@@ -149,6 +149,13 @@ const GOOGLE_CLIENT_IDS = {
   iosClientId: "975323074001-re455uukp107dpf8l25q75nia9co29td.apps.googleusercontent.com",
 };
 
+const APPLE_DISCOVERY = {
+  authorizationEndpoint: "https://appleid.apple.com/auth/authorize",
+  tokenEndpoint: "https://appleid.apple.com/auth/token",
+};
+// Replace with your real Apple Services ID from Apple Developer Console
+const APPLE_WEB_CLIENT_ID = "com.g3d0manz00.bugetGardenfront.web";
+
 function AuthModal({ visible, onClose, onSuccess }: {
   visible: boolean;
   onClose: () => void;
@@ -170,6 +177,18 @@ function AuthModal({ visible, onClose, onSuccess }: {
     ...GOOGLE_CLIENT_IDS,
     redirectUri: makeRedirectUri({ scheme: "bugetgardenfront", path: "auth" }),
   });
+
+  const [appleRequest, appleResponse, applePromptAsync] = useAuthRequest(
+    {
+      clientId: APPLE_WEB_CLIENT_ID,
+      scopes: ["name", "email"],
+      redirectUri: makeRedirectUri({ scheme: "bugetgardenfront", path: "auth" }),
+      responseType: ResponseType.Code,
+      usePKCE: false,
+      extraParams: { response_mode: "query" },
+    },
+    APPLE_DISCOVERY,
+  );
 
   useEffect(() => {
     if (googleResponse?.type === "success") {
