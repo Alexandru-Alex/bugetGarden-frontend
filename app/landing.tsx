@@ -149,6 +149,8 @@ const GOOGLE_CLIENT_IDS = {
   iosClientId: "975323074001-re455uukp107dpf8l25q75nia9co29td.apps.googleusercontent.com",
 };
 
+const APPLE_AUTH_ENABLED = false;
+
 const APPLE_DISCOVERY = {
   authorizationEndpoint: "https://appleid.apple.com/auth/authorize",
   tokenEndpoint: "https://appleid.apple.com/auth/token",
@@ -551,7 +553,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
             </Pressable>
 
             {/* Apple button — hidden on Android (Apple SDK not available) */}
-            {Platform.OS !== "android" && (
+            {APPLE_AUTH_ENABLED && Platform.OS !== "android" && (
               <Pressable
                 style={({ pressed }) => [auth.appleBtn, pressed && auth.appleBtnPressed]}
                 onPress={handleAppleSignIn}
