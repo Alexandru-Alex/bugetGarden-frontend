@@ -24,6 +24,7 @@ export default function SettingsScreen() {
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [pendingCurrency, setPendingCurrency] = useState<Currency>("USD");
   const [showDecimalModal, setShowDecimalModal] = useState(false);
+  const [notifEnabled, setNotifEnabled] = useState(false);
   const currencyScrollRef = useRef<ScrollView>(null);
   const [syncLabel, setSyncLabel] = useState(() => {
     const last = getLastSync();
@@ -56,6 +57,10 @@ export default function SettingsScreen() {
     staleTime: Infinity,
     enabled: !!token,
   });
+
+  useEffect(() => {
+    if (account?.isNotification !== undefined) setNotifEnabled(account.isNotification);
+  }, [account?.isNotification]);
 
   const { mutate: updateAvatar } = useMutation({
     mutationFn: (avatarUrl: string) => api.patch("/accounts/avatar", { avatarUrl }),
@@ -309,8 +314,8 @@ export default function SettingsScreen() {
               <Text style={styles.notifSubtext}>Remind to add expenses/income</Text>
             </View>
             <Switch
-              value={account?.isNotification ?? false}
-              onValueChange={updateNotification}
+              value={notifEnabled}
+              onValueChange={(val) => { setNotifEnabled(val); updateNotification(val); }}
               disabled={savingNotification}
               trackColor={{ false: "#e0e0e0", true: "#9FCB98" }}
               thumbColor="#346739"
