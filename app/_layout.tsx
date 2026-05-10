@@ -65,6 +65,7 @@ export default function RootLayout() {
             <Stack.Screen name="budgets" options={{ headerShown: false }} />
             <Stack.Screen name="goals/transaction" options={{ headerShown: false }} />
             <Stack.Screen name="store" options={{ headerShown: false }} />
+            <Stack.Screen name="settings" options={{ headerShown: false }} />
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>

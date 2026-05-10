@@ -31,7 +31,7 @@ const SECONDARY_ITEMS = [
   { label: "Goals",        icon: "flag-outline"       as const, path: "/goals" },
   { label: "Quests",       icon: "checkmark-circle-outline" as const, path: "/quests" },
   { label: "Achievements", icon: "trophy-outline"     as const, path: "/achievements" },
-  { label: "Settings",     icon: "settings-outline"   as const, path: ""     },
+  { label: "Settings",     icon: "settings-outline"   as const, path: "/settings" },
 ];
 
 const LOGOUT_ITEM = { label: "Log Out", icon: "log-out-outline" as const };
