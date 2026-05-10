@@ -66,6 +66,8 @@ export default function RootLayout() {
             <Stack.Screen name="goals/transaction" options={{ headerShown: false }} />
             <Stack.Screen name="store" options={{ headerShown: false }} />
             <Stack.Screen name="settings" options={{ headerShown: false }} />
+            <Stack.Screen name="change-email" options={{ headerShown: false }} />
+            <Stack.Screen name="change-password" options={{ headerShown: false }} />
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>
