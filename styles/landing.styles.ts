@@ -128,6 +128,73 @@ export const styles = StyleSheet.create({
   webScrollContent: {
     flexGrow: 1,
   },
+  featureSection: {
+    width: "100%" as any,
+    backgroundColor: "#ffffff",
+    paddingVertical: 80,
+    paddingHorizontal: 60,
+  },
+  featureRow: {
+    flexDirection: "row" as any,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 60,
+    maxWidth: 960,
+    alignSelf: "center",
+    width: "100%" as any,
+  },
+  featureIcon: {
+    fontSize: 40,
+    marginBottom: 12,
+  },
+  featureTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 28,
+    color: "#346739",
+    marginBottom: 14,
+  },
+  featureBody: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 16,
+    color: "#555555",
+    lineHeight: 26,
+    maxWidth: 340,
+  },
+  featureTextCol: {
+    flex: 1,
+    maxWidth: 380,
+  },
+  featureMockCol: {
+    flex: 1,
+    maxWidth: 260,
+    alignItems: "center",
+  },
+  phoneFrame: {
+    width: 220,
+    backgroundColor: "#111111",
+    borderRadius: 36,
+    padding: 8,
+    shadowColor: "#346739",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 24,
+    elevation: 12,
+  },
+  phoneNotch: {
+    width: 60,
+    height: 10,
+    backgroundColor: "#222222",
+    borderRadius: 8,
+    alignSelf: "center",
+    marginBottom: 6,
+  },
+  phoneScreen: {
+    backgroundColor: "#f8fdf8",
+    borderRadius: 28,
+    overflow: "hidden",
+    minHeight: 380,
+    padding: 16,
+  },
 });
 
 export const auth = StyleSheet.create({

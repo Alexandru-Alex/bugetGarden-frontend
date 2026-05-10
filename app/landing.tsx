@@ -667,8 +667,54 @@ function WebLanding({ onGetStarted, contentStyle, btnStyle, pulseRingStyle, time
           time={time}
           onGetStarted={onGetStarted}
         />
+        <FeatureSection
+          icon="💰"
+          title="Dynamic Budget Score"
+          body="Test placeholder"
+          mockup={<PhoneMockup><View style={{ flex: 1 }} /></PhoneMockup>}
+        />
       </ScrollView>
     </>
+  );
+}
+
+function PhoneMockup({ children }: { children: React.ReactNode }) {
+  return (
+    <View style={styles.phoneFrame}>
+      <View style={styles.phoneNotch} />
+      <View style={styles.phoneScreen}>{children}</View>
+    </View>
+  );
+}
+
+function FeatureSection({
+  icon,
+  title,
+  body,
+  mockup,
+  reversed = false,
+}: {
+  icon: string;
+  title: string;
+  body: string;
+  mockup: React.ReactNode;
+  reversed?: boolean;
+}) {
+  const textCol = (
+    <View style={styles.featureTextCol}>
+      <Text style={styles.featureIcon}>{icon}</Text>
+      <Text style={styles.featureTitle}>{title}</Text>
+      <Text style={styles.featureBody}>{body}</Text>
+    </View>
+  );
+  const mockCol = <View style={styles.featureMockCol}>{mockup}</View>;
+
+  return (
+    <View style={styles.featureSection}>
+      <View style={styles.featureRow}>
+        {reversed ? <>{mockCol}{textCol}</> : <>{textCol}{mockCol}</>}
+      </View>
+    </View>
   );
 }
 
