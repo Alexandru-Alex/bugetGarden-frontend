@@ -88,7 +88,7 @@ export default function SettingsScreen() {
     },
   });
 
-  const { mutate: updateNotification } = useMutation({
+  const { mutate: updateNotification, isPending: savingNotification } = useMutation({
     mutationFn: (isNotification: boolean) =>
       api.patch("/accounts", { name: null, currency: null, numberOfDecimals: null, isNotification }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY }),
@@ -310,7 +310,8 @@ export default function SettingsScreen() {
             </View>
             <Switch
               value={account?.isNotification ?? false}
-              onValueChange={(val) => updateNotification(val)}
+              onValueChange={updateNotification}
+              disabled={savingNotification}
               trackColor={{ false: "#e0e0e0", true: "#9FCB98" }}
               thumbColor="#346739"
             />
