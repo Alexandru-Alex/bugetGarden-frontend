@@ -274,7 +274,7 @@ export const styles = StyleSheet.create({
     color: "#1a2e1b",
     width: "100%",
     marginBottom: 20,
-    ...Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } }),
+    ...Platform.select({ web: { outlineStyle: "none" as any, outlineWidth: 0 } }),
   },
   nameModalButtons: {
     flexDirection: "row",
