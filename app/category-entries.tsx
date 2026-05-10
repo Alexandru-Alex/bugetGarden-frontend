@@ -1,9 +1,11 @@
 import { NavMenu } from "@/components/nav-menu";
+import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api } from "@/lib/api";
+import { formatAmount } from "@/lib/currency";
 import { PAGE_SIZE, PagedResponse } from "@/lib/types";
 import { styles } from "@/styles/category-entries.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
@@ -41,9 +43,6 @@ function formatEntryDate(dateStr: string): string {
   return `${parseInt(day, 10)} ${MONTHS[parseInt(month, 10) - 1]} ${year}`;
 }
 
-function formatAmount(amount: number) {
-  return amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
 
 function groupByDate(entries: FinancialEntryDto[]): Section[] {
   const map = new Map<string, FinancialEntryDto[]>();
@@ -67,6 +66,13 @@ export default function CategoryEntriesScreen() {
   }>();
 
   const [sortBy, setSortBy] = useState<"date" | "amount">("date");
+
+  const { data: account } = useQuery<AccountDto>({
+    queryKey: ACCOUNT_QUERY_KEY,
+    queryFn: () => api.get("/accounts"),
+    staleTime: Infinity,
+  });
+  const decimals = account?.numberOfDecimals ?? 2;
 
   const { width } = useWindowDimensions();
   const compact = width < 500;
@@ -162,7 +168,7 @@ export default function CategoryEntriesScreen() {
         )}
       </View>
       <Text style={styles.entryAmount}>
-        {symbol}{formatAmount(item.amount)}
+        {symbol}{formatAmount(item.amount, decimals)}
       </Text>
     </Pressable>
   );

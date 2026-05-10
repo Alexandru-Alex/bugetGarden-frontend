@@ -1,7 +1,7 @@
 import { NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
-import { currencySymbolFor } from "@/lib/currency";
+import { currencySymbolFor, formatAmount } from "@/lib/currency";
 import { formatDateISO, formatMonthISO } from "@/lib/date";
 import { DatePickerField } from "@/components/date-picker-field";
 import { MonthPickerField } from "@/components/month-picker-field";
@@ -77,9 +77,6 @@ interface CreateGoalRequest {
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
 
-function formatAmount(n: number): string {
-  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
 
 function formatDeadline(iso?: string): string | null {
   if (!iso) return null;
@@ -96,11 +93,12 @@ function goalProgress(goal: GoalDto): number {
 interface GoalCardProps {
   goal: GoalDto;
   symbol: string;
+  decimals: number;
   onPress: (goal: GoalDto) => void;
   onMenu: (goal: GoalDto) => void;
 }
 
-function GoalCard({ goal, symbol, onPress, onMenu }: GoalCardProps) {
+function GoalCard({ goal, symbol, decimals, onPress, onMenu }: GoalCardProps) {
   const pct = goalProgress(goal);
   const isCompleted = goal.status === "completed";
   const isCancelled = goal.status === "cancelled";
@@ -166,8 +164,8 @@ function GoalCard({ goal, symbol, onPress, onMenu }: GoalCardProps) {
       )}
 
       <View style={styles.amountsRow}>
-        <Text style={[styles.amountSaved, (isCompleted || isCancelled) && { color: "#aaa" }]}>{symbol}{formatAmount(goal.currentAmount)}</Text>
-        <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount)}</Text>
+        <Text style={[styles.amountSaved, (isCompleted || isCancelled) && { color: "#aaa" }]}>{symbol}{formatAmount(goal.currentAmount, decimals)}</Text>
+        <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount, decimals)}</Text>
       </View>
 
       <View style={styles.progressTrack}>
@@ -316,12 +314,13 @@ type GoalTransactionType = "DEPOSIT" | "WITHDRAW";
 interface AddTransactionModalProps {
   goal: GoalDto | null;
   symbol: string;
+  decimals: number;
   isPending: boolean;
   onClose: () => void;
   onAdd: (goalId: string, amount: number, type: GoalTransactionType, date: string, note?: string) => void;
 }
 
-function AddTransactionModal({ goal, symbol, isPending, onClose, onAdd }: AddTransactionModalProps) {
+function AddTransactionModal({ goal, symbol, decimals, isPending, onClose, onAdd }: AddTransactionModalProps) {
   const [amountInput, setAmountInput] = useState("");
   const [txType, setTxType] = useState<GoalTransactionType>("DEPOSIT");
   const [txDate, setTxDate] = useState(new Date());
@@ -368,8 +367,8 @@ function AddTransactionModal({ goal, symbol, isPending, onClose, onAdd }: AddTra
                 <Text style={styles.modalTitle}>{goal.name}</Text>
 
                 <View style={styles.amountsRow}>
-                  <Text style={styles.amountSaved}>{symbol}{formatAmount(goal.currentAmount)}</Text>
-                  <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount)}</Text>
+                  <Text style={styles.amountSaved}>{symbol}{formatAmount(goal.currentAmount, decimals)}</Text>
+                  <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount, decimals)}</Text>
                 </View>
                 <View style={[styles.progressTrack, { marginBottom: 20 }]}>
                   <View
@@ -503,6 +502,7 @@ export default function GoalsScreen() {
   });
 
   const symbol = currencySymbolFor(account?.currency);
+  const decimals = account?.numberOfDecimals ?? 2;
 
   const { totalSaved, totalTarget } = useMemo(() => ({
     totalSaved: activeGoals.reduce((s, g) => s + g.currentAmount, 0),
@@ -605,11 +605,11 @@ export default function GoalsScreen() {
           <View style={styles.summaryRow}>
             <View style={styles.summaryCard}>
               <Text style={styles.summaryCardLabel}>Total Saved</Text>
-              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalSaved)}</Text>
+              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalSaved, decimals)}</Text>
             </View>
             <View style={styles.summaryCard}>
               <Text style={styles.summaryCardLabel}>Total Target</Text>
-              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalTarget)}</Text>
+              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalTarget, decimals)}</Text>
             </View>
           </View>
         </View>
@@ -668,6 +668,7 @@ export default function GoalsScreen() {
             key={goal.id}
             goal={goal}
             symbol={symbol}
+            decimals={decimals}
             onPress={(g) =>
               router.push({
                 pathname: "/goals/transaction",
@@ -728,6 +729,7 @@ export default function GoalsScreen() {
       <AddTransactionModal
         goal={addFundsGoal}
         symbol={symbol}
+        decimals={decimals}
         isPending={updateFundsMutation.isPending}
         onClose={() => setAddFundsGoal(null)}
         onAdd={handleAddFunds}

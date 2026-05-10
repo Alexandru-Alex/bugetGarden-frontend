@@ -1,7 +1,7 @@
 import { NavMenu } from "@/components/nav-menu";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
-import { currencySymbolFor } from "@/lib/currency";
+import { currencySymbolFor, formatAmount } from "@/lib/currency";
 import { CategoryDto } from "@/lib/types";
 import { styles } from "@/styles/budgets.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -57,9 +57,6 @@ function progressWidth(spent: number, limit: number): `${number}%` {
   return `${Math.min(Math.round((spent / limit) * 100), 100)}%`;
 }
 
-function formatAmount(n: number): string {
-  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
 
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
@@ -138,6 +135,7 @@ export default function BudgetsScreen() {
   });
 
   const symbol = currencySymbolFor(account?.currency);
+  const decimals = account?.numberOfDecimals ?? 2;
 
   const { totalBudget, totalSpent } = useMemo(() => ({
     totalBudget: budgeted.reduce((s, b) => s + b.limit, 0),
@@ -213,11 +211,11 @@ export default function BudgetsScreen() {
           <View style={styles.summaryRow}>
             <View style={[styles.summaryCard, styles.summaryCardBudget]}>
               <Text style={styles.summaryCardLabel}>Total Budget</Text>
-              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalBudget)}</Text>
+              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalBudget, decimals)}</Text>
             </View>
             <View style={[styles.summaryCard, styles.summaryCardSpent]}>
               <Text style={styles.summaryCardLabel}>Total Spent</Text>
-              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalSpent)}</Text>
+              <Text style={styles.summaryCardAmount}>{symbol}{formatAmount(totalSpent, decimals)}</Text>
             </View>
           </View>
         </View>
@@ -242,12 +240,12 @@ export default function BudgetsScreen() {
               <View style={styles.categoryInfo}>
                 <Text style={styles.categoryName}>{item.name}</Text>
                 <View style={styles.categoryMeta}>
-                  <Text style={styles.categoryMetaText}>Limit: {symbol}{formatAmount(item.limit)}</Text>
+                  <Text style={styles.categoryMetaText}>Limit: {symbol}{formatAmount(item.limit, decimals)}</Text>
                   <Text style={styles.categoryMetaText}>·</Text>
-                  <Text style={[styles.categoryMetaText, item.spent > item.limit && { color: "#E74C3C" }]}>Spent: {symbol}{formatAmount(item.spent)}</Text>
+                  <Text style={[styles.categoryMetaText, item.spent > item.limit && { color: "#E74C3C" }]}>Spent: {symbol}{formatAmount(item.spent, decimals)}</Text>
                   <Text style={styles.categoryMetaText}>·</Text>
                   <Text style={[styles.categoryMetaText, item.spent > item.limit && { color: "#E74C3C" }]}>
-                    Remaining: {symbol}{formatAmount(item.spent > item.limit ? 0 : item.remaining)}
+                    Remaining: {symbol}{formatAmount(item.spent > item.limit ? 0 : item.remaining, decimals)}
                   </Text>
                 </View>
                 <View style={styles.progressTrack}>

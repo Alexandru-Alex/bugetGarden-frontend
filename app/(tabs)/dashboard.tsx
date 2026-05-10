@@ -3,7 +3,7 @@ import { DatePickerField } from "@/components/date-picker-field";
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
-import { currencySymbolFor } from "@/lib/currency";
+import { currencySymbolFor, formatAmount } from "@/lib/currency";
 import { formatDateISO } from "@/lib/date";
 import { NavTransition } from "@/lib/nav-direction";
 import { CategoryDto } from "@/lib/types";
@@ -55,10 +55,6 @@ function buildSummaryPath(
 }
 
 
-function formatAmount(amount: number) {
-  return amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
 function netTotalColor(net: number, income: number): string {
   if (income <= 0 && net >= 0) return "#FFFFFF";
   if (income <= 0) return "#FF6B6B";
@@ -78,9 +74,10 @@ interface Segment {
   categoryId?: string;
 }
 
-function DonutChart({ segments, symbol, isLoading, size = 200, strokeWidth = 30, onAdd, onPressSegment }: {
+function DonutChart({ segments, symbol, decimals, isLoading, size = 200, strokeWidth = 30, onAdd, onPressSegment }: {
   segments: Segment[];
   symbol: string;
+  decimals: number;
   isLoading?: boolean;
   size?: number;
   strokeWidth?: number;
@@ -144,7 +141,7 @@ function DonutChart({ segments, symbol, isLoading, size = 200, strokeWidth = 30,
                   numberOfLines={1}
                   adjustsFontSizeToFit
                 >
-                  {symbol}{formatAmount(displayTotal)}
+                  {symbol}{formatAmount(displayTotal, decimals)}
                 </Text>
               </>
             )}
@@ -174,7 +171,7 @@ function DonutChart({ segments, symbol, isLoading, size = 200, strokeWidth = 30,
                 <View style={[styles.legendDot, { backgroundColor: seg.color }]} />
                 <Text style={styles.legendLabel}>{seg.label}</Text>
                 <Text style={styles.legendValue}>
-                  {symbol}{formatAmount(seg.value)}
+                  {symbol}{formatAmount(seg.value, decimals)}
                   {"  "}<Text style={styles.legendPct}>{pct}%</Text>
                 </Text>
               </Pressable>
@@ -282,6 +279,7 @@ export default function DashboardScreen() {
   if (!token) return <Redirect href="/landing" />;
 
   const symbol = currencySymbolFor(account?.currency);
+  const decimals = account?.numberOfDecimals ?? 2;
 
   return (
     <PageTransition style={styles.root}>
@@ -308,7 +306,7 @@ export default function DashboardScreen() {
                 </View>
               </View>
             </View>
-            <Text style={[styles.totalAmount, { color: totalColor }]}>{symbol}{formatAmount(netTotal)}</Text>
+            <Text style={[styles.totalAmount, { color: totalColor }]}>{symbol}{formatAmount(netTotal, decimals)}</Text>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -376,6 +374,7 @@ export default function DashboardScreen() {
           <DonutChart
             segments={segments}
             symbol={symbol}
+            decimals={decimals}
             isLoading={summaryLoading}
             onAdd={() => setShowAddModal(true)}
             onPressSegment={handleSegmentPress}

@@ -1,8 +1,10 @@
 import { NavMenu } from "@/components/nav-menu";
+import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api } from "@/lib/api";
+import { formatAmount } from "@/lib/currency";
 import { styles } from "@/styles/goal-transactions.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useQuestProgress } from "@/hooks/use-quest-progress";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
@@ -60,9 +62,6 @@ function formatDate(dateStr: string): string {
   return `${parseInt(day, 10)} ${MONTHS[parseInt(month, 10) - 1]} ${year}`;
 }
 
-function formatAmount(n: number): string {
-  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
 
 function groupByDate(txs: GoalTransactionDto[]): Section[] {
   const map = new Map<string, GoalTransactionDto[]>();
@@ -282,6 +281,13 @@ export default function GoalTransactionsScreen() {
 
   const isReadOnly = goalStatus === "completed" || goalStatus === "cancelled";
 
+  const { data: account } = useQuery<AccountDto>({
+    queryKey: ACCOUNT_QUERY_KEY,
+    queryFn: () => api.get("/accounts"),
+    staleTime: Infinity,
+  });
+  const decimals = account?.numberOfDecimals ?? 2;
+
   const { width } = useWindowDimensions();
   const compact = width < 500;
   const insets = useSafeAreaInsets();
@@ -345,7 +351,7 @@ export default function GoalTransactionsScreen() {
           )}
         </View>
         <Text style={[styles.txAmount, { color: isDeposit ? "#346739" : "#E74C3C" }]}>
-          {isDeposit ? "+" : "-"}{symbol}{formatAmount(item.amount)}
+          {isDeposit ? "+" : "-"}{symbol}{formatAmount(item.amount, decimals)}
         </Text>
       </Pressable>
     );

@@ -6,7 +6,7 @@ import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
-import { currencySymbolFor } from "@/lib/currency";
+import { currencySymbolFor, formatAmount } from "@/lib/currency";
 import { PAGE_SIZE, PagedResponse } from "@/lib/types";
 import { styles } from "@/styles/tabs/statistics.styles";
 import { sharedStyles } from "@/styles/shared.styles";
@@ -51,9 +51,6 @@ const STAT_PERIODS: StatPeriod[] = ["YEAR", "MONTH", "WEEK", "DAY"];
 const TAB_LABELS: Record<StatTab, string> = { GENERAL: "General", EXPENSES: "Expenses", INCOME: "Income" };
 const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function formatAmount(amount: number) {
-  return amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
 
 function formatEntryDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-");
@@ -116,6 +113,7 @@ function StatisticsContent() {
   });
 
   const symbol = currencySymbolFor(account?.currency);
+  const decimals = account?.numberOfDecimals ?? 2;
 
   const showToast = useCallback(
     (msg: string, pos?: { x: number; y: number }) => {
@@ -206,7 +204,7 @@ function StatisticsContent() {
       const inc = item.income ?? 0;
       const exp = item.expenses ?? 0;
       const value = barType === "income" ? inc : barType === "expense" ? exp : Math.abs(inc - exp);
-      showToast(`${symbol}${formatAmount(value)}`, position);
+      showToast(`${symbol}${formatAmount(value, decimals)}`, position);
       if (barType !== "profit") {
         setSelectedBar({ barType, item });
         setTxCollapsed(false);
@@ -218,7 +216,7 @@ function StatisticsContent() {
   const handleCategoryBarPress = useCallback(
     (item: SummaryItem, position: { x: number; y: number }) => {
       const value = activeTab === "INCOME" ? (item.income ?? 0) : (item.expenses ?? 0);
-      showToast(`${symbol}${formatAmount(value)}`, position);
+      showToast(`${symbol}${formatAmount(value, decimals)}`, position);
     },
     [showToast, symbol, activeTab],
   );
@@ -226,14 +224,14 @@ function StatisticsContent() {
   const handleGoalsDotPress = useCallback(
     (item: GoalsPeriodItem, type: GoalsDotType, position: { x: number; y: number }) => {
       const value = (type === "deposited" ? item.deposited : item.withdrawn) ?? 0;
-      showToast(`${symbol}${formatAmount(value)}`, position);
+      showToast(`${symbol}${formatAmount(value, decimals)}`, position);
     },
     [showToast, symbol],
   );
 
   const handleSegmentPress = useCallback(
     (entry: CategoryEntryDto, position: { x: number; y: number }) => {
-      showToast(`${entry.name} • ${symbol}${formatAmount(entry.amount)}`, position);
+      showToast(`${entry.name} • ${symbol}${formatAmount(entry.amount, decimals)}`, position);
     },
     [showToast, symbol],
   );
@@ -443,7 +441,7 @@ function StatisticsContent() {
                         )}
                       </View>
                       <View style={styles.txRight}>
-                        <Text style={styles.txAmount}>{symbol}{formatAmount(tx.amount)}</Text>
+                        <Text style={styles.txAmount}>{symbol}{formatAmount(tx.amount, decimals)}</Text>
                         <Text style={styles.txDate}>{formatEntryDate(tx.entryDate)}</Text>
                       </View>
                     </View>

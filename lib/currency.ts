@@ -33,3 +33,10 @@ const SYMBOL_MAP: Record<string, string> = Object.fromEntries(
 export function currencySymbolFor(currency?: string): string {
   return SYMBOL_MAP[currency?.toUpperCase() ?? ""] ?? "$";
 }
+
+export function formatAmount(n: number, decimals: number = 2): string {
+  return n.toLocaleString("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
