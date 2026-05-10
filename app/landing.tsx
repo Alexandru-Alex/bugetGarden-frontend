@@ -572,6 +572,56 @@ function AuthModal({ visible, onClose, onSuccess }: {
 
 // ─── Landing Screen ──────────────────────────────────────────────────────────
 
+function MobileLanding({ contentStyle, btnStyle, pulseRingStyle, time, onGetStarted }: {
+  contentStyle: any;
+  btnStyle: any;
+  pulseRingStyle: any;
+  time: any;
+  onGetStarted: () => void;
+}) {
+  return (
+    <>
+      <View style={StyleSheet.absoluteFill}>
+        <Image source={BG_IMAGE} style={{ width: W, height: H }} resizeMode="cover" />
+        <GrassBoundary>
+          <GrassWave time={time} />
+        </GrassBoundary>
+      </View>
+      <View style={styles.overlay} />
+      <View style={styles.petalsLayer} pointerEvents="none">
+        <FlowerPetals />
+      </View>
+      <SafeAreaView style={styles.safe}>
+        <Animated.View style={[styles.content, contentStyle]}>
+          <ArcTitle />
+          <View style={styles.taglineWrap}>
+            <ThemedText style={styles.tagline}>Save smartly, grow your garden</ThemedText>
+          </View>
+          <Animated.View style={[styles.btnWrapper, btnStyle]}>
+            <Pressable
+              style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaButtonPressed]}
+              onPress={onGetStarted}
+            >
+              <Animated.View style={[styles.pulseRing, pulseRingStyle]} />
+              <Text style={styles.ctaText}>Get Started 🌿</Text>
+            </Pressable>
+          </Animated.View>
+        </Animated.View>
+      </SafeAreaView>
+    </>
+  );
+}
+
+function WebLanding({ onGetStarted, contentStyle, btnStyle, pulseRingStyle, time }: {
+  onGetStarted: () => void;
+  contentStyle: any;
+  btnStyle: any;
+  pulseRingStyle: any;
+  time: any;
+}) {
+  return null;
+}
+
 export default function LandingScreen() {
   const router = useRouter();
   const [authVisible, setAuthVisible] = useState(false);
@@ -631,49 +681,15 @@ export default function LandingScreen() {
     opacity: 0.7 * (1 - pulseRing.value),
   }));
 
+  const isWeb = Platform.OS === "web";
+
   return (
-    <View style={styles.container}>
-      <View style={StyleSheet.absoluteFill}>
-        <Image
-          source={BG_IMAGE}
-          style={{ width: W, height: H }}
-          resizeMode="cover"
-        />
-        <GrassBoundary>
-          <GrassWave time={time} />
-        </GrassBoundary>
-      </View>
-
-      <View style={styles.overlay} />
-      <View style={styles.petalsLayer} pointerEvents="none">
-        <FlowerPetals />
-      </View>
-
-      <SafeAreaView style={styles.safe}>
-        <Animated.View style={[styles.content, contentStyle, Platform.OS === "web" && { userSelect: "none" } as object]}>
-          <ArcTitle />
-
-          <View style={styles.taglineWrap}>
-            <ThemedText style={styles.tagline}>
-              Save smartly, grow your garden
-            </ThemedText>
-          </View>
-
-          <Animated.View style={[styles.btnWrapper, btnStyle]}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.ctaButton,
-                pressed && styles.ctaButtonPressed,
-              ]}
-              onPress={() => setAuthVisible(true)}
-            >
-              <Animated.View style={[styles.pulseRing, pulseRingStyle]} />
-              <Text style={styles.ctaText}>Get Started 🌿</Text>
-            </Pressable>
-          </Animated.View>
-        </Animated.View>
-      </SafeAreaView>
-
+    <View style={[styles.container, isWeb && styles.containerWeb]}>
+      {isWeb ? (
+        <WebLanding onGetStarted={() => setAuthVisible(true)} contentStyle={contentStyle} btnStyle={btnStyle} pulseRingStyle={pulseRingStyle} time={time} />
+      ) : (
+        <MobileLanding contentStyle={contentStyle} btnStyle={btnStyle} pulseRingStyle={pulseRingStyle} time={time} onGetStarted={() => setAuthVisible(true)} />
+      )}
       <AuthModal
         visible={authVisible}
         onClose={() => setAuthVisible(false)}
