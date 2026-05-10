@@ -149,6 +149,72 @@ export default function SettingsScreen() {
             <Text style={styles.syncSubLabel}>{syncLabel}</Text>
           </Pressable>
         </View>
+
+        <View style={styles.manageCard}>
+          <Text style={styles.manageCardTitle}>Manage Account</Text>
+
+          <View style={styles.cardDivider} />
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.manageRow,
+              pressed && account?.provider === "local" && styles.manageRowPressed,
+              account?.provider !== "local" && styles.manageRowDisabled,
+            ]}
+            onPress={() => account?.provider === "local" && router.push("/change-email")}
+            disabled={account?.provider !== "local"}
+          >
+            <Ionicons
+              name="mail-outline"
+              size={20}
+              color={account?.provider === "local" ? "#346739" : "#b0b8b0"}
+            />
+            <Text
+              style={[
+                styles.manageRowLabel,
+                account?.provider !== "local" && styles.manageRowLabelDisabled,
+              ]}
+            >
+              Change Email
+            </Text>
+            <Ionicons
+              name="chevron-forward"
+              size={16}
+              color={account?.provider === "local" ? "#9FCB98" : "#c8cec8"}
+            />
+          </Pressable>
+
+          <View style={styles.cardDivider} />
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.manageRow,
+              pressed && account?.provider === "local" && styles.manageRowPressed,
+              account?.provider !== "local" && styles.manageRowDisabled,
+            ]}
+            onPress={() => account?.provider === "local" && router.push("/change-password")}
+            disabled={account?.provider !== "local"}
+          >
+            <Ionicons
+              name="lock-closed-outline"
+              size={20}
+              color={account?.provider === "local" ? "#346739" : "#b0b8b0"}
+            />
+            <Text
+              style={[
+                styles.manageRowLabel,
+                account?.provider !== "local" && styles.manageRowLabelDisabled,
+              ]}
+            >
+              Change Password
+            </Text>
+            <Ionicons
+              name="chevron-forward"
+              size={16}
+              color={account?.provider === "local" ? "#9FCB98" : "#c8cec8"}
+            />
+          </Pressable>
+        </View>
       </ScrollView>
 
       <Modal
