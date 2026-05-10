@@ -651,14 +651,31 @@ function HeroSection({ contentStyle, btnStyle, pulseRingStyle, time, onGetStarte
   );
 }
 
+function StickyAppBtn({ onPress }: { onPress: () => void }) {
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  return (
+    <View style={styles.stickyAppBtn}>
+      <Animated.View style={animStyle}>
+        <Pressable
+          style={styles.appBtnPressable}
+          onPress={onPress}
+          // @ts-ignore — onHoverIn/onHoverOut are React Native Web-specific
+          onHoverIn={() => { scale.value = withTiming(1.05, { duration: 150 }); }}
+          // @ts-ignore
+          onHoverOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
+        >
+          <Text style={styles.appBtnText}>App →</Text>
+        </Pressable>
+      </Animated.View>
+    </View>
+  );
+}
+
 function WebLanding({ onGetStarted, contentStyle, btnStyle, pulseRingStyle, time }: LandingAnimProps) {
   return (
     <>
-      <View style={styles.stickyAppBtn}>
-        <Pressable style={styles.appBtnPressable} onPress={onGetStarted}>
-          <Text style={styles.appBtnText}>App →</Text>
-        </Pressable>
-      </View>
+      <StickyAppBtn onPress={onGetStarted} />
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
         <HeroSection
           contentStyle={contentStyle}
@@ -667,9 +684,46 @@ function WebLanding({ onGetStarted, contentStyle, btnStyle, pulseRingStyle, time
           time={time}
           onGetStarted={onGetStarted}
         />
-        <FeatureSection icon="💰" title="Dynamic Budget Score" body="Test" mockup={<ScoreMockup />} />
-        <FeatureSection icon="🪙" title="Earn Coins" body="Test" mockup={<CoinsMockup />} reversed />
-        <FeatureSection icon="🌿" title="Grow Your Garden" body="Test" mockup={<GardenMockup />} />
+        <FeatureSection
+          icon="💰"
+          title="Dynamic Budget Score"
+          body="See your financial health in real-time. Every transaction updates your score instantly — so you always know where you stand."
+          mockup={<ScoreMockup />}
+          tinted
+        />
+        <FeatureSection
+          icon="🪙"
+          title="Earn Coins"
+          body="Save money, earn virtual coins. Spend them in the Garden Shop or unlock milestones on your financial roadmap."
+          mockup={<CoinsMockup />}
+          reversed
+        />
+        <FeatureSection
+          icon="🌿"
+          title="Grow Your Garden"
+          body="Every saving plants a new tree. Watch your garden bloom as your finances grow — a living reflection of your progress."
+          mockup={<GardenMockup />}
+          tinted
+        />
+
+        {/* Final CTA */}
+        <View style={styles.ctaSection}>
+          <Text style={styles.ctaSectionTitle}>Start your garden today</Text>
+          <Text style={styles.ctaSectionSub}>
+            Track spending. Earn coins. Grow your garden.
+          </Text>
+          <Pressable
+            style={({ pressed }) => [styles.ctaSectionBtn, pressed && styles.ctaSectionBtnPressed]}
+            onPress={onGetStarted}
+          >
+            <Text style={styles.ctaSectionBtnText}>Get Started 🌿</Text>
+          </Pressable>
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footerSection}>
+          <Text style={styles.footerText}>© 2026 Money Garden</Text>
+        </View>
       </ScrollView>
     </>
   );
@@ -690,12 +744,14 @@ function FeatureSection({
   body,
   mockup,
   reversed = false,
+  tinted = false,
 }: {
   icon: string;
   title: string;
   body: string;
   mockup: React.ReactNode;
   reversed?: boolean;
+  tinted?: boolean;
 }) {
   const textCol = (
     <View style={styles.featureTextCol}>
@@ -707,7 +763,7 @@ function FeatureSection({
   const mockCol = <View style={styles.featureMockCol}>{mockup}</View>;
 
   return (
-    <View style={styles.featureSection}>
+    <View style={[styles.featureSection, tinted && styles.featureSectionTinted]}>
       <View style={styles.featureRow}>
         {reversed ? <>{mockCol}{textCol}</> : <>{textCol}{mockCol}</>}
       </View>
