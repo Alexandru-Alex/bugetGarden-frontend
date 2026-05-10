@@ -23,6 +23,7 @@ export interface AccountDto {
   totalScore: number;
   currency: string;
   avatarUrl?: string;
+  provider: string;
 }
 
 // Importat din orice ecran care face POST /transactions pentru a invalida cache-ul
