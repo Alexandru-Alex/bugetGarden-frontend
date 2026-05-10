@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export const GREEN_DARK = "#346739";
 export const GREEN_MED = "#79AE6F";
@@ -243,5 +243,83 @@ export const styles = StyleSheet.create({
   },
   manageRowLabelDisabled: {
     color: "#b0b8b0",
+  },
+  nameModal: {
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    padding: 24,
+    width: "100%",
+    maxWidth: 340,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  nameModalTitle: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 18,
+    color: "#1a2e1b",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  nameInput: {
+    borderWidth: 1.5,
+    borderColor: "#9FCB98",
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "#1a2e1b",
+    width: "100%",
+    marginBottom: 20,
+    ...Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } }),
+  },
+  nameModalButtons: {
+    flexDirection: "row",
+    gap: 10,
+    width: "100%",
+  },
+  nameModalBtn: {
+    flex: 1,
+    paddingVertical: 11,
+    borderRadius: 12,
+    alignItems: "center",
+    backgroundColor: "#f2f5f2",
+  },
+  nameModalBtnPrimary: {
+    flex: 1,
+    paddingVertical: 11,
+    borderRadius: 12,
+    alignItems: "center",
+    backgroundColor: "#346739",
+  },
+  nameModalBtnLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    color: "#346739",
+  },
+  nameModalBtnPrimaryLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    color: "#ffffff",
+  },
+  nameEditBadge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#346739",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderColor: "#ffffff",
+  },
+  profileNameWrapper: {
+    position: "relative",
+    alignSelf: "flex-start",
   },
 });
