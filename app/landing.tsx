@@ -278,6 +278,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
       }
       onSuccess(data.newUser);
     } catch (e: unknown) {
+      console.error("Backend Apple auth error:", e);
       setError(e instanceof Error ? e.message : "Apple sign-in failed. Please try again.");
     } finally {
       setLoading(false);
@@ -322,6 +323,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
       });
     } catch (e: unknown) {
       if ((e as { code?: string }).code !== "ERR_REQUEST_CANCELED") {
+        console.error("Apple sign-in error:", e);
         setError(e instanceof Error ? e.message : "Apple sign-in failed. Please try again.");
       }
       setLoading(false);
