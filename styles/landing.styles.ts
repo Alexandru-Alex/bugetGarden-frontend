@@ -195,6 +195,74 @@ export const styles = StyleSheet.create({
     minHeight: 380,
     padding: 16,
   },
+  mockHeader: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: "#346739",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  mockScoreValue: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 52,
+    color: "#346739",
+    textAlign: "center",
+  },
+  mockBarBg: {
+    height: 10,
+    backgroundColor: "#e0f0de",
+    borderRadius: 8,
+    marginVertical: 12,
+    overflow: "hidden",
+  },
+  mockBarFill: {
+    height: "100%" as any,
+    backgroundColor: "#79AE6F",
+    borderRadius: 8,
+  },
+  mockScoreTag: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "#79AE6F",
+    textAlign: "center",
+  },
+  mockCoinRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0faf0",
+    borderRadius: 12,
+    padding: 10,
+    marginBottom: 10,
+    gap: 8,
+  },
+  mockCoinEmoji: {
+    fontSize: 20,
+  },
+  mockCoinRight: {
+    flex: 1,
+  },
+  mockCoinAmount: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    color: "#346739",
+  },
+  mockCoinSub: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 11,
+    color: "#79AE6F",
+  },
+  mockGardenGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 8,
+  },
+  mockGardenEmoji: {
+    fontSize: 28,
+    width: 44,
+    textAlign: "center",
+  },
 });
 
 export const auth = StyleSheet.create({

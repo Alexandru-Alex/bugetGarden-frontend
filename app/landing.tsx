@@ -667,12 +667,9 @@ function WebLanding({ onGetStarted, contentStyle, btnStyle, pulseRingStyle, time
           time={time}
           onGetStarted={onGetStarted}
         />
-        <FeatureSection
-          icon="💰"
-          title="Dynamic Budget Score"
-          body="Test placeholder"
-          mockup={<PhoneMockup><View style={{ flex: 1 }} /></PhoneMockup>}
-        />
+        <FeatureSection icon="💰" title="Dynamic Budget Score" body="Test" mockup={<ScoreMockup />} />
+        <FeatureSection icon="🪙" title="Earn Coins" body="Test" mockup={<CoinsMockup />} reversed />
+        <FeatureSection icon="🌿" title="Grow Your Garden" body="Test" mockup={<GardenMockup />} />
       </ScrollView>
     </>
   );
@@ -715,6 +712,53 @@ function FeatureSection({
         {reversed ? <>{mockCol}{textCol}</> : <>{textCol}{mockCol}</>}
       </View>
     </View>
+  );
+}
+
+function ScoreMockup() {
+  return (
+    <PhoneMockup>
+      <Text style={styles.mockHeader}>Budget Score</Text>
+      <Text style={styles.mockScoreValue}>87</Text>
+      <View style={styles.mockBarBg}>
+        <View style={[styles.mockBarFill, { width: "87%" as any }]} />
+      </View>
+      <Text style={styles.mockScoreTag}>Great job! 🌿 Keep it up</Text>
+    </PhoneMockup>
+  );
+}
+
+function CoinsMockup() {
+  return (
+    <PhoneMockup>
+      <Text style={styles.mockHeader}>Coins Earned</Text>
+      {[
+        { emoji: "🪙", amount: "+50 coins", label: "Groceries saving" },
+        { emoji: "🪙", amount: "+30 coins", label: "Budget goal hit" },
+        { emoji: "🪙", amount: "+20 coins", label: "No dining out" },
+      ].map((item, i) => (
+        <View key={i} style={styles.mockCoinRow}>
+          <Text style={styles.mockCoinEmoji}>{item.emoji}</Text>
+          <View style={styles.mockCoinRight}>
+            <Text style={styles.mockCoinAmount}>{item.amount}</Text>
+            <Text style={styles.mockCoinSub}>{item.label}</Text>
+          </View>
+        </View>
+      ))}
+    </PhoneMockup>
+  );
+}
+
+function GardenMockup() {
+  return (
+    <PhoneMockup>
+      <Text style={styles.mockHeader}>My Garden</Text>
+      <View style={styles.mockGardenGrid}>
+        {["🌲","🌸","🌳","🌿","🌺","🍃","🌲","🌷","🌻"].map((emoji, i) => (
+          <Text key={i} style={styles.mockGardenEmoji}>{emoji}</Text>
+        ))}
+      </View>
+    </PhoneMockup>
   );
 }
 
