@@ -59,6 +59,7 @@ export default function SettingsScreen() {
   if (!token) return <Redirect href="/landing" />;
 
   const currentAvatarUrl = localAvatarUrl ?? account?.avatarUrl ?? "gardener_1";
+  const isLocalAccount = account?.provider === "local";
 
   const goToStore = () => {
     NavTransition.setDirection(pathname, "/store");
@@ -158,30 +159,21 @@ export default function SettingsScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.manageRow,
-              pressed && account?.provider === "local" && styles.manageRowPressed,
-              account?.provider !== "local" && styles.manageRowDisabled,
+              pressed && isLocalAccount && styles.manageRowPressed,
+              !isLocalAccount && styles.manageRowDisabled,
             ]}
-            onPress={() => account?.provider === "local" && router.push("/change-email")}
-            disabled={account?.provider !== "local"}
+            onPress={() => router.push("/change-email")}
+            disabled={!isLocalAccount}
           >
             <Ionicons
               name="mail-outline"
               size={20}
-              color={account?.provider === "local" ? "#346739" : "#b0b8b0"}
+              color={isLocalAccount ? "#346739" : "#b0b8b0"}
             />
-            <Text
-              style={[
-                styles.manageRowLabel,
-                account?.provider !== "local" && styles.manageRowLabelDisabled,
-              ]}
-            >
+            <Text style={[styles.manageRowLabel, !isLocalAccount && styles.manageRowLabelDisabled]}>
               Change Email
             </Text>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color={account?.provider === "local" ? "#9FCB98" : "#c8cec8"}
-            />
+            <Ionicons name="chevron-forward" size={16} color={isLocalAccount ? "#9FCB98" : "#c8cec8"} />
           </Pressable>
 
           <View style={styles.cardDivider} />
@@ -189,30 +181,21 @@ export default function SettingsScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.manageRow,
-              pressed && account?.provider === "local" && styles.manageRowPressed,
-              account?.provider !== "local" && styles.manageRowDisabled,
+              pressed && isLocalAccount && styles.manageRowPressed,
+              !isLocalAccount && styles.manageRowDisabled,
             ]}
-            onPress={() => account?.provider === "local" && router.push("/change-password")}
-            disabled={account?.provider !== "local"}
+            onPress={() => router.push("/change-password")}
+            disabled={!isLocalAccount}
           >
             <Ionicons
               name="lock-closed-outline"
               size={20}
-              color={account?.provider === "local" ? "#346739" : "#b0b8b0"}
+              color={isLocalAccount ? "#346739" : "#b0b8b0"}
             />
-            <Text
-              style={[
-                styles.manageRowLabel,
-                account?.provider !== "local" && styles.manageRowLabelDisabled,
-              ]}
-            >
+            <Text style={[styles.manageRowLabel, !isLocalAccount && styles.manageRowLabelDisabled]}>
               Change Password
             </Text>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color={account?.provider === "local" ? "#9FCB98" : "#c8cec8"}
-            />
+            <Ionicons name="chevron-forward" size={16} color={isLocalAccount ? "#9FCB98" : "#c8cec8"} />
           </Pressable>
         </View>
       </ScrollView>

@@ -24,7 +24,6 @@ export const styles = StyleSheet.create({
   headerSubRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
   },
   backBtn: {
     width: 32,
@@ -79,7 +78,6 @@ export const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: "#346739",
     padding: 0,
-    ...inputOutline,
   },
   saveBtn: {
     backgroundColor: "#346739",
