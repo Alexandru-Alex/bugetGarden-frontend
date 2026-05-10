@@ -22,6 +22,7 @@ export interface AccountDto {
   goldCoins: number;
   totalScore: number;
   currency: string;
+  numberOfDecimals?: number;
   avatarUrl?: string;
   provider: string;
 }

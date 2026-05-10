@@ -2,6 +2,8 @@ import { Platform, StyleSheet } from "react-native";
 
 export const GREEN_DARK = "#346739";
 export const GREEN_MED = "#79AE6F";
+export const ITEM_H = 48;
+export const PICKER_H = ITEM_H * 3;
 
 export const styles = StyleSheet.create({
   root: {
@@ -321,5 +323,169 @@ export const styles = StyleSheet.create({
   profileNameWrapper: {
     position: "relative",
     alignSelf: "flex-start",
+  },
+  appearanceRowValue: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+    color: "#6b7f6b",
+    marginRight: 4,
+  },
+  // Currency picker modal
+  currencyModal: {
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    padding: 24,
+    width: "100%",
+    maxWidth: 360,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  currencyModalTitle: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 18,
+    color: "#1a2e1b",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  wheelContainer: {
+    height: PICKER_H,
+    borderWidth: 1.5,
+    borderColor: "#9FCB98",
+    borderRadius: 14,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+  wheelHighlight: {
+    position: "absolute",
+    top: ITEM_H,
+    left: 0,
+    right: 0,
+    height: ITEM_H,
+    borderTopWidth: 1.5,
+    borderBottomWidth: 1.5,
+    borderColor: "#9FCB98",
+  },
+  wheelScroll: { flex: 1 },
+  wheelContent: { paddingVertical: ITEM_H },
+  wheelItem: {
+    height: ITEM_H,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    gap: 10,
+  },
+  wheelSymbol: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 18,
+    color: "#346739",
+    minWidth: 32,
+  },
+  wheelCode: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "#346739",
+    letterSpacing: 0.3,
+  },
+  wheelFadeTop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: ITEM_H,
+    zIndex: 2,
+  },
+  wheelFadeBottom: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: ITEM_H,
+    zIndex: 2,
+  },
+  webPickerContainer: {
+    borderWidth: 1.5,
+    borderColor: "#9FCB98",
+    borderRadius: 14,
+    overflow: "hidden",
+    maxHeight: ITEM_H * 5,
+    marginBottom: 16,
+  },
+  webPickerScroll: { flex: 1 },
+  webPickerItem: {
+    height: ITEM_H,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    gap: 10,
+  },
+  webPickerItemSelected: { backgroundColor: "#346739" },
+  webPickerSymbol: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 16,
+    color: "#346739",
+    minWidth: 32,
+  },
+  webPickerCode: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#346739",
+    flex: 1,
+    letterSpacing: 0.3,
+  },
+  webPickerTextSelected: { color: "#ffffff" },
+  currencyModalBtn: {
+    paddingVertical: 11,
+    borderRadius: 12,
+    alignItems: "center",
+    backgroundColor: "#346739",
+  },
+  currencyModalBtnLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    color: "#ffffff",
+  },
+  // Decimal places picker modal
+  decimalModal: {
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    padding: 24,
+    width: "100%",
+    maxWidth: 320,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  decimalModalTitle: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 18,
+    color: "#1a2e1b",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  decimalOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 13,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    gap: 10,
+  },
+  decimalOptionSelected: { backgroundColor: "#f0f8ee" },
+  decimalOptionValue: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 15,
+    color: "#1a2e1b",
+    minWidth: 18,
+  },
+  decimalOptionExample: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+    color: "#6b7f6b",
+    flex: 1,
   },
 });

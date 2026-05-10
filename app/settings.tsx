@@ -2,13 +2,14 @@ import { NavMenu } from "@/components/nav-menu";
 import { AccountDto, ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
 import { avatarSource, AVATAR_KEYS } from "@/lib/avatars";
-import { styles } from "@/styles/settings.styles";
+import { CURRENCIES, currencySymbolFor, type Currency } from "@/lib/currency";
+import { styles, ITEM_H, PICKER_H } from "@/styles/settings.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, useRouter, usePathname } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Image, Modal, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavTransition } from "@/lib/nav-direction";
@@ -20,6 +21,10 @@ export default function SettingsScreen() {
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
   const [nameInput, setNameInput] = useState("");
+  const [showCurrencyModal, setShowCurrencyModal] = useState(false);
+  const [pendingCurrency, setPendingCurrency] = useState<Currency>("USD");
+  const [showDecimalModal, setShowDecimalModal] = useState(false);
+  const currencyScrollRef = useRef<ScrollView>(null);
   const [syncLabel, setSyncLabel] = useState(() => {
     const last = getLastSync();
     return last ? relativeTime(last) : "Never synced";
@@ -65,6 +70,24 @@ export default function SettingsScreen() {
     },
   });
 
+  const { mutate: updateCurrency, isPending: savingCurrency } = useMutation({
+    mutationFn: (currency: string) =>
+      api.patch("/accounts", { name: null, currency, numberOfDecimals: null }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      setShowCurrencyModal(false);
+    },
+  });
+
+  const { mutate: updateDecimals, isPending: savingDecimals } = useMutation({
+    mutationFn: (numberOfDecimals: number) =>
+      api.patch("/accounts", { name: null, currency: null, numberOfDecimals }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      setShowDecimalModal(false);
+    },
+  });
+
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
 
@@ -88,6 +111,25 @@ export default function SettingsScreen() {
     setShowAvatarModal(false);
     updateAvatar(key);
   };
+
+  const handleOpenCurrency = useCallback(() => {
+    const current = (account?.currency ?? "USD") as Currency;
+    setPendingCurrency(current);
+    setShowCurrencyModal(true);
+    const idx = CURRENCIES.findIndex((c) => c.code === current);
+    setTimeout(() => currencyScrollRef.current?.scrollTo({ y: idx * ITEM_H, animated: false }), 80);
+  }, [account?.currency]);
+
+  const handleCurrencyScrollEnd = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const idx = Math.round(e.nativeEvent.contentOffset.y / ITEM_H);
+      const clamped = Math.max(0, Math.min(CURRENCIES.length - 1, idx));
+      setPendingCurrency(CURRENCIES[clamped].code);
+    },
+    []
+  );
+
+  const decimalExamples: Record<number, string> = { 0: "eg. 10", 1: "eg. 10.4", 2: "eg. 10.45" };
 
   return (
     <View style={styles.root}>
@@ -148,14 +190,9 @@ export default function SettingsScreen() {
                   setShowNameModal(true);
                 }}
               >
-                <View style={styles.profileNameWrapper}>
-                  <Text style={styles.profileName} numberOfLines={1}>
-                    {account?.displayName ?? "—"}
-                  </Text>
-                  <View style={styles.nameEditBadge}>
-                    <Ionicons name="pencil" size={8} color="#fff" />
-                  </View>
-                </View>
+                <Text style={styles.profileName} numberOfLines={1}>
+                  {account?.displayName ?? "—"}
+                </Text>
               </Pressable>
               <Text style={styles.profileEmail} numberOfLines={1}>
                 {account?.email ?? "—"}
@@ -219,6 +256,38 @@ export default function SettingsScreen() {
               Change Password
             </Text>
             <Ionicons name="chevron-forward" size={16} color={isLocalAccount ? "#9FCB98" : "#c8cec8"} />
+          </Pressable>
+        </View>
+
+        <View style={[styles.manageCard, { marginTop: 16 }]}>
+          <Text style={styles.manageCardTitle}>Appearance</Text>
+
+          <View style={styles.cardDivider} />
+
+          <Pressable
+            style={({ pressed }) => [styles.manageRow, pressed && styles.manageRowPressed]}
+            onPress={handleOpenCurrency}
+          >
+            <Ionicons name="globe-outline" size={20} color="#346739" />
+            <Text style={styles.manageRowLabel}>Currency</Text>
+            <Text style={styles.appearanceRowValue}>
+              {currencySymbolFor(account?.currency)}{"  "}{account?.currency ?? "—"}
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color="#9FCB98" />
+          </Pressable>
+
+          <View style={styles.cardDivider} />
+
+          <Pressable
+            style={({ pressed }) => [styles.manageRow, pressed && styles.manageRowPressed]}
+            onPress={() => setShowDecimalModal(true)}
+          >
+            <Ionicons name="calculator-outline" size={20} color="#346739" />
+            <Text style={styles.manageRowLabel}>Decimal places</Text>
+            <Text style={styles.appearanceRowValue}>
+              {account?.numberOfDecimals ?? 2}{"  "}({decimalExamples[account?.numberOfDecimals ?? 2]})
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color="#9FCB98" />
           </Pressable>
         </View>
       </ScrollView>
@@ -295,6 +364,136 @@ export default function SettingsScreen() {
                 </Text>
               </Pressable>
             </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={showCurrencyModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowCurrencyModal(false)}
+      >
+        <Pressable style={styles.modalBackdrop} onPress={() => setShowCurrencyModal(false)}>
+          <Pressable
+            style={styles.currencyModal}
+            {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : undefined)}
+          >
+            <Text style={styles.currencyModalTitle}>Currency</Text>
+
+            {Platform.OS === "web" ? (
+              <View style={styles.webPickerContainer}>
+                <ScrollView style={styles.webPickerScroll} showsVerticalScrollIndicator={false}>
+                  {CURRENCIES.map(({ code, symbol }) => (
+                    <Pressable
+                      key={code}
+                      style={[
+                        styles.webPickerItem,
+                        pendingCurrency === code && styles.webPickerItemSelected,
+                      ]}
+                      onPress={() => updateCurrency(code)}
+                    >
+                      <Text style={[styles.webPickerSymbol, pendingCurrency === code && styles.webPickerTextSelected]}>
+                        {symbol}
+                      </Text>
+                      <Text style={[styles.webPickerCode, pendingCurrency === code && styles.webPickerTextSelected]}>
+                        {code}
+                      </Text>
+                      {pendingCurrency === code && (
+                        <Ionicons name="checkmark" size={16} color="#ffffff" />
+                      )}
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+            ) : (
+              <View style={styles.wheelContainer}>
+                <ScrollView
+                  ref={currencyScrollRef}
+                  style={styles.wheelScroll}
+                  showsVerticalScrollIndicator={false}
+                  snapToInterval={ITEM_H}
+                  decelerationRate="fast"
+                  scrollEventThrottle={16}
+                  onMomentumScrollEnd={handleCurrencyScrollEnd}
+                  onScrollEndDrag={handleCurrencyScrollEnd}
+                  contentContainerStyle={styles.wheelContent}
+                >
+                  {CURRENCIES.map(({ code, symbol }) => (
+                    <Pressable
+                      key={code}
+                      style={styles.wheelItem}
+                      onPress={() => {
+                        const idx = CURRENCIES.findIndex((c) => c.code === code);
+                        currencyScrollRef.current?.scrollTo({ y: idx * ITEM_H, animated: true });
+                        setPendingCurrency(code);
+                      }}
+                    >
+                      <Text style={styles.wheelSymbol}>{symbol}</Text>
+                      <Text style={styles.wheelCode}>{code}</Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+                <LinearGradient
+                  colors={["#ffffff", "rgba(255,255,255,0)"]}
+                  style={styles.wheelFadeTop}
+                  pointerEvents="none"
+                />
+                <LinearGradient
+                  colors={["rgba(255,255,255,0)", "#ffffff"]}
+                  style={styles.wheelFadeBottom}
+                  pointerEvents="none"
+                />
+                <View style={styles.wheelHighlight} pointerEvents="none" />
+              </View>
+            )}
+
+            {Platform.OS !== "web" && (
+              <Pressable
+                style={({ pressed }) => [styles.currencyModalBtn, { opacity: pressed || savingCurrency ? 0.7 : 1 }]}
+                onPress={() => updateCurrency(pendingCurrency)}
+                disabled={savingCurrency}
+              >
+                <Text style={styles.currencyModalBtnLabel}>
+                  {savingCurrency ? "Saving…" : "Save"}
+                </Text>
+              </Pressable>
+            )}
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={showDecimalModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDecimalModal(false)}
+      >
+        <Pressable style={styles.modalBackdrop} onPress={() => setShowDecimalModal(false)}>
+          <Pressable
+            style={styles.decimalModal}
+            {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : undefined)}
+          >
+            <Text style={styles.decimalModalTitle}>Decimal Places</Text>
+            {([0, 1, 2] as const).map((val) => {
+              const selected = (account?.numberOfDecimals ?? 2) === val;
+              return (
+                <Pressable
+                  key={val}
+                  style={({ pressed }) => [
+                    styles.decimalOption,
+                    selected && styles.decimalOptionSelected,
+                    pressed && { opacity: 0.7 },
+                  ]}
+                  onPress={() => updateDecimals(val)}
+                  disabled={savingDecimals}
+                >
+                  <Text style={styles.decimalOptionValue}>{val}</Text>
+                  <Text style={styles.decimalOptionExample}>({decimalExamples[val]})</Text>
+                  {selected && <Ionicons name="checkmark" size={16} color="#346739" />}
+                </Pressable>
+              );
+            })}
           </Pressable>
         </Pressable>
       </Modal>
