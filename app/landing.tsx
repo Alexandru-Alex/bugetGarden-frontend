@@ -255,6 +255,80 @@ function AuthModal({ visible, onClose, onSuccess }: {
     }
   };
 
+  const handleAppleBackendAuth = async (payload: {
+    identityToken: string | null;
+    authorizationCode: string | null;
+    user?: string | null;
+    email?: string | null;
+    fullName?: { givenName: string | null; familyName: string | null } | null;
+  }) => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await api.post<{ token: string; newUser: boolean }>(
+        "/authorization-apple",
+        payload,
+        { auth: false },
+      );
+      await saveToken(data.token);
+      if (Platform.OS === "web") {
+        localStorage.setItem("is_new_user", String(data.newUser));
+      } else {
+        await SecureStore.setItemAsync("is_new_user", String(data.newUser));
+      }
+      onSuccess(data.newUser);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Apple sign-in failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (appleResponse?.type === "success") {
+      handleAppleBackendAuth({
+        authorizationCode: appleResponse.params.code ?? null,
+        identityToken: null,
+      });
+    }
+  }, [appleResponse]);
+
+  const handleAppleSignIn = async () => {
+    if (Platform.OS === "web") {
+      await applePromptAsync();
+      return;
+    }
+    try {
+      setLoading(true);
+      setError("");
+      const AppleAuth = require("expo-apple-authentication");
+      const credential = await AppleAuth.signInAsync({
+        requestedScopes: [
+          AppleAuth.AppleAuthenticationScope.FULL_NAME,
+          AppleAuth.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      await handleAppleBackendAuth({
+        identityToken: credential.identityToken ?? null,
+        authorizationCode: credential.authorizationCode ?? null,
+        user: credential.user ?? null,
+        email: credential.email ?? null,
+        fullName: credential.fullName
+          ? {
+              givenName: credential.fullName.givenName ?? null,
+              familyName: credential.fullName.familyName ?? null,
+            }
+          : null,
+      });
+    } catch (e: unknown) {
+      // ERR_REQUEST_CANCELED = user dismissed the Apple sheet — not an error
+      if ((e as { code?: string }).code !== "ERR_REQUEST_CANCELED") {
+        setError(e instanceof Error ? e.message : "Apple sign-in failed. Please try again.");
+      }
+      setLoading(false);
+    }
+  };
+
   const cardY = useSharedValue(60);
   const cardOpacity = useSharedValue(0);
 
