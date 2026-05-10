@@ -430,24 +430,6 @@ export default function SettingsScreen() {
             </Pressable>
           )}
 
-          {__DEV__ && Platform.OS !== "web" && (
-            <>
-              <View style={styles.cardDivider} />
-              <Pressable
-                style={({ pressed }) => [styles.manageRow, pressed && styles.manageRowPressed]}
-                onPress={async () => {
-                  const Notifications = await import("expo-notifications");
-                  await Notifications.scheduleNotificationAsync({
-                    content: { title: "Money Garden 🌱", body: "Don't forget to log your expenses and income today!" },
-                    trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 3 },
-                  });
-                }}
-              >
-                <Ionicons name="bug-outline" size={20} color="#346739" />
-                <Text style={styles.manageRowLabel}>Send test notification (3s)</Text>
-              </Pressable>
-            </>
-          )}
         </View>
 
         <View style={[styles.manageCard, { marginTop: 16 }]}>
