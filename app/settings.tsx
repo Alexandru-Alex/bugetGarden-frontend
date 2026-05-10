@@ -322,16 +322,18 @@ export default function SettingsScreen() {
             />
           </View>
 
-          <View style={styles.cardDivider} />
+          {Platform.OS !== "web" && <View style={styles.cardDivider} />}
 
-          <Pressable
-            style={({ pressed }) => [styles.manageRow, pressed && styles.manageRowPressed]}
-            onPress={() => Linking.openSettings()}
-          >
-            <Ionicons name="settings-outline" size={20} color="#346739" />
-            <Text style={styles.manageRowLabel}>Notification settings</Text>
-            <Ionicons name="chevron-forward" size={16} color="#9FCB98" />
-          </Pressable>
+          {Platform.OS !== "web" && (
+            <Pressable
+              style={({ pressed }) => [styles.manageRow, pressed && styles.manageRowPressed]}
+              onPress={() => Linking.openSettings()}
+            >
+              <Ionicons name="settings-outline" size={20} color="#346739" />
+              <Text style={styles.manageRowLabel}>Notification settings</Text>
+              <Ionicons name="chevron-forward" size={16} color="#9FCB98" />
+            </Pressable>
+          )}
         </View>
       </ScrollView>
 
