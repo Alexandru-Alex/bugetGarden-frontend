@@ -488,4 +488,13 @@ export const styles = StyleSheet.create({
     color: "#6b7f6b",
     flex: 1,
   },
+  notifLabelGroup: {
+    flex: 1,
+    gap: 2,
+  },
+  notifSubtext: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "#6b7f6b",
+  },
 });
