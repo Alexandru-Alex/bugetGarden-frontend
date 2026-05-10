@@ -119,37 +119,36 @@ export default function SettingsScreen() {
         </Pressable>
 
         <View style={styles.profileCard}>
-          <Pressable
-            style={({ pressed }) => [styles.avatarBtn, { opacity: pressed ? 0.8 : 1 }]}
-            onPress={() => setShowAvatarModal(true)}
-          >
-            <Image source={avatarSource(currentAvatarUrl)} style={styles.avatar} resizeMode="cover" />
-            <View style={styles.avatarEditBadge}>
-              <Ionicons name="pencil" size={9} color="#fff" />
+          <View style={styles.profileRow}>
+            <Pressable
+              style={({ pressed }) => [styles.avatarBtn, { opacity: pressed ? 0.8 : 1 }]}
+              onPress={() => setShowAvatarModal(true)}
+            >
+              <Image source={avatarSource(currentAvatarUrl)} style={styles.avatar} resizeMode="cover" />
+              <View style={styles.avatarEditBadge}>
+                <Ionicons name="pencil" size={9} color="#fff" />
+              </View>
+            </Pressable>
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileName} numberOfLines={1}>
+                {account?.displayName ?? "—"}
+              </Text>
+              <Text style={styles.profileEmail} numberOfLines={1}>
+                {account?.email ?? "—"}
+              </Text>
             </View>
-          </Pressable>
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName} numberOfLines={1}>
-              {account?.displayName ?? "—"}
-            </Text>
-            <Text style={styles.profileEmail} numberOfLines={1}>
-              {account?.email ?? "—"}
-            </Text>
           </View>
-        </View>
 
-        <Pressable
-          style={({ pressed }) => [styles.syncCard, pressed && styles.syncCardPressed]}
-          onPress={handleSync}
-        >
-          <Animated.View style={syncIconStyle}>
-            <Ionicons name="sync-outline" size={22} color="#346739" />
-          </Animated.View>
-          <View style={styles.syncInfo}>
+          <View style={styles.cardDivider} />
+
+          <Pressable style={({ pressed }) => [styles.syncRow, pressed && styles.syncRowPressed]} onPress={handleSync}>
+            <Animated.View style={syncIconStyle}>
+              <Ionicons name="sync-outline" size={20} color="#346739" />
+            </Animated.View>
             <Text style={styles.syncLabel}>Sync</Text>
             <Text style={styles.syncSubLabel}>{syncLabel}</Text>
-          </View>
-        </Pressable>
+          </Pressable>
+        </View>
       </ScrollView>
 
       <Modal

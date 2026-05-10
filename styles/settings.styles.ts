@@ -83,15 +83,24 @@ export const styles = StyleSheet.create({
   profileCard: {
     backgroundColor: "#ffffff",
     borderRadius: 16,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.07,
     shadowRadius: 6,
     elevation: 2,
+  },
+  profileRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    paddingBottom: 16,
+  },
+  cardDivider: {
+    height: 1,
+    backgroundColor: "rgba(0,0,0,0.07)",
   },
   avatarBtn: {
     position: "relative",
@@ -130,36 +139,25 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: "#6b7f6b",
   },
-  syncCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 16,
-    padding: 16,
+  syncRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 14,
-    marginTop: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
-    elevation: 2,
+    gap: 10,
+    paddingVertical: 14,
   },
-  syncCardPressed: {
-    backgroundColor: "#f0f5f0",
-  },
-  syncInfo: {
-    flex: 1,
+  syncRowPressed: {
+    opacity: 0.7,
   },
   syncLabel: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 15,
+    fontSize: 14,
     color: "#1a2e1b",
+    flex: 1,
   },
   syncSubLabel: {
     fontFamily: "Nunito_700Bold",
     fontSize: 12,
     color: "#6b7f6b",
-    marginTop: 1,
   },
   modalBackdrop: {
     ...StyleSheet.absoluteFillObject,
