@@ -8,7 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, useRouter, usePathname } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavTransition } from "@/lib/nav-direction";
@@ -18,6 +18,8 @@ export default function SettingsScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [localAvatarUrl, setLocalAvatarUrl] = useState<string | null>(null);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [nameInput, setNameInput] = useState("");
   const [syncLabel, setSyncLabel] = useState(() => {
     const last = getLastSync();
     return last ? relativeTime(last) : "Never synced";
@@ -53,6 +55,14 @@ export default function SettingsScreen() {
   const { mutate: updateAvatar } = useMutation({
     mutationFn: (avatarUrl: string) => api.patch("/accounts/avatar", { avatarUrl }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY }),
+  });
+
+  const { mutate: updateName, isPending: savingName } = useMutation({
+    mutationFn: (name: string) => api.patch("/accounts", { name, currency: null }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      setShowNameModal(false);
+    },
   });
 
   if (token === undefined) return null;
@@ -131,9 +141,22 @@ export default function SettingsScreen() {
               </View>
             </Pressable>
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName} numberOfLines={1}>
-                {account?.displayName ?? "—"}
-              </Text>
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.75 : 1 }]}
+                onPress={() => {
+                  setNameInput(account?.displayName ?? "");
+                  setShowNameModal(true);
+                }}
+              >
+                <View style={styles.profileNameWrapper}>
+                  <Text style={styles.profileName} numberOfLines={1}>
+                    {account?.displayName ?? "—"}
+                  </Text>
+                  <View style={styles.nameEditBadge}>
+                    <Ionicons name="pencil" size={8} color="#fff" />
+                  </View>
+                </View>
+              </Pressable>
               <Text style={styles.profileEmail} numberOfLines={1}>
                 {account?.email ?? "—"}
               </Text>
@@ -226,6 +249,51 @@ export default function SettingsScreen() {
                   <Image source={avatarSource(key)} style={styles.avatarOptionImg} resizeMode="cover" />
                 </Pressable>
               ))}
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={showNameModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowNameModal(false)}
+      >
+        <Pressable style={styles.modalBackdrop} onPress={() => setShowNameModal(false)}>
+          <Pressable
+            style={styles.nameModal}
+            {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : undefined)}
+          >
+            <Text style={styles.nameModalTitle}>Change Name</Text>
+            <TextInput
+              style={styles.nameInput}
+              value={nameInput}
+              onChangeText={setNameInput}
+              placeholder="Your name"
+              placeholderTextColor="#9FCB98"
+              autoFocus
+              maxLength={50}
+            />
+            <View style={styles.nameModalButtons}>
+              <Pressable
+                style={({ pressed }) => [styles.nameModalBtn, { opacity: pressed ? 0.7 : 1 }]}
+                onPress={() => setShowNameModal(false)}
+              >
+                <Text style={styles.nameModalBtnLabel}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [styles.nameModalBtnPrimary, { opacity: pressed || savingName ? 0.7 : 1 }]}
+                onPress={() => {
+                  const trimmed = nameInput.trim();
+                  if (trimmed) updateName(trimmed);
+                }}
+                disabled={savingName}
+              >
+                <Text style={styles.nameModalBtnPrimaryLabel}>
+                  {savingName ? "Saving…" : "Save"}
+                </Text>
+              </Pressable>
             </View>
           </Pressable>
         </Pressable>
