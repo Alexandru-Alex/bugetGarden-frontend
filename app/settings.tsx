@@ -59,8 +59,8 @@ export default function SettingsScreen() {
   });
 
   useEffect(() => {
-    if (account?.isNotification !== undefined) setNotifEnabled(account.isNotification);
-  }, [account?.isNotification]);
+    if (account?.notification !== undefined) setNotifEnabled(account.notification);
+  }, [account?.notification]);
 
   const { mutate: updateAvatar } = useMutation({
     mutationFn: (avatarUrl: string) => api.patch("/accounts/avatar", { avatarUrl }),
@@ -94,8 +94,8 @@ export default function SettingsScreen() {
   });
 
   const { mutate: updateNotification, isPending: savingNotification } = useMutation({
-    mutationFn: (isNotification: boolean) =>
-      api.patch("/accounts", { name: null, currency: null, numberOfDecimals: null, isNotification }),
+    mutationFn: (notification: boolean) =>
+      api.patch("/accounts", { name: null, currency: null, numberOfDecimals: null, notification }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY }),
   });
 

@@ -25,7 +25,7 @@ export interface AccountDto {
   numberOfDecimals?: number;
   avatarUrl?: string;
   provider: string;
-  isNotification?: boolean;
+  notification?: boolean;
 }
 
 // Importat din orice ecran care face POST /transactions pentru a invalida cache-ul
