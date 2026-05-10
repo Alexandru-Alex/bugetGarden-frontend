@@ -22,6 +22,7 @@ export interface AccountDto {
   goldCoins: number;
   totalScore: number;
   currency: string;
+  avatarUrl?: string;
 }
 
 // Importat din orice ecran care face POST /transactions pentru a invalida cache-ul

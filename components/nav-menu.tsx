@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { api, logout } from "../lib/api";
+import { avatarSource } from "../lib/avatars";
 import { NavTransition } from "../lib/nav-direction";
 
 const DRAWER_WIDTH = 200;
@@ -45,6 +46,11 @@ function WebNavBar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { width } = useWindowDimensions();
   const compact = width < 500;
+  const { data: account } = useQuery<{ avatarUrl?: string }>({
+    queryKey: ["account"],
+    queryFn: () => api.get("/accounts"),
+    staleTime: Infinity,
+  });
 
   const isSecondaryActive = SECONDARY_ITEMS.some(item => pathname === item.path);
 
@@ -98,7 +104,7 @@ function WebNavBar() {
         style={[webStyles.avatarBtn, (dropdownOpen || isSecondaryActive) && webStyles.avatarBtnActive]}
       >
         <Image
-          source={require("../assets/avatars/gardener_1.png")}
+          source={avatarSource(account?.avatarUrl)}
           style={webStyles.avatarImg}
         />
         {isSecondaryActive && <View style={webStyles.avatarUnderline} />}
@@ -163,7 +169,7 @@ function MobileNavMenu() {
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
   const [open, setOpen] = useState(false);
-  const { data: account } = useQuery<{ displayName: string }>({
+  const { data: account } = useQuery<{ displayName: string; avatarUrl?: string }>({
     queryKey: ["account"],
     queryFn: () => api.get("/accounts"),
     staleTime: Infinity,
@@ -244,7 +250,7 @@ function MobileNavMenu() {
             >
               <View style={mobileStyles.drawerHeader}>
                 <Image
-                  source={require("../assets/avatars/gardener_1.png")}
+                  source={avatarSource(account?.avatarUrl)}
                   style={mobileStyles.drawerAvatar}
                 />
                 <Text style={mobileStyles.drawerTitle}>{account?.displayName ?? "user"}</Text>

@@ -1,10 +1,10 @@
 import { NavMenu } from "@/components/nav-menu";
 import { AccountDto, ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
 import { api, getStoredToken } from "@/lib/api";
+import { avatarSource, AVATAR_KEYS } from "@/lib/avatars";
 import { styles } from "@/styles/settings.styles";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "@tanstack/react-query";
-import * as SecureStore from "expo-secure-store";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, useRouter, usePathname } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -12,42 +12,17 @@ import { Image, Modal, Platform, Pressable, ScrollView, Text, View } from "react
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavTransition } from "@/lib/nav-direction";
 
-const AVATARS = [
-  require("../assets/avatars/gardener_1.png"),
-  require("../assets/avatars/gardener_2.png"),
-] as const;
-
-let _avatarIndexCache: number | undefined;
-
-async function getAvatarIndex(): Promise<number> {
-  if (_avatarIndexCache !== undefined) return _avatarIndexCache;
-  const raw = Platform.OS === "web"
-    ? localStorage.getItem("avatar_index")
-    : await SecureStore.getItemAsync("avatar_index");
-  _avatarIndexCache = raw ? parseInt(raw, 10) : 0;
-  return _avatarIndexCache;
-}
-
-async function saveAvatarIndex(idx: number): Promise<void> {
-  _avatarIndexCache = idx;
-  if (Platform.OS === "web") {
-    localStorage.setItem("avatar_index", String(idx));
-  } else {
-    await SecureStore.setItemAsync("avatar_index", String(idx));
-  }
-}
-
 export default function SettingsScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
-  const [avatarIndex, setAvatarIndex] = useState(0);
+  const [localAvatarUrl, setLocalAvatarUrl] = useState<string | null>(null);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     getStoredToken().then(setToken);
-    getAvatarIndex().then(setAvatarIndex);
   }, []);
 
   const { data: account } = useQuery<AccountDto>({
@@ -57,18 +32,25 @@ export default function SettingsScreen() {
     enabled: !!token,
   });
 
+  const { mutate: updateAvatar } = useMutation({
+    mutationFn: (avatarUrl: string) => api.patch("/accounts/avatar", { avatarUrl }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY }),
+  });
+
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
+
+  const currentAvatarUrl = localAvatarUrl ?? account?.avatarUrl ?? "gardener_1";
 
   const goToStore = () => {
     NavTransition.setDirection(pathname, "/store");
     router.replace("/store");
   };
 
-  const handleSelectAvatar = async (idx: number) => {
-    setAvatarIndex(idx);
-    await saveAvatarIndex(idx);
+  const handleSelectAvatar = (key: string) => {
+    setLocalAvatarUrl(key);
     setShowAvatarModal(false);
+    updateAvatar(key);
   };
 
   return (
@@ -116,7 +98,7 @@ export default function SettingsScreen() {
             style={({ pressed }) => [styles.avatarBtn, { opacity: pressed ? 0.8 : 1 }]}
             onPress={() => setShowAvatarModal(true)}
           >
-            <Image source={AVATARS[avatarIndex]} style={styles.avatar} resizeMode="cover" />
+            <Image source={avatarSource(currentAvatarUrl)} style={styles.avatar} resizeMode="cover" />
             <View style={styles.avatarEditBadge}>
               <Ionicons name="pencil" size={9} color="#fff" />
             </View>
@@ -145,17 +127,17 @@ export default function SettingsScreen() {
           >
             <Text style={styles.avatarModalTitle}>Choose Avatar</Text>
             <View style={styles.avatarRow}>
-              {AVATARS.map((src, idx) => (
+              {AVATAR_KEYS.map((key) => (
                 <Pressable
-                  key={idx}
+                  key={key}
                   style={({ pressed }) => [
                     styles.avatarOption,
-                    avatarIndex === idx && styles.avatarOptionSelected,
+                    currentAvatarUrl === key && styles.avatarOptionSelected,
                     pressed && { opacity: 0.8 },
                   ]}
-                  onPress={() => handleSelectAvatar(idx)}
+                  onPress={() => handleSelectAvatar(key)}
                 >
-                  <Image source={src} style={styles.avatarOptionImg} resizeMode="cover" />
+                  <Image source={avatarSource(key)} style={styles.avatarOptionImg} resizeMode="cover" />
                 </Pressable>
               ))}
             </View>
