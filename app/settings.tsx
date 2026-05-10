@@ -4,21 +4,50 @@ import { api, getStoredToken } from "@/lib/api";
 import { styles } from "@/styles/settings.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
+import * as SecureStore from "expo-secure-store";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, useRouter, usePathname } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Image, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavTransition } from "@/lib/nav-direction";
 
+const AVATARS = [
+  require("../assets/avatars/gardener_1.png"),
+  require("../assets/avatars/gardener_2.png"),
+] as const;
+
+let _avatarIndexCache: number | undefined;
+
+async function getAvatarIndex(): Promise<number> {
+  if (_avatarIndexCache !== undefined) return _avatarIndexCache;
+  const raw = Platform.OS === "web"
+    ? localStorage.getItem("avatar_index")
+    : await SecureStore.getItemAsync("avatar_index");
+  _avatarIndexCache = raw ? parseInt(raw, 10) : 0;
+  return _avatarIndexCache;
+}
+
+async function saveAvatarIndex(idx: number): Promise<void> {
+  _avatarIndexCache = idx;
+  if (Platform.OS === "web") {
+    localStorage.setItem("avatar_index", String(idx));
+  } else {
+    await SecureStore.setItemAsync("avatar_index", String(idx));
+  }
+}
+
 export default function SettingsScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
+  const [avatarIndex, setAvatarIndex] = useState(0);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     getStoredToken().then(setToken);
+    getAvatarIndex().then(setAvatarIndex);
   }, []);
 
   const { data: account } = useQuery<AccountDto>({
@@ -34,6 +63,12 @@ export default function SettingsScreen() {
   const goToStore = () => {
     NavTransition.setDirection(pathname, "/store");
     router.replace("/store");
+  };
+
+  const handleSelectAvatar = async (idx: number) => {
+    setAvatarIndex(idx);
+    await saveAvatarIndex(idx);
+    setShowAvatarModal(false);
   };
 
   return (
@@ -77,11 +112,15 @@ export default function SettingsScreen() {
         </Pressable>
 
         <View style={styles.profileCard}>
-          <Image
-            source={require("../assets/avatars/gardener_1.png")}
-            style={styles.avatar}
-            resizeMode="cover"
-          />
+          <Pressable
+            style={({ pressed }) => [styles.avatarBtn, { opacity: pressed ? 0.8 : 1 }]}
+            onPress={() => setShowAvatarModal(true)}
+          >
+            <Image source={AVATARS[avatarIndex]} style={styles.avatar} resizeMode="cover" />
+            <View style={styles.avatarEditBadge}>
+              <Ionicons name="pencil" size={9} color="#fff" />
+            </View>
+          </Pressable>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName} numberOfLines={1}>
               {account?.displayName ?? "—"}
@@ -92,6 +131,37 @@ export default function SettingsScreen() {
           </View>
         </View>
       </ScrollView>
+
+      <Modal
+        visible={showAvatarModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowAvatarModal(false)}
+      >
+        <Pressable style={styles.modalBackdrop} onPress={() => setShowAvatarModal(false)}>
+          <Pressable
+            style={styles.avatarModal}
+            {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : undefined)}
+          >
+            <Text style={styles.avatarModalTitle}>Choose Avatar</Text>
+            <View style={styles.avatarRow}>
+              {AVATARS.map((src, idx) => (
+                <Pressable
+                  key={idx}
+                  style={({ pressed }) => [
+                    styles.avatarOption,
+                    avatarIndex === idx && styles.avatarOptionSelected,
+                    pressed && { opacity: 0.8 },
+                  ]}
+                  onPress={() => handleSelectAvatar(idx)}
+                >
+                  <Image source={src} style={styles.avatarOptionImg} resizeMode="cover" />
+                </Pressable>
+              ))}
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
