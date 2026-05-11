@@ -15,7 +15,7 @@ import { SharedValue, useDerivedValue } from "react-native-reanimated";
 
 const { width: W, height: H } = Dimensions.get("window");
 
-const BG = require("@/assets/images/welcome-bg.webp");
+const BG = require("@/assets/images/welcome-bg.jpg");
 
 const SKSL = `
 uniform shader image;
