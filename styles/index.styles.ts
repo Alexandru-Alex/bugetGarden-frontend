@@ -409,7 +409,7 @@ export const marketing = StyleSheet.create({
   },
   gardenSection: {
     width: "100%" as any,
-    backgroundColor: "#2d7a3d",
+    backgroundColor: "#2F5C33",
     paddingVertical: 100,
     paddingHorizontal: 60,
   },
@@ -455,7 +455,7 @@ export const marketing = StyleSheet.create({
   gardenBtnText: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 15,
-    color: "#2d7a3d",
+    color: "#2F5C33",
     letterSpacing: 0.3,
   },
   gardenImageCol: {
