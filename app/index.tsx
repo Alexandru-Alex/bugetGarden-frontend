@@ -43,80 +43,38 @@ class GrassBoundary extends React.Component<
   }
 }
 
-function PhoneMockup({ children }: { children: React.ReactNode }) {
+function FeaturesSection() {
+  const features = [
+    {
+      img: ILLUS_TRACK,
+      icon: "💰",
+      title: "Dynamic Budget Score",
+      body: "See your financial health in real-time. Every transaction updates your score instantly — so you always know where you stand.",
+    },
+    {
+      img: ILLUS_EARN,
+      icon: "🪙",
+      title: "Earn Coins",
+      body: "Save money, earn virtual coins. Spend them in the Garden Shop or unlock milestones on your financial roadmap.",
+    },
+    {
+      img: ILLUS_GROW,
+      icon: "🌿",
+      title: "Grow Your Garden",
+      body: "Every saving plants a new tree. Watch your garden bloom as your finances grow — a living reflection of your progress.",
+    },
+  ];
   return (
-    <View style={styles.phoneFrame}>
-      <View style={styles.phoneNotch} />
-      <View style={styles.phoneScreen}>{children}</View>
-    </View>
-  );
-}
-
-function ScoreMockup() {
-  return (
-    <PhoneMockup>
-      <Text style={styles.mockHeader}>Budget Score</Text>
-      <Text style={styles.mockScoreValue}>87</Text>
-      <View style={styles.mockBarBg}>
-        <View style={[styles.mockBarFill, { width: "87%" as any }]} />
-      </View>
-      <Text style={styles.mockScoreTag}>Great job! Keep it up</Text>
-    </PhoneMockup>
-  );
-}
-
-function CoinsMockup() {
-  return (
-    <PhoneMockup>
-      <Text style={styles.mockHeader}>Coins Earned</Text>
-      {[
-        { emoji: "🪙", amount: "+50 coins", label: "Groceries saving" },
-        { emoji: "🪙", amount: "+30 coins", label: "Budget goal hit" },
-        { emoji: "🪙", amount: "+20 coins", label: "No dining out" },
-      ].map((item) => (
-        <View key={item.label} style={styles.mockCoinRow}>
-          <Text style={styles.mockCoinEmoji}>{item.emoji}</Text>
-          <View style={styles.mockCoinRight}>
-            <Text style={styles.mockCoinAmount}>{item.amount}</Text>
-            <Text style={styles.mockCoinSub}>{item.label}</Text>
+    <View style={styles.featuresSection}>
+      <View style={styles.featuresRow}>
+        {features.map((f) => (
+          <View key={f.title} style={styles.featuresCard}>
+            <Image source={f.img} style={styles.featuresCardImage} resizeMode="contain" />
+            <Text style={styles.featuresCardIcon}>{f.icon}</Text>
+            <Text style={styles.featuresCardTitle}>{f.title}</Text>
+            <Text style={styles.featuresCardBody}>{f.body}</Text>
           </View>
-        </View>
-      ))}
-    </PhoneMockup>
-  );
-}
-
-function GardenMockup() {
-  return (
-    <PhoneMockup>
-      <Text style={styles.mockHeader}>My Garden</Text>
-      <View style={styles.mockGardenGrid}>
-        {["🌲","🌸","🌳","🌿","🌺","🍃","🌲","🌷","🌻"].map((emoji, i) => (
-          <Text key={`${emoji}-${i}`} style={styles.mockGardenEmoji}>{emoji}</Text>
         ))}
-      </View>
-    </PhoneMockup>
-  );
-}
-
-function FeatureSection({
-  icon, title, body, mockup, reversed = false, tinted = false,
-}: {
-  icon: string; title: string; body: string; mockup: React.ReactNode;
-  reversed?: boolean; tinted?: boolean;
-}) {
-  const textCol = (
-    <View style={styles.featureTextCol}>
-      <Text style={styles.featureIcon}>{icon}</Text>
-      <Text style={styles.featureTitle}>{title}</Text>
-      <Text style={styles.featureBody}>{body}</Text>
-    </View>
-  );
-  const mockCol = <View style={styles.featureMockCol}>{mockup}</View>;
-  return (
-    <View style={[styles.featureSection, tinted && styles.featureSectionTinted]}>
-      <View style={styles.featureRow}>
-        {reversed ? <>{mockCol}{textCol}</> : <>{textCol}{mockCol}</>}
       </View>
     </View>
   );
@@ -284,27 +242,7 @@ export default function MarketingPage() {
         <HeroSection contentStyle={contentStyle} />
         <IntroSection />
         <GardenSection onPress={goToApp} />
-        <FeatureSection
-          icon="💰"
-          title="Dynamic Budget Score"
-          body="See your financial health in real-time. Every transaction updates your score instantly — so you always know where you stand."
-          mockup={<ScoreMockup />}
-          tinted
-        />
-        <FeatureSection
-          icon="🪙"
-          title="Earn Coins"
-          body="Save money, earn virtual coins. Spend them in the Garden Shop or unlock milestones on your financial roadmap."
-          mockup={<CoinsMockup />}
-          reversed
-        />
-        <FeatureSection
-          icon="🌿"
-          title="Grow Your Garden"
-          body="Every saving plants a new tree. Watch your garden bloom as your finances grow — a living reflection of your progress."
-          mockup={<GardenMockup />}
-          tinted
-        />
+        <FeaturesSection />
         <View style={styles.ctaSection}>
           <Text style={styles.ctaSectionTitle}>Start your garden today</Text>
           <Text style={styles.ctaSectionSub}>Track spending. Earn coins. Grow your garden.</Text>
