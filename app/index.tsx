@@ -189,7 +189,7 @@ function GardenSection({ onPress }: { onPress: () => void }) {
           </Pressable>
         </View>
         <View style={styles.gardenImageCol}>
-          <Image source={PREVIEW_GARDEN} style={styles.gardenImage} resizeMode="cover" />
+          <Image source={PREVIEW_GARDEN} style={styles.gardenImage} resizeMode="contain" />
         </View>
       </View>
     </View>

@@ -460,15 +460,10 @@ export const marketing = StyleSheet.create({
   },
   gardenImageCol: {
     flex: 1,
-    maxWidth: 300,
     alignItems: "center",
   },
   gardenImage: {
-    width: 300,
-    height: 260,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
+    width: "100%" as any,
+    aspectRatio: 1.15,
   },
 });
