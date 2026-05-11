@@ -24,9 +24,12 @@ import Animated, {
 const BG_IMAGE = require("@/assets/images/background.jpg");
 const APP_ICON = require("@/assets/images/icon.jpg");
 const PREVIEW_1 = require("@/assets/images/preview_1.png");
-const ILLUS_TRACK = require("@/assets/images/illustrations/illus_track.png");
-const ILLUS_EARN  = require("@/assets/images/illustrations/illus_earn.png");
-const ILLUS_GROW  = require("@/assets/images/illustrations/illus_grow.png");
+const ILLUS_TRACK  = require("@/assets/images/illustrations/illus_track.png");
+const ILLUS_EARN   = require("@/assets/images/illustrations/illus_earn.png");
+const ILLUS_GROW   = require("@/assets/images/illustrations/illus_grow.png");
+const ILLUS_SCORE  = require("@/assets/images/illustrations/illus_score.png");
+const ILLUS_CELEB  = require("@/assets/images/illustrations/illus_celebrate.png");
+const ILLUS_GROWTH = require("@/assets/images/illustrations/illus_growth.png");
 const PREVIEW_GARDEN = require("@/assets/images/preview_garden.jpg");
 
 const isWeb = Platform.OS === "web";
@@ -46,19 +49,19 @@ class GrassBoundary extends React.Component<
 function FeaturesSection() {
   const features = [
     {
-      img: ILLUS_TRACK,
+      img: ILLUS_SCORE,
       icon: "💰",
       title: "Dynamic Budget Score",
       body: "See your financial health in real-time. Every transaction updates your score instantly — so you always know where you stand.",
     },
     {
-      img: ILLUS_EARN,
+      img: ILLUS_CELEB,
       icon: "🪙",
       title: "Earn Coins",
       body: "Save money, earn virtual coins. Spend them in the Garden Shop or unlock milestones on your financial roadmap.",
     },
     {
-      img: ILLUS_GROW,
+      img: ILLUS_GROWTH,
       icon: "🌿",
       title: "Grow Your Garden",
       body: "Every saving plants a new tree. Watch your garden bloom as your finances grow — a living reflection of your progress.",
