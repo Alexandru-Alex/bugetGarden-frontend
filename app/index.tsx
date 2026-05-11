@@ -262,7 +262,13 @@ export default function MarketingPage() {
           </Pressable>
         </View>
         <View style={styles.footerSection}>
-          <Text style={styles.footerText}>© 2026 Money Garden</Text>
+          <View style={styles.footerRow}>
+            <Text style={styles.footerText}>© 2026 Money Garden</Text>
+            <Text style={styles.footerDot}> · </Text>
+            <Pressable onPress={() => router.push("/privacy-policy")}>
+              <Text style={styles.footerLink}>Privacy Policy</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </View>

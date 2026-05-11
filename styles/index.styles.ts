@@ -1,4 +1,11 @@
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, TextStyle } from "react-native";
+
+const footerBaseText: TextStyle = {
+  fontFamily: "Nunito_700Bold",
+  fontSize: 13,
+  color: "rgba(255,255,255,0.6)",
+  letterSpacing: 0.3,
+};
 
 export const marketing = StyleSheet.create({
   container: {
@@ -250,11 +257,20 @@ export const marketing = StyleSheet.create({
     paddingVertical: 28,
     alignItems: "center",
   },
-  footerText: {
+  footerRow: {
+    flexDirection: "row" as any,
+    alignItems: "center",
+  },
+  footerText: footerBaseText,
+  footerDot: {
     fontFamily: "Nunito_700Bold",
     fontSize: 13,
-    color: "rgba(255,255,255,0.6)",
-    letterSpacing: 0.3,
+    color: "rgba(255,255,255,0.35)",
+  },
+  footerLink: {
+    ...footerBaseText,
+    textDecorationLine: "underline" as any,
+    textDecorationColor: "rgba(255,255,255,0.35)" as any,
   },
   introSection: {
     width: "100%" as any,
