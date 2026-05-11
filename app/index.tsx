@@ -242,6 +242,7 @@ export default function MarketingPage() {
   return (
     <View style={[styles.container, isWeb && styles.containerWeb]}>
       <Head>
+        <title>Money Garden - Track, Earn, Grow</title>
         <meta property="og:url" content="https://getmoneygarden.com/" />
       </Head>
       <StickyNav onOpenApp={goToApp} />
