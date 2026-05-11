@@ -464,9 +464,8 @@ export const marketing = StyleSheet.create({
     alignItems: "center",
   },
   gardenImage: {
-    width: 280,
-    height: 220,
-    borderRadius: 16,
+    width: 300,
+    height: 260,
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
