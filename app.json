@@ -39,7 +39,12 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/icon.jpg"
+      "favicon": "./assets/images/icon.jpg",
+      "title": "Money Garden - Track, Earn, Grow",
+      "description": "Gamified budget management app. Track expenses, earn gold coins, and grow your virtual garden while building better financial habits.",
+      "lang": "en",
+      "themeColor": "#346739",
+      "backgroundColor": "#ffffff"
     },
     "plugins": [
       "expo-router",

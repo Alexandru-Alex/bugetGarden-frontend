@@ -59,7 +59,11 @@
       "Bash(dir F:\\\\background*)",
       "Read(//f//**)",
       "Bash(dir \"F:\\\\background\")",
-      "Bash(dir \"F:\\\\\" 2>&1 | head -30 *)"
+      "Bash(dir \"F:\\\\\" 2>&1 | head -30 *)",
+      "Bash(npx @claude-flow/cli@latest security scan --depth standard)",
+      "Bash(npx @claude-flow/cli@latest hooks worker dispatch --trigger document)",
+      "Bash(npm audit *)",
+      "PowerShell(npm audit *)"
     ]
   }
 }

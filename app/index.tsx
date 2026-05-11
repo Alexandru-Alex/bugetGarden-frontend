@@ -1,5 +1,6 @@
 import { GrassWave } from "@/components/grass-wave";
 import { marketing as styles } from "@/styles/index.styles";
+import Head from "expo-router/head";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import {
@@ -52,18 +53,21 @@ function FeaturesSection() {
       img: ILLUS_SCORE,
       icon: "💰",
       title: "Dynamic Budget Score",
+      alt: "Budget score indicator showing financial health",
       body: "See your financial health in real-time. Every transaction updates your score instantly — so you always know where you stand.",
     },
     {
       img: ILLUS_CELEB,
       icon: "🪙",
       title: "Earn Coins",
+      alt: "Coins earned from saving money",
       body: "Save money, earn virtual coins. Spend them in the Garden Shop or unlock milestones on your financial roadmap.",
     },
     {
       img: ILLUS_GROWTH,
       icon: "🌿",
       title: "Grow Your Garden",
+      alt: "Virtual garden growing as finances improve",
       body: "Every saving plants a new tree. Watch your garden bloom as your finances grow — a living reflection of your progress.",
     },
   ];
@@ -72,7 +76,7 @@ function FeaturesSection() {
       <View style={styles.featuresRow}>
         {features.map((f) => (
           <View key={f.title} style={styles.featuresCard}>
-            <Image source={f.img} style={styles.featuresCardImage} resizeMode="contain" />
+            <Image source={f.img} style={styles.featuresCardImage} resizeMode="contain" accessibilityLabel={f.alt} />
             <Text style={styles.featuresCardIcon}>{f.icon}</Text>
             <Text style={styles.featuresCardTitle}>{f.title}</Text>
             <Text style={styles.featuresCardBody}>{f.body}</Text>
@@ -113,9 +117,9 @@ function StoreBadge({ label, store }: { label: string; store: string }) {
 
 function IntroSection() {
   const pills = [
-    { img: ILLUS_TRACK, label: "Track", sub: "Log income & expenses" },
-    { img: ILLUS_EARN,  label: "Earn",  sub: "Get coins for saving" },
-    { img: ILLUS_GROW,  label: "Grow",  sub: "Build your garden" },
+    { img: ILLUS_TRACK, label: "Track", sub: "Log income & expenses", alt: "Track your expenses illustration" },
+    { img: ILLUS_EARN,  label: "Earn",  sub: "Get coins for saving",  alt: "Earn gold coins for saving illustration" },
+    { img: ILLUS_GROW,  label: "Grow",  sub: "Build your garden",     alt: "Grow your virtual garden illustration" },
   ];
   return (
     <View style={styles.introSection}>
@@ -126,7 +130,7 @@ function IntroSection() {
       <View style={styles.introPillsRow}>
         {pills.map((p) => (
           <View key={p.label} style={styles.introPill}>
-            <Image source={p.img} style={styles.introPillImage} resizeMode="contain" />
+            <Image source={p.img} style={styles.introPillImage} resizeMode="contain" accessibilityLabel={p.alt} />
             <Text style={styles.introPillLabel}>{p.label}</Text>
             <Text style={styles.introPillSub}>{p.sub}</Text>
           </View>
@@ -155,7 +159,7 @@ function GardenSection({ onPress }: { onPress: () => void }) {
           </Pressable>
         </View>
         <View style={styles.gardenImageCol}>
-          <Image source={PREVIEW_GARDEN} style={styles.gardenImage} resizeMode="contain" />
+          <Image source={PREVIEW_GARDEN} style={styles.gardenImage} resizeMode="contain" accessibilityLabel="Money Garden virtual garden growing with saved coins" />
         </View>
       </View>
     </View>
@@ -186,7 +190,7 @@ function HeroSection({ contentStyle }: {
         ]}
       >
         <View style={[styles.heroLeft, compact && { paddingHorizontal: 32 }]}>
-          <Image source={APP_ICON} style={styles.heroAppIcon} />
+          <Image source={APP_ICON} style={styles.heroAppIcon} accessibilityLabel="Money Garden app icon" />
           <Text style={[styles.heroTitle, compact && { fontSize: 38 }]}>
             Money Garden
           </Text>
@@ -203,7 +207,7 @@ function HeroSection({ contentStyle }: {
         </View>
         {!compact && (
           <View style={styles.heroRight}>
-            <Image source={PREVIEW_1} style={styles.heroPreviewImage} resizeMode="contain" />
+            <Image source={PREVIEW_1} style={styles.heroPreviewImage} resizeMode="contain" accessibilityLabel="Money Garden app preview showing budget dashboard" />
           </View>
         )}
       </Animated.View>
@@ -237,6 +241,9 @@ export default function MarketingPage() {
 
   return (
     <View style={[styles.container, isWeb && styles.containerWeb]}>
+      <Head>
+        <meta property="og:url" content="https://getmoneygarden.com/" />
+      </Head>
       <StickyNav onOpenApp={goToApp} />
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
         <HeroSection contentStyle={contentStyle} />
