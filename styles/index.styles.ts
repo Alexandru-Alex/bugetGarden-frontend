@@ -31,10 +31,11 @@ export const marketing = StyleSheet.create({
     paddingVertical: 80,
   },
   heroRight: {
-    flex: 1,
-    alignItems: "center",
+    flex: 1.2,
+    alignItems: "stretch",
     justifyContent: "center",
-    paddingVertical: 60,
+    paddingVertical: 40,
+    paddingHorizontal: 20,
   },
   heroAppIcon: {
     width: 72,
@@ -95,8 +96,8 @@ export const marketing = StyleSheet.create({
     letterSpacing: 0.2,
   },
   heroPreviewImage: {
-    width: 480,
-    height: 400,
+    width: "100%" as any,
+    aspectRatio: 1.14,
   },
   stickyNav: {
     position: "fixed" as any,
