@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import {
   Image,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -82,14 +83,22 @@ function FeaturesSection() {
   );
 }
 
-function FloatingOpenApp({ onPress }: { onPress: () => void }) {
+function StickyNav({ onOpenApp }: { onOpenApp: () => void }) {
   return (
-    <Pressable
-      style={({ pressed }) => [styles.floatingOpenApp, pressed && { opacity: 0.82 }]}
-      onPress={onPress}
-    >
-      <Text style={styles.floatingOpenAppText}>Open App →</Text>
-    </Pressable>
+    <View style={styles.stickyNav}>
+      <Pressable
+        style={({ pressed }) => [styles.contactBtn, pressed && { opacity: 0.72 }]}
+        onPress={() => Linking.openURL("mailto:help@getmoneygarden.com")}
+      >
+        <Text style={styles.contactBtnText}>Contact Us</Text>
+      </Pressable>
+      <Pressable
+        style={({ pressed }) => [styles.floatingOpenApp, pressed && { opacity: 0.82 }]}
+        onPress={onOpenApp}
+      >
+        <Text style={styles.floatingOpenAppText}>Open App →</Text>
+      </Pressable>
+    </View>
   );
 }
 
@@ -228,7 +237,7 @@ export default function MarketingPage() {
 
   return (
     <View style={[styles.container, isWeb && styles.containerWeb]}>
-      <FloatingOpenApp onPress={goToApp} />
+      <StickyNav onOpenApp={goToApp} />
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
         <HeroSection contentStyle={contentStyle} />
         <IntroSection />

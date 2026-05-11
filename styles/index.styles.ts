@@ -99,11 +99,16 @@ export const marketing = StyleSheet.create({
     width: "100%" as any,
     aspectRatio: 1.14,
   },
-  floatingOpenApp: {
+  stickyNav: {
     position: "fixed" as any,
     top: 20,
     right: 28,
     zIndex: 100,
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+  },
+  floatingOpenApp: {
     backgroundColor: "rgba(255,255,255,0.18)",
     borderWidth: 1.5,
     borderColor: "rgba(255,255,255,0.65)",
@@ -115,6 +120,20 @@ export const marketing = StyleSheet.create({
   floatingOpenAppText: {
     color: "#ffffff",
     fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    letterSpacing: 0.4,
+  },
+  contactBtn: {
+    backgroundColor: "transparent",
+    borderWidth: 1.5,
+    borderColor: "rgba(255,255,255,0.45)",
+    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 22,
+  },
+  contactBtnText: {
+    color: "rgba(255,255,255,0.85)",
+    fontFamily: "Nunito_700Bold",
     fontSize: 14,
     letterSpacing: 0.4,
   },
