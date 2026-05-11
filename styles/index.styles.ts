@@ -410,7 +410,7 @@ export const marketing = StyleSheet.create({
   gardenSection: {
     width: "100%" as any,
     backgroundColor: "#2F5C33",
-    paddingVertical: 100,
+    paddingVertical: 48,
     paddingHorizontal: 60,
   },
   gardenRow: {
