@@ -460,12 +460,12 @@ export const marketing = StyleSheet.create({
   },
   gardenImageCol: {
     flex: 1,
-    maxWidth: 340,
+    maxWidth: 300,
     alignItems: "center",
   },
   gardenImage: {
-    width: "100%" as any,
-    aspectRatio: 1.05,
+    width: 280,
+    height: 220,
     borderRadius: 16,
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 8 },
