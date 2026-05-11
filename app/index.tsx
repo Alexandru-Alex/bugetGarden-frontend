@@ -127,7 +127,7 @@ function StickyNav({ onPress }: { onPress: () => void }) {
     <View style={styles.stickyNav}>
       <View style={styles.navBrand}>
         <Image source={APP_ICON} style={styles.navIcon} />
-        <Text style={styles.navName}>BudgetGarden</Text>
+        <Text style={styles.navName}>Money Garden</Text>
       </View>
       <Pressable style={styles.navBtn} onPress={onPress}>
         <Text style={styles.navBtnText}>Open App →</Text>
@@ -155,7 +155,7 @@ function IntroSection() {
     <View style={styles.introSection}>
       <Text style={styles.introTitle}>The app that makes budgeting feel rewarding</Text>
       <Text style={styles.introSub}>
-        Stop dreading your finances. BudgetGarden turns every saving into a coin, every coin into a flower, and every flower into a garden that reflects who you are.
+        Stop dreading your finances. Money Garden turns every saving into a coin, every coin into a flower, and every flower into a garden that reflects who you are.
       </Text>
       <View style={styles.introPillsRow}>
         {pills.map((p) => (
@@ -230,13 +230,13 @@ function HeroSection({ contentStyle }: {
         <View style={[styles.heroLeft, compact && { paddingHorizontal: 32 }]}>
           <Image source={APP_ICON} style={styles.heroAppIcon} />
           <Text style={[styles.heroTitle, compact && { fontSize: 38 }]}>
-            BudgetGarden
+            Money Garden
           </Text>
           <Text style={styles.heroTagline}>
             Track your spending. Grow your garden.
           </Text>
           <Text style={styles.heroBody}>
-            BudgetGarden is an app that helps you build healthy money habits and turn financial discipline into something you can see — a beautiful, growing garden.
+            Money Garden is an app that helps you build healthy money habits and turn financial discipline into something you can see — a beautiful, growing garden.
           </Text>
           <View style={styles.storeBadgesRow}>
             <StoreBadge label="GET IT ON" store="Google Play" />
@@ -316,7 +316,7 @@ export default function MarketingPage() {
           </Pressable>
         </View>
         <View style={styles.footerSection}>
-          <Text style={styles.footerText}>© 2026 BudgetGarden</Text>
+          <Text style={styles.footerText}>© 2026 Money Garden</Text>
         </View>
       </ScrollView>
     </View>
