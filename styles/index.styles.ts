@@ -99,46 +99,20 @@ export const marketing = StyleSheet.create({
     width: "100%" as any,
     aspectRatio: 1.14,
   },
-  stickyNav: {
+  floatingOpenApp: {
     position: "fixed" as any,
-    top: 0,
-    left: 0,
-    right: 0,
+    top: 20,
+    right: 28,
     zIndex: 100,
-    flexDirection: "row" as any,
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 32,
-    paddingVertical: 14,
-    backgroundColor: "rgba(52, 103, 57, 0.88)",
-    ...Platform.select({ web: { backdropFilter: "blur(12px)" } as any }),
-  },
-  navBrand: {
-    flexDirection: "row" as any,
-    alignItems: "center",
-    gap: 10,
-  },
-  navIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-  },
-  navName: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 16,
-    color: "#ffffff",
-    letterSpacing: 0.3,
-  },
-  navBtn: {
-    backgroundColor: "rgba(255,255,255,0.15)",
+    backgroundColor: "rgba(255,255,255,0.18)",
     borderWidth: 1.5,
-    borderColor: "rgba(255,255,255,0.7)",
-    borderRadius: 24,
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    ...Platform.select({ web: { backdropFilter: "blur(8px)" } as any }),
+    borderColor: "rgba(255,255,255,0.65)",
+    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 22,
+    ...Platform.select({ web: { backdropFilter: "blur(10px)" } as any }),
   },
-  navBtnText: {
+  floatingOpenAppText: {
     color: "#ffffff",
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
@@ -410,7 +384,7 @@ export const marketing = StyleSheet.create({
   gardenSection: {
     width: "100%" as any,
     backgroundColor: "#2F5C33",
-    paddingVertical: 28,
+    paddingVertical: 100,
     paddingHorizontal: 60,
   },
   gardenRow: {
@@ -463,7 +437,7 @@ export const marketing = StyleSheet.create({
     alignItems: "center",
   },
   gardenImage: {
-    width: 200,
-    aspectRatio: 1.15,
+    width: 320,
+    height: 230,
   },
 });

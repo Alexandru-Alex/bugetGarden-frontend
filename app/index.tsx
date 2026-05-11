@@ -21,7 +21,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
+const BG_IMAGE = require("@/assets/images/background.jpg");
 const APP_ICON = require("@/assets/images/icon.jpg");
 const PREVIEW_1 = require("@/assets/images/preview_1.png");
 const ILLUS_TRACK = require("@/assets/images/illustrations/illus_track.png");
@@ -122,17 +122,14 @@ function FeatureSection({
   );
 }
 
-function StickyNav({ onPress }: { onPress: () => void }) {
+function FloatingOpenApp({ onPress }: { onPress: () => void }) {
   return (
-    <View style={styles.stickyNav}>
-      <View style={styles.navBrand}>
-        <Image source={APP_ICON} style={styles.navIcon} />
-        <Text style={styles.navName}>Money Garden</Text>
-      </View>
-      <Pressable style={styles.navBtn} onPress={onPress}>
-        <Text style={styles.navBtnText}>Open App →</Text>
-      </Pressable>
-    </View>
+    <Pressable
+      style={({ pressed }) => [styles.floatingOpenApp, pressed && { opacity: 0.82 }]}
+      onPress={onPress}
+    >
+      <Text style={styles.floatingOpenAppText}>Open App →</Text>
+    </Pressable>
   );
 }
 
@@ -208,7 +205,10 @@ function HeroSection({ contentStyle }: {
       <View style={styles.heroBg}>
         <Image
           source={BG_IMAGE}
-          style={{ width: "100%" as any, height: "100%" as any }}
+          style={[
+            { width: "100%" as any, height: "100%" as any },
+            Platform.select({ web: { filter: "blur(6px)", transform: "scale(1.06)" } as any }),
+          ]}
           resizeMode="cover"
         />
         <GrassBoundary>
@@ -279,7 +279,7 @@ export default function MarketingPage() {
 
   return (
     <View style={[styles.container, isWeb && styles.containerWeb]}>
-      <StickyNav onPress={goToApp} />
+      <FloatingOpenApp onPress={goToApp} />
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
         <HeroSection contentStyle={contentStyle} />
         <IntroSection />
