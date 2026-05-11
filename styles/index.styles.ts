@@ -417,8 +417,8 @@ export const marketing = StyleSheet.create({
     flexDirection: "row" as any,
     alignItems: "center",
     justifyContent: "center",
-    gap: 60,
-    maxWidth: 1040,
+    gap: 40,
+    maxWidth: 860,
     alignSelf: "center",
     width: "100%" as any,
   },
@@ -463,7 +463,7 @@ export const marketing = StyleSheet.create({
     alignItems: "center",
   },
   gardenImage: {
-    width: 160,
+    width: 200,
     aspectRatio: 1.15,
   },
 });

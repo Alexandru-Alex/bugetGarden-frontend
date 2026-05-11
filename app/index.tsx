@@ -179,7 +179,7 @@ function GardenSection({ onPress }: { onPress: () => void }) {
         <View style={styles.gardenTextCol}>
           <Text style={styles.gardenTitle}>Grow your own garden</Text>
           <Text style={styles.gardenBody}>
-            Stay consistent with your budget and watch your garden come to life. Every saving adds a new flower to your world — a living, visual reminder of your financial progress.
+            Every saving plants a new flower. Watch your garden grow as your finances improve.
           </Text>
           <Pressable
             style={({ pressed }) => [styles.gardenBtn, pressed && { opacity: 0.88 }]}
