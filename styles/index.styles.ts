@@ -26,7 +26,8 @@ export const marketing = StyleSheet.create({
   heroLeft: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 60,
+    alignItems: "center",
+    paddingHorizontal: 40,
     paddingVertical: 80,
   },
   heroRight: {
@@ -47,20 +48,23 @@ export const marketing = StyleSheet.create({
     color: "#ffffff",
     lineHeight: 58,
     marginBottom: 10,
+    textAlign: "center",
   },
   heroTagline: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 18,
     color: "rgba(255,255,255,0.9)",
     marginBottom: 14,
+    textAlign: "center",
   },
   heroBody: {
     fontFamily: "Nunito_700Bold",
     fontSize: 15,
     color: "rgba(255,255,255,0.72)",
     lineHeight: 24,
-    maxWidth: 400,
+    maxWidth: 380,
     marginBottom: 32,
+    textAlign: "center",
   },
   storeBadgesRow: {
     flexDirection: "row" as any,
@@ -90,34 +94,9 @@ export const marketing = StyleSheet.create({
     fontFamily: "Nunito_800ExtraBold",
     letterSpacing: 0.2,
   },
-  heroPhoneWrap: {
-    width: 260,
-    backgroundColor: "#111111",
-    borderRadius: 44,
-    padding: 10,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 24 },
-    shadowOpacity: 0.45,
-    shadowRadius: 40,
-    elevation: 20,
-  },
-  heroPhoneNotch: {
-    width: 70,
-    height: 10,
-    backgroundColor: "#222222",
-    borderRadius: 8,
-    alignSelf: "center",
-    marginBottom: 6,
-  },
-  heroPhoneScreen: {
-    borderRadius: 34,
-    overflow: "hidden",
-    height: 520,
-    backgroundColor: "#ffffff",
-  },
-  heroPhoneImage: {
-    width: "100%" as any,
-    height: "100%" as any,
+  heroPreviewImage: {
+    width: 480,
+    height: 400,
   },
   stickyNav: {
     position: "fixed" as any,

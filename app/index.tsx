@@ -23,7 +23,7 @@ import Animated, {
 
 const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
 const APP_ICON = require("@/assets/images/icon.jpg");
-const PREVIEW_PHONE = require("@/assets/images/preview_phone.png");
+const PREVIEW_1 = require("@/assets/images/preview_1.png");
 const ILLUS_TRACK = require("@/assets/images/illustrations/illus_track.png");
 const ILLUS_EARN  = require("@/assets/images/illustrations/illus_earn.png");
 const ILLUS_GROW  = require("@/assets/images/illustrations/illus_grow.png");
@@ -227,15 +227,15 @@ function HeroSection({ contentStyle }: {
           Platform.select({ web: { userSelect: "none" } as any }),
         ]}
       >
-        <View style={[styles.heroLeft, compact && { alignItems: "center", paddingHorizontal: 32 }]}>
+        <View style={[styles.heroLeft, compact && { paddingHorizontal: 32 }]}>
           <Image source={APP_ICON} style={styles.heroAppIcon} />
-          <Text style={[styles.heroTitle, compact && { textAlign: "center", fontSize: 38 }]}>
+          <Text style={[styles.heroTitle, compact && { fontSize: 38 }]}>
             BudgetGarden
           </Text>
-          <Text style={[styles.heroTagline, compact && { textAlign: "center" }]}>
+          <Text style={styles.heroTagline}>
             Track your spending. Grow your garden.
           </Text>
-          <Text style={[styles.heroBody, compact && { textAlign: "center" }]}>
+          <Text style={styles.heroBody}>
             BudgetGarden is an app that helps you build healthy money habits and turn financial discipline into something you can see — a beautiful, growing garden.
           </Text>
           <View style={styles.storeBadgesRow}>
@@ -245,12 +245,7 @@ function HeroSection({ contentStyle }: {
         </View>
         {!compact && (
           <View style={styles.heroRight}>
-            <View style={styles.heroPhoneWrap}>
-              <View style={styles.heroPhoneNotch} />
-              <View style={styles.heroPhoneScreen}>
-                <Image source={PREVIEW_PHONE} style={styles.heroPhoneImage} resizeMode="cover" />
-              </View>
-            </View>
+            <Image source={PREVIEW_1} style={styles.heroPreviewImage} resizeMode="contain" />
           </View>
         )}
       </Animated.View>
