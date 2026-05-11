@@ -15,7 +15,7 @@ import { SharedValue, useDerivedValue } from "react-native-reanimated";
 
 const { width: W, height: H } = Dimensions.get("window");
 
-const BG = require("@/assets/images/welcome-bg.webp");
+const DEFAULT_BG = require("@/assets/images/welcome-bg.webp");
 
 const SKSL = `
 uniform shader image;
@@ -42,9 +42,11 @@ half4 main(float2 pos) {
 
 interface Props {
   time: SharedValue<number>;
+  source?: ReturnType<typeof require>;
 }
 
-export function GrassWave({ time }: Props) {
+export function GrassWave({ time, source }: Props) {
+  const BG = source ?? DEFAULT_BG;
   const image = useImage(BG);
   const effect = useMemo(() => {
     try {

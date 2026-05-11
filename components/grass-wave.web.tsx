@@ -5,11 +5,11 @@
 import { Asset } from "expo-asset";
 import React, { useEffect, useRef } from "react";
 
-const BG = require("@/assets/images/welcome-bg.webp");
+const DEFAULT_BG = require("@/assets/images/welcome-bg.webp");
 
 // Preincarca imaginea la nivel de modul (inainte ca componenta sa fie montata)
-const _bgAsset = Asset.fromModule(BG);
-_bgAsset.downloadAsync();
+const _defaultAsset = Asset.fromModule(DEFAULT_BG);
+_defaultAsset.downloadAsync();
 
 // ─── Shaders ──────────────────────────────────────────────────────────────────
 
@@ -84,9 +84,10 @@ function makeProgram(gl: WebGLRenderingContext) {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function GrassWave() {
+export function GrassWave({ source }: { source?: ReturnType<typeof require> }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number | null>(null);
+  const _bgAsset = Asset.fromModule(source ?? DEFAULT_BG);
 
   useEffect(() => {
     const canvas = canvasRef.current;

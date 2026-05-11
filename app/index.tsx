@@ -1,4 +1,3 @@
-import { FlowerPetals } from "@/components/flower-petals";
 import { GrassWave } from "@/components/grass-wave";
 import { marketing as styles } from "@/styles/index.styles";
 import { useRouter } from "expo-router";
@@ -164,22 +163,11 @@ function HeroSection({ contentStyle }: {
   return (
     <View style={styles.heroSection}>
       <View style={styles.heroBg}>
-        <Image
-          source={BG_IMAGE}
-          style={[
-            { width: "100%" as any, height: "100%" as any },
-            Platform.select({ web: { filter: "blur(6px)", transform: "scale(1.06)" } as any }),
-          ]}
-          resizeMode="cover"
-        />
         <GrassBoundary>
-          <GrassWave time={time} />
+          <GrassWave time={time} source={BG_IMAGE} />
         </GrassBoundary>
       </View>
       <View style={[StyleSheet.absoluteFill, styles.overlay]} />
-      <View style={[StyleSheet.absoluteFill, styles.petalsLayer]} pointerEvents="none">
-        <FlowerPetals />
-      </View>
       <Animated.View
         style={[
           styles.heroContent,
