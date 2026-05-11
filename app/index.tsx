@@ -24,9 +24,9 @@ import Animated, {
 const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
 const APP_ICON = require("@/assets/images/icon.jpg");
 const PREVIEW_PHONE = require("@/assets/images/preview_phone.png");
-const ILLUS_TRACK = require("@/assets/images/illustrations/illus_track.svg");
-const ILLUS_EARN  = require("@/assets/images/illustrations/illus_earn.svg");
-const ILLUS_GROW  = require("@/assets/images/illustrations/illus_grow.svg");
+const ILLUS_TRACK = require("@/assets/images/illustrations/illus_track.png");
+const ILLUS_EARN  = require("@/assets/images/illustrations/illus_earn.png");
+const ILLUS_GROW  = require("@/assets/images/illustrations/illus_grow.png");
 const PREVIEW_GARDEN = require("@/assets/images/preview_garden.jpg");
 
 const isWeb = Platform.OS === "web";
