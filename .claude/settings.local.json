@@ -56,7 +56,10 @@
       "Bash(Copy-Item *)",
       "PowerShell(Copy-Item *)",
       "PowerShell(\\(Get-Item \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\.worktrees\\\\landing-redesign\\\\assets\\\\images\\\\preview_phone.png\"\\).Length; \\(Get-Item \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\.worktrees\\\\landing-redesign\\\\assets\\\\images\\\\preview_garden.jpg\"\\).Length)",
-      "Bash(dir F:\\\\background*)"
+      "Bash(dir F:\\\\background*)",
+      "Read(//f//**)",
+      "Bash(dir \"F:\\\\background\")",
+      "Bash(dir \"F:\\\\\" 2>&1 | head -30 *)"
     ]
   }
 }
