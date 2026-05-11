@@ -196,8 +196,8 @@ function GardenSection({ onPress }: { onPress: () => void }) {
   );
 }
 
-function HeroSection({ contentStyle, onGetStarted }: {
-  contentStyle: any; onGetStarted: () => void;
+function HeroSection({ contentStyle }: {
+  contentStyle: any;
 }) {
   const time = useSharedValue(0);
   const { width } = useWindowDimensions();
@@ -286,7 +286,7 @@ export default function MarketingPage() {
     <View style={[styles.container, isWeb && styles.containerWeb]}>
       <StickyNav onPress={goToApp} />
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
-        <HeroSection contentStyle={contentStyle} onGetStarted={goToApp} />
+        <HeroSection contentStyle={contentStyle} />
         <IntroSection />
         <GardenSection onPress={goToApp} />
         <FeatureSection
@@ -321,7 +321,7 @@ export default function MarketingPage() {
           </Pressable>
         </View>
         <View style={styles.footerSection}>
-          <Text style={styles.footerText}>2026 Money Garden</Text>
+          <Text style={styles.footerText}>© 2026 BudgetGarden</Text>
         </View>
       </ScrollView>
     </View>
