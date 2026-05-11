@@ -410,7 +410,7 @@ export const marketing = StyleSheet.create({
   gardenSection: {
     width: "100%" as any,
     backgroundColor: "#2F5C33",
-    paddingVertical: 48,
+    paddingVertical: 28,
     paddingHorizontal: 60,
   },
   gardenRow: {
@@ -428,17 +428,17 @@ export const marketing = StyleSheet.create({
   },
   gardenTitle: {
     fontFamily: "Nunito_900Black",
-    fontSize: 36,
+    fontSize: 26,
     color: "#ffffff",
-    marginBottom: 16,
-    lineHeight: 44,
+    marginBottom: 10,
+    lineHeight: 32,
   },
   gardenBody: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 16,
+    fontSize: 14,
     color: "rgba(255,255,255,0.82)",
-    lineHeight: 26,
-    marginBottom: 28,
+    lineHeight: 22,
+    marginBottom: 18,
   },
   gardenBtn: {
     backgroundColor: "#ffffff",
@@ -463,7 +463,7 @@ export const marketing = StyleSheet.create({
     alignItems: "center",
   },
   gardenImage: {
-    width: 220,
+    width: 160,
     aspectRatio: 1.15,
   },
 });
