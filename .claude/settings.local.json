@@ -43,7 +43,20 @@
       "PowerShell(Get-Command *)",
       "PowerShell(& \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\android\\\\gradlew.bat\" --stop 2>&1)",
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.get\\('dependencies',{}\\).items\\(\\) if 'notif' in k.lower\\(\\) or 'push' in k.lower\\(\\) or 'expo' in k.lower\\(\\)}, indent=2\\)\\)\")",
-      "Bash(python -c \"import sys,json; p=json.load\\(sys.stdin\\); deps={**p.get\\('dependencies',{}\\),**p.get\\('devDependencies',{}\\)}; print\\('expo-notifications:', deps.get\\('expo-notifications','NOT FOUND'\\)\\); print\\('expo-secure-store:', deps.get\\('expo-secure-store','NOT FOUND'\\)\\)\")"
+      "Bash(python -c \"import sys,json; p=json.load\\(sys.stdin\\); deps={**p.get\\('dependencies',{}\\),**p.get\\('devDependencies',{}\\)}; print\\('expo-notifications:', deps.get\\('expo-notifications','NOT FOUND'\\)\\); print\\('expo-secure-store:', deps.get\\('expo-secure-store','NOT FOUND'\\)\\)\")",
+      "PowerShell(& \"C:\\\\Users\\\\g3d0m\\\\.claude\\\\plugins\\\\cache\\\\superpowers-dev\\\\superpowers\\\\5.0.7\\\\scripts\\\\start-server.sh\" --project-dir \"D:\\\\IdeaProjects\\\\bugetGarden-front\" 2>&1 | Select-Object -First 5)",
+      "PowerShell(New-Item *)",
+      "Bash(ls -d .worktrees)",
+      "Bash(ls -d worktrees)",
+      "Bash(npx @claude-flow/cli@latest hooks post-edit --file \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\.worktrees\\\\landing-redesign\\\\app\\\\landing.tsx\" --success true)",
+      "Bash(npx @claude-flow/cli@latest hooks post-edit --file \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\.worktrees\\\\landing-redesign\\\\styles\\\\landing.styles.ts\" --success true)",
+      "Bash(exit 0)",
+      "Bash(npx @claude-flow/cli@latest hooks pre-edit --file \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\.worktrees\\\\landing-redesign\\\\app\\\\landing.tsx\")",
+      "Bash(awk '/function WebLanding/,/^function [A-Z]/' app/landing.tsx)",
+      "Bash(Copy-Item *)",
+      "PowerShell(Copy-Item *)",
+      "PowerShell(\\(Get-Item \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\.worktrees\\\\landing-redesign\\\\assets\\\\images\\\\preview_phone.png\"\\).Length; \\(Get-Item \"D:\\\\IdeaProjects\\\\bugetGarden-front\\\\.worktrees\\\\landing-redesign\\\\assets\\\\images\\\\preview_garden.jpg\"\\).Length)",
+      "Bash(dir F:\\\\background*)"
     ]
   }
 }
