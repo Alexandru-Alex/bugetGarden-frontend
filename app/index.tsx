@@ -24,6 +24,9 @@ import Animated, {
 const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
 const APP_ICON = require("@/assets/images/icon.jpg");
 const PREVIEW_PHONE = require("@/assets/images/preview_phone.png");
+const ILLUS_TRACK = require("@/assets/images/illustrations/illus_track.svg");
+const ILLUS_EARN  = require("@/assets/images/illustrations/illus_earn.svg");
+const ILLUS_GROW  = require("@/assets/images/illustrations/illus_grow.svg");
 
 const isWeb = Platform.OS === "web";
 
@@ -141,6 +144,31 @@ function StoreBadge({ label, store }: { label: string; store: string }) {
   );
 }
 
+function IntroSection() {
+  const pills = [
+    { img: ILLUS_TRACK, label: "Track", sub: "Log income & expenses" },
+    { img: ILLUS_EARN,  label: "Earn",  sub: "Get coins for saving" },
+    { img: ILLUS_GROW,  label: "Grow",  sub: "Build your garden" },
+  ];
+  return (
+    <View style={styles.introSection}>
+      <Text style={styles.introTitle}>The app that makes budgeting feel rewarding</Text>
+      <Text style={styles.introSub}>
+        Stop dreading your finances. BudgetGarden turns every saving into a coin, every coin into a flower, and every flower into a garden that reflects who you are.
+      </Text>
+      <View style={styles.introPillsRow}>
+        {pills.map((p) => (
+          <View key={p.label} style={styles.introPill}>
+            <Image source={p.img} style={styles.introPillImage} resizeMode="contain" />
+            <Text style={styles.introPillLabel}>{p.label}</Text>
+            <Text style={styles.introPillSub}>{p.sub}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 function HeroSection({ contentStyle, onGetStarted }: {
   contentStyle: any; onGetStarted: () => void;
 }) {
@@ -232,6 +260,7 @@ export default function MarketingPage() {
       <StickyNav onPress={goToApp} />
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
         <HeroSection contentStyle={contentStyle} onGetStarted={goToApp} />
+        <IntroSection />
         <FeatureSection
           icon="💰"
           title="Dynamic Budget Score"
