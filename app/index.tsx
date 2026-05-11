@@ -22,7 +22,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-const BG_IMAGE = require("@/assets/images/welcome-bg.jpg");
+const BG_IMAGE = require("@/assets/images/welcome-index.jpg");
 const APP_ICON = require("@/assets/images/icon.jpg");
 const PREVIEW_1 = require("@/assets/images/preview_1.png");
 const ILLUS_TRACK  = require("@/assets/images/illustrations/illus_track.png");
