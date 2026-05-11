@@ -5,7 +5,7 @@
 import { Asset } from "expo-asset";
 import React, { useEffect, useRef } from "react";
 
-const BG = require("@/assets/images/welcome-bg.jpg");
+const BG = require("@/assets/images/welcome-bg.webp");
 
 // Preincarca imaginea la nivel de modul (inainte ca componenta sa fie montata)
 const _bgAsset = Asset.fromModule(BG);

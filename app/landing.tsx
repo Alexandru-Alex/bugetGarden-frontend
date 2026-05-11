@@ -53,7 +53,7 @@ function GoogleLogo({ size = 20 }: { size?: number }) {
 
 const { width: W, height: H } = Dimensions.get("window");
 
-const BG_IMAGE = require("@/assets/images/welcome-bg.jpg");
+const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
 
 class GrassBoundary extends React.Component<
   { children: React.ReactNode },
@@ -564,7 +564,6 @@ export default function LandingScreen() {
           source={BG_IMAGE}
           style={{ width: W, height: H }}
           resizeMode="cover"
-          blurRadius={8}
         />
         <GrassBoundary>
           <GrassWave time={time} />
