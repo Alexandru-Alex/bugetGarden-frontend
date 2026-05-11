@@ -24,6 +24,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
+const APP_ICON = require("@/assets/images/icon.jpg");
 
 const isWeb = Platform.OS === "web";
 
@@ -118,23 +119,16 @@ function FeatureSection({
   );
 }
 
-function StickyAppBtn({ onPress }: { onPress: () => void }) {
-  const scale = useSharedValue(1);
-  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+function StickyNav({ onPress }: { onPress: () => void }) {
   return (
-    <View style={styles.stickyAppBtn}>
-      <Animated.View style={animStyle}>
-        <Pressable
-          style={styles.appBtnPressable}
-          onPress={onPress}
-          // @ts-ignore React Native Web-specific hover handlers
-          onHoverIn={() => { scale.value = withTiming(1.05, { duration: 150 }); }}
-          // @ts-ignore
-          onHoverOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
-        >
-          <Text style={styles.appBtnText}>App →</Text>
-        </Pressable>
-      </Animated.View>
+    <View style={styles.stickyNav}>
+      <View style={styles.navBrand}>
+        <Image source={APP_ICON} style={styles.navIcon} />
+        <Text style={styles.navName}>BudgetGarden</Text>
+      </View>
+      <Pressable style={styles.navBtn} onPress={onPress}>
+        <Text style={styles.navBtnText}>Open App →</Text>
+      </Pressable>
     </View>
   );
 }
@@ -209,7 +203,7 @@ export default function MarketingPage() {
 
   return (
     <View style={[styles.container, isWeb && styles.containerWeb]}>
-      <StickyAppBtn onPress={goToApp} />
+      <StickyNav onPress={goToApp} />
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
         <HeroSection
           contentStyle={contentStyle}

@@ -75,13 +75,37 @@ export const marketing = StyleSheet.create({
     fontFamily: "Nunito_800ExtraBold",
     letterSpacing: 0.6,
   },
-  stickyAppBtn: {
+  stickyNav: {
     position: "fixed" as any,
-    top: 20,
-    right: 24,
+    top: 0,
+    left: 0,
+    right: 0,
     zIndex: 100,
+    flexDirection: "row" as any,
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    backgroundColor: "rgba(52, 103, 57, 0.88)",
+    ...Platform.select({ web: { backdropFilter: "blur(12px)" } as any }),
   },
-  appBtnPressable: {
+  navBrand: {
+    flexDirection: "row" as any,
+    alignItems: "center",
+    gap: 10,
+  },
+  navIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+  },
+  navName: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 16,
+    color: "#ffffff",
+    letterSpacing: 0.3,
+  },
+  navBtn: {
     backgroundColor: "rgba(255,255,255,0.15)",
     borderWidth: 1.5,
     borderColor: "rgba(255,255,255,0.7)",
@@ -90,10 +114,10 @@ export const marketing = StyleSheet.create({
     paddingHorizontal: 20,
     ...Platform.select({ web: { backdropFilter: "blur(8px)" } as any }),
   },
-  appBtnText: {
+  navBtnText: {
     color: "#ffffff",
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 15,
+    fontSize: 14,
     letterSpacing: 0.4,
   },
   heroSection: {
