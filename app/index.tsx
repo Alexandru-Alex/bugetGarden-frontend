@@ -1,7 +1,5 @@
-import { ArcTitle } from "@/components/arc-title";
 import { FlowerPetals } from "@/components/flower-petals";
 import { GrassWave } from "@/components/grass-wave";
-import { ThemedText } from "@/components/themed-text";
 import { marketing as styles } from "@/styles/index.styles";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
@@ -12,6 +10,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import Animated, {
@@ -19,12 +18,12 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
-  withRepeat,
   withTiming,
 } from "react-native-reanimated";
 
 const BG_IMAGE = require("@/assets/images/welcome-bg.webp");
 const APP_ICON = require("@/assets/images/icon.jpg");
+const PREVIEW_PHONE = require("@/assets/images/preview_phone.png");
 
 const isWeb = Platform.OS === "web";
 
@@ -133,14 +132,30 @@ function StickyNav({ onPress }: { onPress: () => void }) {
   );
 }
 
-function HeroSection({ contentStyle, btnStyle, pulseRingStyle, onGetStarted }: {
-  contentStyle: any; btnStyle: any; pulseRingStyle: any; onGetStarted: () => void;
+function StoreBadge({ label, store }: { label: string; store: string }) {
+  return (
+    <View style={styles.storeBadge}>
+      <Text style={styles.storeBadgeSmall}>{label}</Text>
+      <Text style={styles.storeBadgeBig}>{store}</Text>
+    </View>
+  );
+}
+
+function HeroSection({ contentStyle, onGetStarted }: {
+  contentStyle: any; onGetStarted: () => void;
 }) {
   const time = useSharedValue(0);
+  const { width } = useWindowDimensions();
+  const compact = width < 860;
+
   return (
     <View style={styles.heroSection}>
       <View style={styles.heroBg}>
-        <Image source={BG_IMAGE} style={{ width: "100%" as any, height: "100%" as any }} resizeMode="cover" />
+        <Image
+          source={BG_IMAGE}
+          style={{ width: "100%" as any, height: "100%" as any }}
+          resizeMode="cover"
+        />
         <GrassBoundary>
           <GrassWave time={time} />
         </GrassBoundary>
@@ -149,20 +164,40 @@ function HeroSection({ contentStyle, btnStyle, pulseRingStyle, onGetStarted }: {
       <View style={[StyleSheet.absoluteFill, styles.petalsLayer]} pointerEvents="none">
         <FlowerPetals />
       </View>
-      <Animated.View style={[styles.content, contentStyle, Platform.select({ web: { userSelect: "none" } as any })]}>
-        <ArcTitle />
-        <View style={styles.taglineWrap}>
-          <ThemedText style={styles.tagline}>Track your money, grow your garden</ThemedText>
+      <Animated.View
+        style={[
+          styles.heroContent,
+          compact && { flexDirection: "column" as any, alignItems: "center" },
+          contentStyle,
+          Platform.select({ web: { userSelect: "none" } as any }),
+        ]}
+      >
+        <View style={[styles.heroLeft, compact && { alignItems: "center", paddingHorizontal: 32 }]}>
+          <Image source={APP_ICON} style={styles.heroAppIcon} />
+          <Text style={[styles.heroTitle, compact && { textAlign: "center", fontSize: 38 }]}>
+            BudgetGarden
+          </Text>
+          <Text style={[styles.heroTagline, compact && { textAlign: "center" }]}>
+            Track your spending. Grow your garden.
+          </Text>
+          <Text style={[styles.heroBody, compact && { textAlign: "center" }]}>
+            BudgetGarden is an app that helps you build healthy money habits and turn financial discipline into something you can see — a beautiful, growing garden.
+          </Text>
+          <View style={styles.storeBadgesRow}>
+            <StoreBadge label="GET IT ON" store="Google Play" />
+            <StoreBadge label="Download on the" store="App Store" />
+          </View>
         </View>
-        <Animated.View style={[styles.btnWrapper, btnStyle]}>
-          <Pressable
-            style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaButtonPressed]}
-            onPress={onGetStarted}
-          >
-            <Animated.View style={[styles.pulseRing, pulseRingStyle]} />
-            <Text style={styles.ctaText}>Get Started</Text>
-          </Pressable>
-        </Animated.View>
+        {!compact && (
+          <View style={styles.heroRight}>
+            <View style={styles.heroPhoneWrap}>
+              <View style={styles.heroPhoneNotch} />
+              <View style={styles.heroPhoneScreen}>
+                <Image source={PREVIEW_PHONE} style={styles.heroPhoneImage} resizeMode="cover" />
+              </View>
+            </View>
+          </View>
+        )}
       </Animated.View>
     </View>
   );
@@ -173,24 +208,15 @@ export default function MarketingPage() {
 
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(40);
-  const btnScale = useSharedValue(1);
-  const pulseRing = useSharedValue(0);
 
   useEffect(() => {
     fadeAnim.value = withDelay(350, withTiming(1, { duration: 900, easing: Easing.out(Easing.quad) }));
     slideAnim.value = withDelay(350, withTiming(0, { duration: 900, easing: Easing.out(Easing.quad) }));
-    btnScale.value = withDelay(1200, withRepeat(withTiming(1.05, { duration: 1000, easing: Easing.inOut(Easing.ease) }), -1, true));
-    pulseRing.value = withDelay(1400, withRepeat(withTiming(1, { duration: 1600, easing: Easing.out(Easing.quad) }), -1, false));
   }, []);
 
   const contentStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
     transform: [{ translateY: slideAnim.value }],
-  }));
-  const btnStyle = useAnimatedStyle(() => ({ transform: [{ scale: btnScale.value }] }));
-  const pulseRingStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: 1 + pulseRing.value * 0.55 }],
-    opacity: 0.7 * (1 - pulseRing.value),
   }));
 
   const goToApp = () => router.push("/landing");
@@ -205,12 +231,7 @@ export default function MarketingPage() {
     <View style={[styles.container, isWeb && styles.containerWeb]}>
       <StickyNav onPress={goToApp} />
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
-        <HeroSection
-          contentStyle={contentStyle}
-          btnStyle={btnStyle}
-          pulseRingStyle={pulseRingStyle}
-          onGetStarted={goToApp}
-        />
+        <HeroSection contentStyle={contentStyle} onGetStarted={goToApp} />
         <FeatureSection
           icon="💰"
           title="Dynamic Budget Score"
