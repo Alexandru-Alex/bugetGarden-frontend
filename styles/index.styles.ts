@@ -463,7 +463,7 @@ export const marketing = StyleSheet.create({
     alignItems: "center",
   },
   gardenImage: {
-    width: "100%" as any,
+    width: 220,
     aspectRatio: 1.15,
   },
 });
