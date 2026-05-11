@@ -1,7 +1,8 @@
 import { ScrollViewStyleReset } from "expo-router/html";
 import type { PropsWithChildren } from "react";
 
-const DOMAIN = "https://getmoneygarden.com";
+const DOMAIN = process.env.EXPO_PUBLIC_DOMAIN ?? "https://getmoneygarden.com";
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://budgetgarden-backend-latest.onrender.com";
 const OG_IMAGE = `${DOMAIN}/og-image.png`;
 
 export default function Root({ children }: PropsWithChildren) {
@@ -17,7 +18,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://budgetgarden-backend-latest.onrender.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com;"
+          content={`default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' ${API_URL}; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com;`}
         />
 
         {/* Canonical */}

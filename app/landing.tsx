@@ -70,9 +70,9 @@ class GrassBoundary extends React.Component<
 // ─── Auth Modal ─────────────────────────────────────────────────────────────
 
 const GOOGLE_CLIENT_IDS = {
-  webClientId: "975323074001-kuerkjh4jje7oidr8kb4l888p6lh81sv.apps.googleusercontent.com",
-  androidClientId: "975323074001-qdr2kgv00149gc5ru0106sa9qffuj5nh.apps.googleusercontent.com",
-  iosClientId: "975323074001-re455uukp107dpf8l25q75nia9co29td.apps.googleusercontent.com",
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+  androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
 };
 
 const APPLE_AUTH_ENABLED = false;

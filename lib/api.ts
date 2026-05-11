@@ -7,7 +7,7 @@ const DEV_HOST = process.env.EXPO_PUBLIC_DEV_HOST
   ?? (Platform.OS === "android" ? "10.0.2.2" : "localhost");
 export const BASE_URL = __DEV__
   ? `http://${DEV_HOST}:8080`
-  : "https://budgetgarden-backend-latest.onrender.com";
+  : (process.env.EXPO_PUBLIC_API_URL ?? "https://budgetgarden-backend-latest.onrender.com");
 
 // Cache in-memory — token nu se schimbă în timpul sesiunii
 let _tokenCache: string | null | undefined = undefined;
