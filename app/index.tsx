@@ -27,6 +27,7 @@ const PREVIEW_PHONE = require("@/assets/images/preview_phone.png");
 const ILLUS_TRACK = require("@/assets/images/illustrations/illus_track.svg");
 const ILLUS_EARN  = require("@/assets/images/illustrations/illus_earn.svg");
 const ILLUS_GROW  = require("@/assets/images/illustrations/illus_grow.svg");
+const PREVIEW_GARDEN = require("@/assets/images/preview_garden.jpg");
 
 const isWeb = Platform.OS === "web";
 
@@ -169,6 +170,32 @@ function IntroSection() {
   );
 }
 
+function GardenSection({ onPress }: { onPress: () => void }) {
+  const { width } = useWindowDimensions();
+  const compact = width < 860;
+  return (
+    <View style={styles.gardenSection}>
+      <View style={[styles.gardenRow, compact && { flexDirection: "column" as any }]}>
+        <View style={styles.gardenTextCol}>
+          <Text style={styles.gardenTitle}>Grow your own garden</Text>
+          <Text style={styles.gardenBody}>
+            Stay consistent with your budget and watch your garden come to life. Every saving adds a new flower to your world — a living, visual reminder of your financial progress.
+          </Text>
+          <Pressable
+            style={({ pressed }) => [styles.gardenBtn, pressed && { opacity: 0.88 }]}
+            onPress={onPress}
+          >
+            <Text style={styles.gardenBtnText}>Start Growing →</Text>
+          </Pressable>
+        </View>
+        <View style={styles.gardenImageCol}>
+          <Image source={PREVIEW_GARDEN} style={styles.gardenImage} resizeMode="cover" />
+        </View>
+      </View>
+    </View>
+  );
+}
+
 function HeroSection({ contentStyle, onGetStarted }: {
   contentStyle: any; onGetStarted: () => void;
 }) {
@@ -261,6 +288,7 @@ export default function MarketingPage() {
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
         <HeroSection contentStyle={contentStyle} onGetStarted={goToApp} />
         <IntroSection />
+        <GardenSection onPress={goToApp} />
         <FeatureSection
           icon="💰"
           title="Dynamic Budget Score"
