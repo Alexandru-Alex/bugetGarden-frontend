@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { LogBox, Platform } from "react-native";
+import { Analytics } from "@vercel/analytics/react";
 
 const isWeb = Platform.OS === "web";
 
@@ -76,6 +77,7 @@ export default function RootLayout() {
             <Stack.Screen name="privacy-policy" options={{ headerShown: false }} />
           </Stack>
           <StatusBar style="auto" />
+          {isWeb && <Analytics />}
         </ThemeProvider>
       </SafeAreaProvider>
     </QueryClientProvider>
