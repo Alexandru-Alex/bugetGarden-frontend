@@ -243,7 +243,14 @@ export default function MarketingPage() {
     <View style={[styles.container, isWeb && styles.containerWeb]}>
       <Head>
         <title>Money Garden - Track, Earn, Grow</title>
+        <meta name="description" content="Gamified budget management app. Track expenses, earn gold coins, and grow your virtual garden while building better financial habits." />
+        <meta property="og:title" content="Money Garden - Track, Earn, Grow" />
+        <meta property="og:description" content="Gamified budget management app. Track expenses, earn gold coins, and grow your virtual garden while building better financial habits." />
         <meta property="og:url" content="https://getmoneygarden.com/" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Money Garden - Track, Earn, Grow" />
+        <meta name="twitter:description" content="Gamified budget management app. Track expenses, earn gold coins, and grow your virtual garden while building better financial habits." />
       </Head>
       <StickyNav onOpenApp={goToApp} />
       <ScrollView style={styles.webScroll} contentContainerStyle={styles.webScrollContent}>
