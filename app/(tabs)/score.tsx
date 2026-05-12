@@ -403,17 +403,14 @@ export default function ScoreScreen() {
   }, [monthly]);
 
   const dailyDelta = useMemo(() => {
-    if (!dailyScores || dailyScores.length === 0) return null;
-    const now = new Date();
-    const todayStr = now.toISOString().slice(0, 10);
-    const yest = new Date(now); yest.setDate(now.getDate() - 1);
-    const yesterdayStr = yest.toISOString().slice(0, 10);
-    const todayEntry     = dailyScores.find(d => d.scoreDate.startsWith(todayStr));
-    const yesterdayEntry = dailyScores.find(d => d.scoreDate.startsWith(yesterdayStr));
-    const t = todayEntry?.scoreTotal != null ? Number(todayEntry.scoreTotal) : null;
-    const y = yesterdayEntry?.scoreTotal != null ? Number(yesterdayEntry.scoreTotal) : null;
-    if (t == null || y == null || isNaN(t) || isNaN(y)) return null;
-    return t - y;
+    if (!dailyScores || dailyScores.length < 2) return null;
+    const sorted = [...dailyScores].sort(
+      (a, b) => new Date(a.scoreDate).getTime() - new Date(b.scoreDate).getTime()
+    );
+    const last = Number(sorted[sorted.length - 1].scoreTotal);
+    const prev = Number(sorted[sorted.length - 2].scoreTotal);
+    if (isNaN(last) || isNaN(prev)) return null;
+    return last - prev;
   }, [dailyScores]);
 
   if (token === undefined) return null;
