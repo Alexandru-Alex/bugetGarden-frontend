@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { SharedValue } from "react-native-reanimated";
 
-const DEFAULT_BG = require("@/assets/images/welcome-index.webp");
+const DEFAULT_BG = require("@/assets/images/welcome-bg.webp");
 
 interface Props {
   time: SharedValue<number>;
