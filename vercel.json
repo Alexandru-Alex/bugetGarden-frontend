@@ -1,6 +1,14 @@
 {
   "buildCommand": "npx expo export --platform web && node scripts/patch-seo.js",
   "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.getmoneygarden.com" }],
+      "destination": "https://getmoneygarden.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
