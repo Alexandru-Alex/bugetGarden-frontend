@@ -1,7 +1,7 @@
 import { FlowerPetals } from "@/components/flower-petals";
 import { GrassWave } from "@/components/grass-wave";
 import { ThemedText } from "@/components/themed-text";
-import { api, saveToken } from "@/lib/api";
+import { api, getStoredToken, saveToken } from "@/lib/api";
 import { useFocusStyle } from "@/lib/use-focus-style";
 import { auth, styles } from "@/styles/landing.styles";
 import { Ionicons } from "@expo/vector-icons";
@@ -501,6 +501,20 @@ function AuthModal({ visible, onClose, onSuccess }: {
 export default function LandingScreen() {
   const router = useRouter();
   const [authVisible, setAuthVisible] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    getStoredToken().then(async (token) => {
+      if (token) {
+        const isNew = Platform.OS === "web"
+          ? localStorage.getItem("is_new_user")
+          : await SecureStore.getItemAsync("is_new_user");
+        router.replace(isNew === "true" ? "/hello" : "/dashboard");
+      } else {
+        setChecking(false);
+      }
+    });
+  }, []);
 
   const time = useSharedValue(0);
   const fadeAnim = useSharedValue(Platform.OS === "android" ? 1 : 0);
@@ -509,6 +523,7 @@ export default function LandingScreen() {
   const pulseRing = useSharedValue(0);
 
   useEffect(() => {
+    if (checking) return;
     if (Platform.OS !== "web") {
       time.value = withRepeat(
         withTiming(1000, { duration: 1_000_000, easing: Easing.linear }),
@@ -541,7 +556,7 @@ export default function LandingScreen() {
         false,
       ),
     );
-  }, []);
+  }, [checking]);
 
   const contentStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
@@ -556,6 +571,8 @@ export default function LandingScreen() {
     transform: [{ scale: 1 + pulseRing.value * 0.55 }],
     opacity: 0.7 * (1 - pulseRing.value),
   }));
+
+  if (checking) return null;
 
   return (
     <View style={styles.container}>
@@ -605,11 +622,7 @@ export default function LandingScreen() {
         onClose={() => setAuthVisible(false)}
         onSuccess={(newUser) => {
           setAuthVisible(false);
-          if (newUser) {
-            router.replace("/hello");
-          } else {
-            router.replace("/garden");
-          }
+          router.replace(newUser ? "/hello" : "/dashboard");
         }}
       />
     </View>
