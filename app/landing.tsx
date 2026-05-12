@@ -572,7 +572,7 @@ export default function LandingScreen() {
     opacity: 0.7 * (1 - pulseRing.value),
   }));
 
-  if (checking) return null;
+  if (checking) return <View style={{ flex: 1, backgroundColor: "#346739" }} />;
 
   return (
     <View style={styles.container}>
