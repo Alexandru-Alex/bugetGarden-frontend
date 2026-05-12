@@ -2,9 +2,9 @@ import {
   Nunito_700Bold,
   Nunito_800ExtraBold,
   Nunito_900Black,
-  useFonts,
 } from "@expo-google-fonts/nunito";
 import { Pacifico_400Regular } from "@expo-google-fonts/pacifico";
+import { FontDisplay, useFonts } from "expo-font";
 import {
   DarkTheme,
   DefaultTheme,
@@ -41,13 +41,15 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   const [fontsLoaded] = useFonts({
-    Nunito_700Bold,
-    Nunito_800ExtraBold,
-    Nunito_900Black,
-    Pacifico_400Regular,
+    Nunito_700Bold:      { uri: Nunito_700Bold,      display: FontDisplay.SWAP },
+    Nunito_800ExtraBold: { uri: Nunito_800ExtraBold, display: FontDisplay.SWAP },
+    Nunito_900Black:     { uri: Nunito_900Black,     display: FontDisplay.SWAP },
+    Pacifico_400Regular: { uri: Pacifico_400Regular, display: FontDisplay.SWAP },
   });
 
-  if (!fontsLoaded) {
+  // On web, font-display:swap shows fallback text immediately — no need to block.
+  // On native, wait so the splash screen covers the unstyled frame.
+  if (!fontsLoaded && !isWeb) {
     return null;
   }
 
