@@ -3,8 +3,8 @@ import { marketing as styles } from "@/styles/index.styles";
 import Head from "expo-router/head";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
+import { Image } from "expo-image";
 import {
-  Image,
   Linking,
   Platform,
   Pressable,
@@ -22,16 +22,16 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-const BG_IMAGE = require("@/assets/images/welcome-index.jpg");
-const APP_ICON = require("@/assets/images/icon.jpg");
-const PREVIEW_1 = require("@/assets/images/preview_1.png");
-const ILLUS_TRACK  = require("@/assets/images/illustrations/illus_track.png");
-const ILLUS_EARN   = require("@/assets/images/illustrations/illus_earn.png");
-const ILLUS_GROW   = require("@/assets/images/illustrations/illus_grow.png");
-const ILLUS_SCORE  = require("@/assets/images/illustrations/illus_score.png");
-const ILLUS_CELEB  = require("@/assets/images/illustrations/illus_celebrate.png");
-const ILLUS_GROWTH = require("@/assets/images/illustrations/illus_growth.png");
-const PREVIEW_GARDEN = require("@/assets/images/preview_garden.jpg");
+const BG_IMAGE = require("@/assets/images/welcome-index.webp");
+const APP_ICON = require("@/assets/images/icon.webp");
+const PREVIEW_1 = require("@/assets/images/preview_1.webp");
+const ILLUS_TRACK  = require("@/assets/images/illustrations/illus_track.webp");
+const ILLUS_EARN   = require("@/assets/images/illustrations/illus_earn.webp");
+const ILLUS_GROW   = require("@/assets/images/illustrations/illus_grow.webp");
+const ILLUS_SCORE  = require("@/assets/images/illustrations/illus_score.webp");
+const ILLUS_CELEB  = require("@/assets/images/illustrations/illus_celebrate.webp");
+const ILLUS_GROWTH = require("@/assets/images/illustrations/illus_growth.webp");
+const PREVIEW_GARDEN = require("@/assets/images/preview_garden.webp");
 
 const isWeb = Platform.OS === "web";
 
@@ -76,7 +76,7 @@ function FeaturesSection() {
       <View style={styles.featuresRow}>
         {features.map((f) => (
           <View key={f.title} style={styles.featuresCard}>
-            <Image source={f.img} style={styles.featuresCardImage} resizeMode="contain" accessibilityLabel={f.alt} />
+            <Image source={f.img} style={styles.featuresCardImage} contentFit="contain" alt={f.alt} priority="low" />
             <Text style={styles.featuresCardIcon}>{f.icon}</Text>
             <Text style={styles.featuresCardTitle}>{f.title}</Text>
             <Text style={styles.featuresCardBody}>{f.body}</Text>
@@ -130,7 +130,7 @@ function IntroSection() {
       <View style={styles.introPillsRow}>
         {pills.map((p) => (
           <View key={p.label} style={styles.introPill}>
-            <Image source={p.img} style={styles.introPillImage} resizeMode="contain" accessibilityLabel={p.alt} />
+            <Image source={p.img} style={styles.introPillImage} contentFit="contain" alt={p.alt} priority="low" />
             <Text style={styles.introPillLabel}>{p.label}</Text>
             <Text style={styles.introPillSub}>{p.sub}</Text>
           </View>
@@ -159,7 +159,7 @@ function GardenSection({ onPress }: { onPress: () => void }) {
           </Pressable>
         </View>
         <View style={styles.gardenImageCol}>
-          <Image source={PREVIEW_GARDEN} style={styles.gardenImage} resizeMode="contain" accessibilityLabel="Money Garden virtual garden growing with saved coins" />
+          <Image source={PREVIEW_GARDEN} style={styles.gardenImage} contentFit="contain" alt="Money Garden virtual garden growing with saved coins" priority="low" />
         </View>
       </View>
     </View>
@@ -190,7 +190,7 @@ function HeroSection({ contentStyle }: {
         ]}
       >
         <View style={[styles.heroLeft, compact && { paddingHorizontal: 32 }]}>
-          <Image source={APP_ICON} style={styles.heroAppIcon} accessibilityLabel="Money Garden app icon" />
+          <Image source={APP_ICON} style={styles.heroAppIcon} alt="Money Garden app icon" />
           <Text style={[styles.heroTitle, compact && { fontSize: 38 }]}>
             Money Garden
           </Text>
@@ -207,7 +207,7 @@ function HeroSection({ contentStyle }: {
         </View>
         {!compact && (
           <View style={styles.heroRight}>
-            <Image source={PREVIEW_1} style={styles.heroPreviewImage} resizeMode="contain" accessibilityLabel="Money Garden app preview showing budget dashboard" />
+            <Image source={PREVIEW_1} style={styles.heroPreviewImage} contentFit="contain" alt="Money Garden app preview showing budget dashboard" />
           </View>
         )}
       </Animated.View>
