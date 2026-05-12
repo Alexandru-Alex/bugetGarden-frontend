@@ -18,7 +18,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         <meta
           httpEquiv="Content-Security-Policy"
-          content={`default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' ${API_URL}; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com;`}
+          content={`default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' ${API_URL} https://va.vercel-scripts.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com;`}
         />
 
         {/* Canonical */}
