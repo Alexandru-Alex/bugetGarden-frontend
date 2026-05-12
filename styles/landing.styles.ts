@@ -96,7 +96,8 @@ export const auth = StyleSheet.create({
   },
   backdrop: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    paddingTop: 80,
     paddingHorizontal: 20,
     ...(Platform.OS === "web"
       ? { position: "fixed" as any, top: 0, left: 0, right: 0, bottom: 0 }
