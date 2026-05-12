@@ -501,18 +501,13 @@ function AuthModal({ visible, onClose, onSuccess }: {
 export default function LandingScreen() {
   const router = useRouter();
   const [authVisible, setAuthVisible] = useState(false);
-  const [checking, setChecking] = useState(true);
-
   useEffect(() => {
     getStoredToken().then(async (token) => {
-      if (token) {
-        const isNew = Platform.OS === "web"
-          ? localStorage.getItem("is_new_user")
-          : await SecureStore.getItemAsync("is_new_user");
-        router.replace(isNew === "true" ? "/hello" : "/dashboard");
-      } else {
-        setChecking(false);
-      }
+      if (!token) return;
+      const isNew = Platform.OS === "web"
+        ? localStorage.getItem("is_new_user")
+        : await SecureStore.getItemAsync("is_new_user");
+      router.replace(isNew === "true" ? "/hello" : "/dashboard");
     });
   }, []);
 
@@ -523,7 +518,6 @@ export default function LandingScreen() {
   const pulseRing = useSharedValue(0);
 
   useEffect(() => {
-    if (checking) return;
     if (Platform.OS !== "web") {
       time.value = withRepeat(
         withTiming(1000, { duration: 1_000_000, easing: Easing.linear }),
@@ -556,7 +550,7 @@ export default function LandingScreen() {
         false,
       ),
     );
-  }, [checking]);
+  }, []);
 
   const contentStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
@@ -571,8 +565,6 @@ export default function LandingScreen() {
     transform: [{ scale: 1 + pulseRing.value * 0.55 }],
     opacity: 0.7 * (1 - pulseRing.value),
   }));
-
-  if (checking) return <View style={{ flex: 1, backgroundColor: "#346739" }} />;
 
   return (
     <View style={styles.container}>
