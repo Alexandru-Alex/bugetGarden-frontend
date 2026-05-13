@@ -1,4 +1,5 @@
 export const MONTH_LABELS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+export const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 /** Format a Date to YYYY-MM-DD using local time (not UTC). */
 export const formatDateISO = (d: Date): string =>

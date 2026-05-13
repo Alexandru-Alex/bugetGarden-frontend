@@ -25,14 +25,24 @@ export const styles = StyleSheet.create({
   monthNav: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 16,
     paddingVertical: 14,
     paddingHorizontal: 8,
+  },
+  navSide: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  navSideRight: {
+    justifyContent: "flex-end",
   },
   navBtn: {
     paddingHorizontal: 8,
     paddingVertical: 2,
+  },
+  shareBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   navArrow: {
     fontSize: 28,

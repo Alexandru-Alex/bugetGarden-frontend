@@ -1,14 +1,19 @@
 // app/(tabs)/garden.tsx
+import { GardenShareCard, SHARE_CARD_WIDTH } from "@/components/garden-share-card";
 import { InventorySheet } from "@/components/inventory-sheet";
 import { GardenFlowersChart } from "@/components/garden-flowers-chart";
 import { GrassCube } from "@/components/grass-cube";
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
+import { MONTH_NAMES } from "@/lib/date";
 import { flowerImage } from "@/lib/flower-images";
+import { GardenCellDto, GardenDto } from "@/lib/types";
 import { styles } from "@/styles/tabs/garden.styles";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
+import * as Sharing from "expo-sharing";
 import { Redirect } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -19,6 +24,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { captureRef } from "react-native-view-shot";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Polygon } from "react-native-svg";
 
@@ -26,32 +32,6 @@ const MAX_CELL_SIZE = 100;
 const ROWS = 7;
 const COLS = 7;
 const INNER_COLS = 6;
-
-const MONTH_NAMES = [
-  "January", "February", "March", "April",
-  "May", "June", "July", "August",
-  "September", "October", "November", "December",
-];
-
-interface PlantedFlowerDto {
-  name: string;
-  imageUrl: string;
-  rarity: string;
-}
-
-interface GardenCellDto {
-  day: number;
-  planted: boolean;
-  plantedAt: string | null;
-  flower: PlantedFlowerDto | null;
-}
-
-interface GardenDto {
-  id: string;
-  month: number;
-  year: number;
-  cells: GardenCellDto[];
-}
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
@@ -95,7 +75,15 @@ export default function GardenScreen() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [sheetVisible, setSheetVisible] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [capturing, setCapturing] = useState(false);
+  const capturingRef = useRef(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const shareCardRef = useRef<View>(null);
+
+  const captureDate = useMemo(() => {
+    const d = new Date();
+    return `${MONTH_NAMES[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -125,6 +113,24 @@ export default function GardenScreen() {
     });
     return result;
   }, [plantedCells]);
+
+  const handleShare = useCallback(async () => {
+    if (capturingRef.current) return;
+    capturingRef.current = true;
+    setCapturing(true);
+    try {
+      await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+      const uri = await captureRef(shareCardRef, { format: "png", quality: 1 });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, { mimeType: "image/png", dialogTitle: "Share your garden" });
+      }
+    } catch (e) {
+      if (__DEV__) console.warn("Garden share failed:", e);
+    } finally {
+      capturingRef.current = false;
+      setCapturing(false);
+    }
+  }, []);
 
   const showToast = useCallback((msg: string) => {
     if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -170,18 +176,26 @@ export default function GardenScreen() {
           <View style={styles.innerWrapper}>
             {/* Month navigator */}
             <View style={styles.monthNav}>
-              <Pressable onPress={prevMonth} style={styles.navBtn}>
-                <Text style={styles.navArrow}>‹</Text>
-              </Pressable>
+              <View style={styles.navSide}>
+                <Pressable onPress={prevMonth} style={styles.navBtn}>
+                  <Text style={styles.navArrow}>‹</Text>
+                </Pressable>
+              </View>
+
               <Text style={styles.monthLabel}>
                 {MONTH_NAMES[viewMonth]} {viewYear}
               </Text>
-              {!isCurrentMonth && (
-                <Pressable onPress={nextMonth} style={styles.navBtn}>
-                  <Text style={styles.navArrow}>›</Text>
+
+              <View style={[styles.navSide, styles.navSideRight]}>
+                {!isCurrentMonth && (
+                  <Pressable onPress={nextMonth} style={styles.navBtn}>
+                    <Text style={styles.navArrow}>›</Text>
+                  </Pressable>
+                )}
+                <Pressable onPress={handleShare} style={styles.shareBtn} disabled={capturing}>
+                  <MaterialCommunityIcons name="share-variant" size={22} color={capturing ? "#79AE6F" : "#9FCB98"} />
                 </Pressable>
-              )}
-              {isCurrentMonth && <View style={styles.navBtn} />}
+              </View>
             </View>
 
             {/* Grid + leaf counter */}
@@ -382,6 +396,16 @@ export default function GardenScreen() {
           onClose={() => setSheetVisible(false)}
           onPlantError={() => showToast("Something went wrong")}
         />
+      )}
+
+      {capturing && (
+        <View pointerEvents="none" style={{ position: "absolute", top: -10000, left: 0, width: SHARE_CARD_WIDTH }}>
+          <GardenShareCard
+            ref={shareCardRef}
+            plantedCells={plantedCells}
+            captureDate={captureDate}
+          />
+        </View>
       )}
     </PageTransition>
   );
