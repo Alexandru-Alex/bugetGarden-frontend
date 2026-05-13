@@ -18,6 +18,7 @@ import { Redirect } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Image as RNImage,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -192,9 +193,11 @@ export default function GardenScreen() {
                     <Text style={styles.navArrow}>›</Text>
                   </Pressable>
                 )}
-                <Pressable onPress={handleShare} style={styles.shareBtn} disabled={capturing}>
-                  <MaterialCommunityIcons name="share-variant" size={22} color={capturing ? "#79AE6F" : "#9FCB98"} />
-                </Pressable>
+                {Platform.OS !== "web" && (
+                  <Pressable onPress={handleShare} style={styles.shareBtn} disabled={capturing}>
+                    <MaterialCommunityIcons name="share-variant" size={22} color={capturing ? "#79AE6F" : "#9FCB98"} />
+                  </Pressable>
+                )}
               </View>
             </View>
 

@@ -32,7 +32,7 @@ export const GardenShareCard = forwardRef<View, Props>(
       style={{ width: SHARE_CARD_WIDTH, backgroundColor: "#fff", borderRadius: 16, overflow: "hidden" }}
     >
       {/* Garden grid area */}
-      <View style={{ backgroundColor: "#346739", alignItems: "center" }}>
+      <View style={{ alignItems: "center" }}>
         <View style={{ paddingTop: CELL_SIZE * 0.65, paddingBottom: 8 }}>
           <View style={{ width: isoW, height: isoH, position: "relative", overflow: "visible" }}>
             {tiles.map(({ r: row, c: col }) => {
