@@ -401,15 +401,13 @@ export default function GardenScreen() {
         />
       )}
 
-      {capturing && (
-        <View pointerEvents="none" style={{ position: "absolute", top: -10000, left: 0, width: SHARE_CARD_WIDTH }}>
-          <GardenShareCard
-            ref={shareCardRef}
-            plantedCells={plantedCells}
-            captureDate={captureDate}
-          />
-        </View>
-      )}
+      <View pointerEvents="none" style={{ position: "absolute", top: -10000, left: 0, width: SHARE_CARD_WIDTH }}>
+        <GardenShareCard
+          ref={shareCardRef}
+          plantedCells={plantedCells}
+          captureDate={captureDate}
+        />
+      </View>
     </PageTransition>
   );
 }
