@@ -239,6 +239,8 @@ export default function MarketingPage() {
     }
   }, []);
 
+  if (!isWeb) return null;
+
   return (
     <View style={[styles.container, isWeb && styles.containerWeb]}>
       <Head>
