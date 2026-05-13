@@ -121,7 +121,7 @@ export default function GardenScreen() {
     setCapturing(true);
     try {
       await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
-      const uri = await captureRef(shareCardRef, { format: "png", quality: 1 });
+      const uri = await captureRef(shareCardRef, { format: "png", quality: 1, fileName: "MoneyGarden-garden" });
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri, { mimeType: "image/png", dialogTitle: "Share your garden" });
       }
