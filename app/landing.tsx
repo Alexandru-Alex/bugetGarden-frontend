@@ -1,7 +1,7 @@
 import { FlowerPetals } from "@/components/flower-petals";
 import { GrassWave } from "@/components/grass-wave";
 import { ThemedText } from "@/components/themed-text";
-import { api, getStoredToken, saveToken } from "@/lib/api";
+import { BASE_URL, api, getStoredToken, saveToken } from "@/lib/api";
 import { useFocusStyle } from "@/lib/use-focus-style";
 import { auth, styles } from "@/styles/landing.styles";
 import { Ionicons } from "@expo/vector-icons";
@@ -336,6 +336,23 @@ function AuthModal({ visible, onClose, onSuccess }: {
           { auth: false },
         );
         await saveToken(data.token);
+        const checkRes = await fetch(`${BASE_URL}/accounts`, {
+          headers: { Authorization: data.token },
+        });
+        if (checkRes.status === 403) {
+          const text = await checkRes.text().catch(() => "");
+          let msg = text;
+          try { msg = JSON.parse(text)?.message ?? text; } catch {}
+          if (msg === "EMAIL_NOT_VERIFIED") {
+            if (Platform.OS === "web") {
+              localStorage.setItem("pending_email", email);
+            } else {
+              await SecureStore.setItemAsync("pending_email", email);
+            }
+            onSuccess(false, false);
+            return;
+          }
+        }
         onSuccess(false);
       }
     } catch (e: unknown) {
