@@ -27,9 +27,10 @@ interface Props {
   onClose: () => void;
   onAddMore?: () => void;
   symbol: string;
+  initialTab?: ModalTab;
 }
 
-export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Props) {
+export function AddTransactionModal({ visible, onClose, onAddMore, symbol, initialTab = "expenses" }: Props) {
   const queryClient = useQueryClient();
   const { checkProgress } = useQuestProgress();
   const [modalVisible, setModalVisible] = useState(false);
@@ -77,7 +78,7 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol }: Pro
       setAmount("");
       setComment("");
       setSelectedCategory(null);
-      setActiveTab("expenses");
+      setActiveTab(initialTab);
       setShowSuccess(false);
       setSelectedDate(new Date());
       setDateKey((k) => k + 1);

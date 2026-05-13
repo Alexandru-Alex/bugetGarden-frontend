@@ -390,6 +390,7 @@ export default function DashboardScreen() {
           setTimeout(() => router.push("/create-categories"), 200);
         }}
         symbol={symbol}
+        initialTab={activeTab === "expenses" ? "expenses" : "income"}
       />
     </PageTransition>
   );
