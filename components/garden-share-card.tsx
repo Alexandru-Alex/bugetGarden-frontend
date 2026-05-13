@@ -140,7 +140,7 @@ export const GardenShareCard = forwardRef<View, Props>(
             style={{ width: 26, height: 26, borderRadius: 6 }}
           />
           <Text style={{ color: "#346739", fontSize: 11, fontFamily: "Nunito_800ExtraBold" }}>
-            BudgetGarden
+            Money Garden
           </Text>
         </View>
         <Text style={{ color: "#aaa", fontSize: 10, fontFamily: "Nunito_700Bold" }}>
