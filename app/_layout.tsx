@@ -11,10 +11,12 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { LogBox, Platform } from "react-native";
 import { Analytics } from "@vercel/analytics/react";
+import { useEffect } from "react";
+import { registerEmailNotVerifiedHandler } from "@/lib/api";
 
 const isWeb = Platform.OS === "web";
 
@@ -40,6 +42,11 @@ const queryClient = new QueryClient({
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    registerEmailNotVerifiedHandler(() => router.replace("/pending-verification"));
+  }, [router]);
 
   const [fontsLoaded] = useFonts({
     Nunito_700Bold:      { uri: Nunito_700Bold,      display: FontDisplay.SWAP },
@@ -75,6 +82,8 @@ export default function RootLayout() {
             <Stack.Screen name="change-email" options={{ headerShown: false }} />
             <Stack.Screen name="change-password" options={{ headerShown: false }} />
             <Stack.Screen name="privacy-policy" options={{ headerShown: false }} />
+            <Stack.Screen name="pending-verification" options={{ headerShown: false }} />
+            <Stack.Screen name="email-verified" options={{ headerShown: false }} />
           </Stack>
           <StatusBar style="auto" />
           {isWeb && <Analytics />}

@@ -32,9 +32,24 @@ export async function logout(): Promise<void> {
   if (Platform.OS === "web") {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("is_new_user");
+    localStorage.removeItem("pending_email");
   } else {
     await SecureStore.deleteItemAsync("auth_token");
     await SecureStore.deleteItemAsync("is_new_user");
+    await SecureStore.deleteItemAsync("pending_email");
+  }
+}
+
+export async function getPendingEmail(): Promise<string> {
+  if (Platform.OS === "web") return localStorage.getItem("pending_email") ?? "";
+  return (await SecureStore.getItemAsync("pending_email")) ?? "";
+}
+
+export async function clearPendingEmail(): Promise<void> {
+  if (Platform.OS === "web") {
+    localStorage.removeItem("pending_email");
+  } else {
+    await SecureStore.deleteItemAsync("pending_email");
   }
 }
 
@@ -47,13 +62,30 @@ export async function saveToken(token: string): Promise<void> {
   }
 }
 
-async function extractErrorMessage(res: Response): Promise<string> {
+export class EmailNotVerifiedError extends Error {
+  constructor() {
+    super("EMAIL_NOT_VERIFIED");
+    this.name = "EmailNotVerifiedError";
+  }
+}
+
+let _emailNotVerifiedHandler: (() => void) | null = null;
+export function registerEmailNotVerifiedHandler(handler: () => void): void {
+  _emailNotVerifiedHandler = handler;
+}
+
+async function handleErrorResponse(res: Response): Promise<never> {
   const text = await res.text().catch(() => res.statusText);
+  let message: string = text || res.statusText;
   try {
     const json = JSON.parse(text);
-    if (json?.message) return json.message;
+    if (json?.message) message = json.message;
   } catch {}
-  return text || res.statusText;
+  if (res.status === 403 && message === "EMAIL_NOT_VERIFIED") {
+    _emailNotVerifiedHandler?.();
+    throw new EmailNotVerifiedError();
+  }
+  throw new Error(message);
 }
 
 async function buildHeaders(
@@ -83,7 +115,7 @@ export const api = {
       body: typeof body === "string" ? body : JSON.stringify(body),
     });
 
-    if (!res.ok) throw new Error(await extractErrorMessage(res));
+    if (!res.ok) return handleErrorResponse(res);
 
     const text = await res.text();
     if (!text) return undefined as T;
@@ -101,7 +133,7 @@ export const api = {
       headers,
       body: JSON.stringify(body),
     });
-    if (!res.ok) throw new Error(await extractErrorMessage(res));
+    if (!res.ok) return handleErrorResponse(res);
     const text = await res.text();
     if (!text) return undefined as T;
     try {
@@ -118,7 +150,7 @@ export const api = {
       headers,
       body: JSON.stringify(body),
     });
-    if (!res.ok) throw new Error(await extractErrorMessage(res));
+    if (!res.ok) return handleErrorResponse(res);
     const text = await res.text();
     if (!text) return undefined as T;
     try {
@@ -131,13 +163,13 @@ export const api = {
   async delete(path: string): Promise<void> {
     const headers = await buildHeaders();
     const res = await fetch(`${BASE_URL}${path}`, { method: "DELETE", headers });
-    if (!res.ok) throw new Error(await extractErrorMessage(res));
+    if (!res.ok) return handleErrorResponse(res);
   },
 
   async get<T = unknown>(path: string): Promise<T> {
     const headers = await buildHeaders();
     const res = await fetch(`${BASE_URL}${path}`, { headers });
-    if (!res.ok) throw new Error(await extractErrorMessage(res));
+    if (!res.ok) return handleErrorResponse(res);
     return res.json() as Promise<T>;
   },
 };

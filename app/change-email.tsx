@@ -1,5 +1,6 @@
 import { NavMenu } from "@/components/nav-menu";
 import { api } from "@/lib/api";
+import * as SecureStore from "expo-secure-store";
 import { ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
 import { inputOutline, styles } from "@/styles/change-account.styles";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,7 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Crypto from "expo-crypto";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -25,11 +26,6 @@ export default function ChangeEmailScreen() {
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newEmail, setNewEmail] = useState("");
-  const [toastVisible, setToastVisible] = useState(false);
-  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
-
   const { mutate, isPending, error, reset } = useMutation({
     mutationFn: async () => {
       const hashedPassword = await Crypto.digestStringAsync(
@@ -38,13 +34,14 @@ export default function ChangeEmailScreen() {
       );
       return api.patch("/accounts/email", { currentPassword: hashedPassword, newEmail });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
-      setToastVisible(true);
-      toastTimer.current = setTimeout(() => {
-        setToastVisible(false);
-        router.canGoBack() ? router.back() : router.replace("/settings");
-      }, 2000);
+      if (Platform.OS === "web") {
+        localStorage.setItem("pending_email", newEmail);
+      } else {
+        await SecureStore.setItemAsync("pending_email", newEmail);
+      }
+      router.replace("/pending-verification");
     },
   });
 
@@ -121,11 +118,6 @@ export default function ChangeEmailScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {toastVisible && (
-        <View style={styles.toast}>
-          <Text style={styles.toastText}>Email updated successfully</Text>
-        </View>
-      )}
     </View>
   );
 }

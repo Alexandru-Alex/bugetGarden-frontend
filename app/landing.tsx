@@ -87,7 +87,7 @@ const APPLE_WEB_CLIENT_ID = "com.g3d0manz00.bugetGardenfront.web";
 function AuthModal({ visible, onClose, onSuccess }: {
   visible: boolean;
   onClose: () => void;
-  onSuccess: (newUser: boolean) => void;
+  onSuccess: (newUser: boolean, emailVerified?: boolean) => void;
 }) {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
@@ -323,10 +323,12 @@ function AuthModal({ visible, onClose, onSuccess }: {
         await saveToken(data.token);
         if (Platform.OS === "web") {
           localStorage.setItem("is_new_user", String(data.newUser));
+          localStorage.setItem("pending_email", email);
         } else {
           await SecureStore.setItemAsync("is_new_user", String(data.newUser));
+          await SecureStore.setItemAsync("pending_email", email);
         }
-        onSuccess(data.newUser);
+        onSuccess(data.newUser, false);
       } else {
         const data = await api.post<{ token: string; newUser: boolean }>(
           "/sign-in",
@@ -504,6 +506,13 @@ export default function LandingScreen() {
   useEffect(() => {
     getStoredToken().then(async (token) => {
       if (!token) return;
+      const pendingEmail = Platform.OS === "web"
+        ? localStorage.getItem("pending_email")
+        : await SecureStore.getItemAsync("pending_email");
+      if (pendingEmail) {
+        router.replace("/pending-verification");
+        return;
+      }
       const isNew = Platform.OS === "web"
         ? localStorage.getItem("is_new_user")
         : await SecureStore.getItemAsync("is_new_user");
@@ -612,9 +621,13 @@ export default function LandingScreen() {
       <AuthModal
         visible={authVisible}
         onClose={() => setAuthVisible(false)}
-        onSuccess={(newUser) => {
+        onSuccess={(newUser, emailVerified = true) => {
           setAuthVisible(false);
-          router.replace(newUser ? "/hello" : "/dashboard");
+          if (!emailVerified) {
+            router.replace("/pending-verification");
+          } else {
+            router.replace(newUser ? "/hello" : "/dashboard");
+          }
         }}
       />
     </View>
