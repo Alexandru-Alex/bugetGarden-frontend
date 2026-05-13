@@ -84,6 +84,7 @@ export default function RootLayout() {
             <Stack.Screen name="privacy-policy" options={{ headerShown: false }} />
             <Stack.Screen name="pending-verification" options={{ headerShown: false }} />
             <Stack.Screen name="email-verified" options={{ headerShown: false }} />
+            <Stack.Screen name="verify-email" options={{ headerShown: false }} />
           </Stack>
           <StatusBar style="auto" />
           {isWeb && <Analytics />}
