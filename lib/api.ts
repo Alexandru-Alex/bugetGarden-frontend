@@ -81,7 +81,7 @@ async function handleErrorResponse(res: Response): Promise<never> {
     const json = JSON.parse(text);
     if (json?.message) message = json.message;
   } catch {}
-  if (res.status === 403 && message === "EMAIL_NOT_VERIFIED") {
+  if (res.status === 403 && message.toLowerCase().includes("not verified")) {
     _emailNotVerifiedHandler?.();
     throw new EmailNotVerifiedError();
   }

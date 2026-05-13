@@ -343,7 +343,7 @@ function AuthModal({ visible, onClose, onSuccess }: {
           const text = await checkRes.text().catch(() => "");
           let msg = text;
           try { msg = JSON.parse(text)?.message ?? text; } catch {}
-          if (msg === "EMAIL_NOT_VERIFIED") {
+          if (msg.toLowerCase().includes("not verified")) {
             if (Platform.OS === "web") {
               localStorage.setItem("pending_email", email);
             } else {
