@@ -1,5 +1,5 @@
 import { NavMenu } from "@/components/nav-menu";
-import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
+import { ACCOUNT_QUERY_KEY, AccountDto } from "@/lib/query-keys";
 import { api } from "@/lib/api";
 import { formatAmount } from "@/lib/currency";
 import { PAGE_SIZE, PagedResponse } from "@/lib/types";

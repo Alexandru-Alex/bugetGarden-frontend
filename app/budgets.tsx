@@ -1,5 +1,5 @@
 import { NavMenu } from "@/components/nav-menu";
-import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
+import { ACCOUNT_QUERY_KEY, AccountDto } from "@/lib/query-keys";
 import { api, getStoredToken } from "@/lib/api";
 import { currencySymbolFor, formatAmount } from "@/lib/currency";
 import { CategoryDto } from "@/lib/types";
@@ -241,12 +241,15 @@ export default function BudgetsScreen() {
                 <Text style={styles.categoryName}>{item.name}</Text>
                 <View style={styles.categoryMeta}>
                   <Text style={styles.categoryMetaText}>Limit: {symbol}{formatAmount(item.limit, decimals)}</Text>
-                  <Text style={styles.categoryMetaText}>·</Text>
-                  <Text style={[styles.categoryMetaText, item.spent > item.limit && { color: "#E74C3C" }]}>Spent: {symbol}{formatAmount(item.spent, decimals)}</Text>
-                  <Text style={styles.categoryMetaText}>·</Text>
-                  <Text style={[styles.categoryMetaText, item.spent > item.limit && { color: "#E74C3C" }]}>
-                    Remaining: {symbol}{formatAmount(item.spent > item.limit ? 0 : item.remaining, decimals)}
-                  </Text>
+                  <View style={styles.categoryMetaRow}>
+                    <Text style={[styles.categoryMetaText, item.spent > item.limit && { color: "#E74C3C" }]}>
+                      Spent: {symbol}{formatAmount(item.spent, decimals)}
+                    </Text>
+                    <Text style={styles.categoryMetaText}> · </Text>
+                    <Text style={[styles.categoryMetaText, item.spent > item.limit && { color: "#E74C3C" }]}>
+                      Remaining: {symbol}{formatAmount(item.spent > item.limit ? 0 : item.remaining, decimals)}
+                    </Text>
+                  </View>
                 </View>
                 <View style={styles.progressTrack}>
                   <View

@@ -4,7 +4,7 @@ import { GoalsDotType, GoalsPeriodItem, StatGoalsChart } from "@/components/stat
 import { CategoryEntryDto, CategoryPeriodDto, StatStackedChart } from "@/components/stat-stacked-chart";
 import { BAR_HEIGHT, NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
-import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
+import { ACCOUNT_QUERY_KEY, AccountDto } from "@/lib/query-keys";
 import { api, getStoredToken } from "@/lib/api";
 import { currencySymbolFor, formatAmount } from "@/lib/currency";
 import { PAGE_SIZE, PagedResponse } from "@/lib/types";

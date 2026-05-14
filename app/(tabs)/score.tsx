@@ -1,4 +1,4 @@
-import { ACCOUNT_QUERY_KEY, AccountDto } from "@/app/(tabs)/dashboard";
+import { ACCOUNT_QUERY_KEY, AccountDto } from "@/lib/query-keys";
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";

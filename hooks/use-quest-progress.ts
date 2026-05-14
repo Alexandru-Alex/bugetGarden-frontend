@@ -1,4 +1,4 @@
-import { ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
+import { ACCOUNT_QUERY_KEY } from "@/lib/query-keys";
 import { fetchTasksProgress, CompletedTaskNotification } from "@/lib/quests-api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";

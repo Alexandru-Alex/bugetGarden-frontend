@@ -1,7 +1,7 @@
 import { NavMenu } from "@/components/nav-menu";
 import { api } from "@/lib/api";
 import * as SecureStore from "expo-secure-store";
-import { ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
+import { ACCOUNT_QUERY_KEY } from "@/lib/query-keys";
 import { inputOutline, styles } from "@/styles/change-account.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

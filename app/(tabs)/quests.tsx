@@ -2,7 +2,7 @@ import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { TASKS_MONTH_KEY, TASKS_TODAY_KEY } from "@/hooks/use-quest-progress";
 import { getStoredToken } from "@/lib/api";
-import { ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
+import { ACCOUNT_QUERY_KEY } from "@/lib/query-keys";
 import { claimTaskReward, fetchMonthTasks, fetchTodayTasks, TaskDto } from "@/lib/quests-api";
 import { styles } from "@/styles/tabs/quests.styles";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

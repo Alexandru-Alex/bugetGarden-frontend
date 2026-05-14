@@ -122,10 +122,14 @@ export const styles = StyleSheet.create({
     marginBottom: 2,
   },
   categoryMeta: {
+    flexDirection: "column",
+    gap: 2,
+    marginBottom: 8,
+  },
+  categoryMetaRow: {
     flexDirection: "row",
-    gap: 6,
-    flexWrap: "wrap",
-    marginBottom: 10,
+    flexWrap: "nowrap",
+    gap: 4,
   },
   categoryMetaText: {
     fontFamily: "Nunito_700Bold",

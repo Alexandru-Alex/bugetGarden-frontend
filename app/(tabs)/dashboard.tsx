@@ -16,20 +16,9 @@ import { ActivityIndicator, Image, Platform, Pressable, RefreshControl, ScrollVi
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Circle, G } from "react-native-svg";
 
-export interface AccountDto {
-  email: string;
-  displayName: string;
-  goldCoins: number;
-  totalScore: number;
-  currency: string;
-  numberOfDecimals?: number;
-  avatarUrl?: string;
-  provider: string;
-  notification?: boolean;
-}
-
-// Importat din orice ecran care face POST /transactions pentru a invalida cache-ul
-export const ACCOUNT_QUERY_KEY = ["account"] as const;
+import { AccountDto, ACCOUNT_QUERY_KEY } from "@/lib/query-keys";
+export type { AccountDto };
+export { ACCOUNT_QUERY_KEY };
 
 interface FinancialSummaryItem {
   name: string;

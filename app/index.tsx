@@ -1,7 +1,7 @@
 import { GrassWave } from "@/components/grass-wave";
 import { marketing as styles } from "@/styles/index.styles";
 import Head from "expo-router/head";
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Image } from "expo-image";
 import {
@@ -233,13 +233,7 @@ export default function MarketingPage() {
 
   const goToApp = () => router.push("/landing");
 
-  useEffect(() => {
-    if (!isWeb) {
-      router.replace("/landing");
-    }
-  }, []);
-
-  if (!isWeb) return null;
+  if (!isWeb) return <Redirect href="/landing" />;
 
   return (
     <View style={[styles.container, isWeb && styles.containerWeb]}>

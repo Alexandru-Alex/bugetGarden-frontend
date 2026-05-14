@@ -1,5 +1,5 @@
 import { NavMenu } from "@/components/nav-menu";
-import { AccountDto, ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
+import { AccountDto, ACCOUNT_QUERY_KEY } from "@/lib/query-keys";
 import { api, getStoredToken, logout } from "@/lib/api";
 import { avatarSource, AVATAR_KEYS } from "@/lib/avatars";
 import { CURRENCIES, currencySymbolFor, type Currency } from "@/lib/currency";
