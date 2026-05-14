@@ -102,8 +102,8 @@ export function InventorySheet({
   });
 
   function animateClose(callback: () => void) {
-    translateY.value = withTiming(SHEET_HEIGHT, { duration: 220 }, (finished) => {
-      if (finished) runOnJS(callback)();
+    translateY.value = withTiming(SHEET_HEIGHT, { duration: 220 }, () => {
+      runOnJS(callback)();
     });
   }
 
