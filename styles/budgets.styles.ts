@@ -125,7 +125,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 6,
     flexWrap: "wrap",
-    marginBottom: 6,
+    marginBottom: 10,
   },
   categoryMetaText: {
     fontFamily: "Nunito_700Bold",
@@ -137,6 +137,7 @@ export const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: GREEN_LIGHT,
     overflow: "hidden",
+    marginTop: 2,
   },
   progressFill: {
     height: 6,

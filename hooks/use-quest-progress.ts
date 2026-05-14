@@ -1,3 +1,4 @@
+import { ACCOUNT_QUERY_KEY } from "@/app/(tabs)/dashboard";
 import { fetchTasksProgress, CompletedTaskNotification } from "@/lib/quests-api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
@@ -13,6 +14,8 @@ export function useQuestProgress() {
       const progress = await fetchTasksProgress();
       queryClient.invalidateQueries({ queryKey: TASKS_TODAY_KEY });
       queryClient.invalidateQueries({ queryKey: TASKS_MONTH_KEY });
+      queryClient.invalidateQueries({ queryKey: ["achievements"] });
+      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
       return progress.newlyCompleted;
     } catch {
       return [];
