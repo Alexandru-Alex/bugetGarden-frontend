@@ -289,7 +289,10 @@ export default function DashboardScreen() {
                   <Image source={require("@/assets/images/coin.png")} style={styles.coinImage} />
                   <View style={styles.coinRow}>
                     <Text style={styles.coinAmount}>{account?.goldCoins ?? 0}</Text>
-                    <Pressable style={({ pressed }) => [styles.coinAddBtn, pressed && styles.coinAddBtnPressed]}>
+                    <Pressable
+                      style={({ pressed }) => [styles.coinAddBtn, pressed && styles.coinAddBtnPressed]}
+                      onPress={() => router.push("/store")}
+                    >
                       <Text style={styles.coinAddText}>+</Text>
                     </Pressable>
                   </View>

@@ -373,6 +373,11 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: "#c99a2a",
   },
+  cardPriceMoney: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: "#346739",
+  },
 
   // ── Buy modal ─────────────────────────────────────────────────────────────
   modalBackdrop: {
@@ -435,6 +440,11 @@ export const styles = StyleSheet.create({
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 20,
     color: "#c99a2a",
+  },
+  modalPriceMoney: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 20,
+    color: "#346739",
   },
   modalBuyBtn: {
     width: "100%",

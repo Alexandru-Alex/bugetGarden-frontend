@@ -1,6 +1,7 @@
 // app/store.tsx
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
+import { usePurchases } from "@/context/purchases-context";
 import { api, getStoredToken } from "@/lib/api";
 import { flowerImage } from "@/lib/flower-images";
 import { styles } from "@/styles/tabs/store.styles";
@@ -8,7 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -16,6 +17,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   useWindowDimensions,
@@ -42,6 +44,8 @@ interface ShopItemDto {
   userProgress: number;
   isUnlocked: boolean;
   ownedQuantity: number;
+  itemType: string;
+  productId?: string; // RevenueCat product identifier for non-flower items
 }
 
 const RARITY_STYLE: Record<string, { bg: string; text: string }> = {
@@ -143,14 +147,80 @@ function ProgressCard({ owned, total }: { owned: number; total: number }) {
   );
 }
 
+// ─── Tab Switcher ─────────────────────────────────────────────────────────────
+
+function TabSwitcher({
+  active,
+  onChange,
+}: {
+  active: "flowers" | "premium";
+  onChange: (tab: "flowers" | "premium") => void;
+}) {
+  return (
+    <View style={tabStyles.row}>
+      <Pressable
+        style={[tabStyles.tab, active === "flowers" && tabStyles.tabActive]}
+        onPress={() => onChange("flowers")}
+      >
+        <Text style={[tabStyles.label, active === "flowers" && tabStyles.labelActive]}>
+          Flowers
+        </Text>
+      </Pressable>
+      <Pressable
+        style={[tabStyles.tab, active === "premium" && tabStyles.tabActive]}
+        onPress={() => onChange("premium")}
+      >
+        <Text style={[tabStyles.label, active === "premium" && tabStyles.labelActive]}>
+          Premium
+        </Text>
+      </Pressable>
+    </View>
+  );
+}
+
+const tabStyles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    backgroundColor: "rgba(0,0,0,0.06)",
+    borderRadius: 12,
+    padding: 4,
+    marginBottom: 20,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 9,
+    alignItems: "center",
+  },
+  tabActive: {
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 2,
+  },
+  label: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    color: "#8a968c",
+  },
+  labelActive: {
+    color: "#1f4a25",
+  },
+});
+
+
 function FlowerCard({
   flower,
   cardWidth,
   onPress,
+  priceLabel,
 }: {
   flower: ShopItemDto;
   cardWidth: number;
   onPress: () => void;
+  priceLabel?: string;
 }) {
   const tag = RARITY_STYLE[flower.rarity] ?? null;
   const scale = useSharedValue(1);
@@ -189,11 +259,14 @@ function FlowerCard({
           <Text style={styles.cardName}>{flower.name}</Text>
         </View>
         <View style={styles.cardPriceRow}>
-          <Image
-            source={require("../assets/images/coin.png")}
-            style={styles.cardCoinImg}
-          />
-          <Text style={styles.cardPriceText}>{flower.price}</Text>
+          {priceLabel ? (
+            <Text style={styles.cardPriceMoney}>{priceLabel}</Text>
+          ) : (
+            <>
+              <Image source={require("../assets/images/coin.png")} style={styles.cardCoinImg} />
+              <Text style={styles.cardPriceText}>{flower.price}</Text>
+            </>
+          )}
         </View>
       </Pressable>
     </Animated.View>
@@ -205,11 +278,13 @@ function BuyModal({
   onBuy,
   onClose,
   isPending,
+  priceLabel,
 }: {
   flower: ShopItemDto;
   onBuy: () => void;
   onClose: () => void;
   isPending: boolean;
+  priceLabel?: string;
 }) {
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
@@ -230,11 +305,14 @@ function BuyModal({
           <Text style={styles.modalName}>{flower.name}</Text>
           <Text style={styles.modalDescription}>{flower.description}</Text>
           <View style={styles.modalPriceRow}>
-            <Image
-              source={require("../assets/images/coin.png")}
-              style={styles.modalCoinImg}
-            />
-            <Text style={styles.modalPrice}>{flower.price}</Text>
+            {priceLabel ? (
+              <Text style={styles.modalPriceMoney}>{priceLabel}</Text>
+            ) : (
+              <>
+                <Image source={require("../assets/images/coin.png")} style={styles.modalCoinImg} />
+                <Text style={styles.modalPrice}>{flower.price}</Text>
+              </>
+            )}
           </View>
           <Pressable style={styles.modalBuyBtn} onPress={onBuy} disabled={isPending}>
             {isPending
@@ -255,6 +333,8 @@ function BuyModal({
 
 export default function StoreScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
+  const [activeTab, setActiveTab] = useState<"flowers" | "premium">("flowers");
+  const effectiveTab = Platform.OS === "web" ? "flowers" : activeTab;
   const [search, setSearch] = useState("");
   const [selectedFlower, setSelectedFlower] = useState<ShopItemDto | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -263,11 +343,14 @@ export default function StoreScreen() {
   const [gridOffsetY, setGridOffsetY] = useState(0);
   const { width: screenWidth } = useWindowDimensions();
   const queryClient = useQueryClient();
+  const { loginUser, offerings, purchase } = usePurchases();
+  const [isPremiumPending, setIsPremiumPending] = useState(false);
 
   const isWide = Platform.OS === "web" && screenWidth >= 600;
   const cols = screenWidth >= 600 ? 4 : 2;
   const GAP = 12;
-  const cardWidth = gridWidth > 0 ? (gridWidth - (cols - 1) * GAP) / cols : 0;
+  const fallbackWidth = screenWidth - 32; // 16px padding fiecare parte
+  const cardWidth = ((gridWidth > 0 ? gridWidth : fallbackWidth) - (cols - 1) * GAP) / cols;
 
   useEffect(() => { getStoredToken().then(setToken); }, []);
 
@@ -275,12 +358,17 @@ export default function StoreScreen() {
     return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
   }, []);
 
-  const { data: account } = useQuery<{ goldCoins: number }>({
+  const { data: account } = useQuery<{ goldCoins: number; email: string }>({
     queryKey: ["account"],
     queryFn: () => api.get("/accounts"),
     staleTime: Infinity,
     enabled: !!token,
   });
+
+  // Link RC purchases to the logged-in user as soon as we have their email
+  useEffect(() => {
+    if (account?.email) loginUser(account.email);
+  }, [account?.email, loginUser]);
 
   const { data: shopData = [] } = useQuery<ShopItemDto[]>({
     queryKey: ["shop"],
@@ -311,16 +399,49 @@ export default function StoreScreen() {
   }
 
   const bannerImageUrl = shopData.find(i => i.name === "Banner_flower")?.imageUrl;
-  const listData = useMemo(() => shopData.filter(i => i.name !== "Banner_flower"), [shopData]);
+  const allItems = useMemo(() => shopData.filter(i => i.name !== "Banner_flower"), [shopData]);
 
-  const owned = listData.filter(i => i.isUnlocked).length;
-  const total = listData.length;
+  const flowers      = useMemo(() => allItems.filter(i => !i.itemType || i.itemType === "flower"), [allItems]);
+  const premiumItems = useMemo(() => allItems.filter(i => i.itemType === "coins"), [allItems]);
+
+  const owned = flowers.filter(i => i.isUnlocked).length;
+  const total = flowers.length;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return listData;
-    return listData.filter(f => f.name.toLowerCase().includes(q));
-  }, [search, listData]);
+    if (!q) return flowers;
+    return flowers.filter(f => f.name.toLowerCase().includes(q));
+  }, [search, flowers]);
+
+  const rcPriceFor = useCallback((item: ShopItemDto): string | undefined => {
+    const pid = item.productId ?? item.id;
+    return offerings?.current?.availablePackages
+      .find(p => p.product.identifier === pid)
+      ?.product.priceString;
+  }, [offerings]);
+
+  const handlePremiumBuy = useCallback(async (item: ShopItemDto) => {
+    const pid = item.productId ?? item.id;
+    const pkg = offerings?.current?.availablePackages.find(
+      p => p.product.identifier === pid
+    );
+    if (!pkg) {
+      showToast("Product not available");
+      return;
+    }
+    setIsPremiumPending(true);
+    try {
+      await purchase(pkg);
+      queryClient.invalidateQueries({ queryKey: ["shop"] });
+      queryClient.invalidateQueries({ queryKey: ["account"] });
+      setSelectedFlower(null);
+      showToast("Purchase successful!");
+    } catch {
+      showToast("Purchase failed. Please try again.");
+    } finally {
+      setIsPremiumPending(false);
+    }
+  }, [offerings, purchase, queryClient]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
@@ -373,36 +494,56 @@ export default function StoreScreen() {
             <View style={styles.webSpacer} />
             <View style={[styles.inner, styles.innerWeb]}>
               <FeatureBanner imageUrl={bannerImageUrl} />
-              <View style={styles.searchBar}>
-                <Ionicons name="search-outline" size={16} color="#8a968c" />
-                <TextInput
-                  style={[
-                    styles.searchInput,
-                    ({ outlineStyle: "none", outlineWidth: 0 } as any),
-                  ]}
-                  placeholder="Search flowers..."
-                  placeholderTextColor="#8a968c"
-                  value={search}
-                  onChangeText={setSearch}
-                />
-              </View>
-              <Text style={styles.sectionTitle}>Popular this week</Text>
-              <View
-                style={styles.grid}
-                onLayout={e => {
-                  setGridWidth(e.nativeEvent.layout.width);
-                  setGridOffsetY(e.nativeEvent.layout.y);
-                }}
-              >
-                {filtered.map(flower => (
-                  <FlowerCard
-                    key={flower.id}
-                    flower={flower}
-                    cardWidth={cardWidth}
-                    onPress={() => setSelectedFlower(flower)}
-                  />
-                ))}
-              </View>
+              {Platform.OS !== "web" && <TabSwitcher active={activeTab} onChange={setActiveTab} />}
+              {effectiveTab === "flowers" ? (
+                <>
+                  <View style={styles.searchBar}>
+                    <Ionicons name="search-outline" size={16} color="#8a968c" />
+                    <TextInput
+                      style={[
+                        styles.searchInput,
+                        ({ outlineStyle: "none", outlineWidth: 0 } as any),
+                      ]}
+                      placeholder="Search flowers..."
+                      placeholderTextColor="#8a968c"
+                      value={search}
+                      onChangeText={setSearch}
+                    />
+                  </View>
+                  <Text style={styles.sectionTitle}>Popular this week</Text>
+                  <View
+                    style={styles.grid}
+                    onLayout={e => {
+                      setGridWidth(e.nativeEvent.layout.width);
+                      setGridOffsetY(e.nativeEvent.layout.y);
+                    }}
+                  >
+                    {filtered.map(flower => (
+                      <FlowerCard
+                        key={flower.id}
+                        flower={flower}
+                        cardWidth={cardWidth}
+                        onPress={() => setSelectedFlower(flower)}
+                      />
+                    ))}
+                  </View>
+                </>
+              ) : (
+                <View
+                  style={styles.grid}
+                  onLayout={e => setGridWidth(e.nativeEvent.layout.width)}
+                >
+                  {premiumItems.map(item => (
+                    <FlowerCard
+                      key={item.id}
+                      flower={item}
+                      cardWidth={cardWidth}
+                      priceLabel={rcPriceFor(item) ?? `$${item.price}`}
+                      onPress={() => setSelectedFlower(item)}
+                    />
+                  ))}
+                </View>
+              )}
             </View>
             <View style={[styles.sideCol, { marginTop: gridOffsetY }]}>
               <DailyBonusCard />
@@ -416,33 +557,53 @@ export default function StoreScreen() {
               <DailyBonusCard />
               <ProgressCard owned={owned} total={total} />
             </View>
-            <View style={styles.searchBar}>
-              <Ionicons name="search-outline" size={16} color="#8a968c" />
-              <TextInput
-                style={[
-                  styles.searchInput,
-                  Platform.OS === "web" && ({ outlineStyle: "none", outlineWidth: 0 } as any),
-                ]}
-                placeholder="Search flowers..."
-                placeholderTextColor="#8a968c"
-                value={search}
-                onChangeText={setSearch}
-              />
-            </View>
-            <Text style={styles.sectionTitle}>Popular this week</Text>
-            <View
-              style={styles.grid}
-              onLayout={e => setGridWidth(e.nativeEvent.layout.width)}
-            >
-              {filtered.map(flower => (
-                <FlowerCard
-                  key={flower.id}
-                  flower={flower}
-                  cardWidth={cardWidth}
-                  onPress={() => setSelectedFlower(flower)}
-                />
-              ))}
-            </View>
+            <TabSwitcher active={activeTab} onChange={setActiveTab} />
+            {activeTab === "flowers" ? (
+              <>
+                <View style={styles.searchBar}>
+                  <Ionicons name="search-outline" size={16} color="#8a968c" />
+                  <TextInput
+                    style={[
+                      styles.searchInput,
+                      Platform.OS === "web" && ({ outlineStyle: "none", outlineWidth: 0 } as any),
+                    ]}
+                    placeholder="Search flowers..."
+                    placeholderTextColor="#8a968c"
+                    value={search}
+                    onChangeText={setSearch}
+                  />
+                </View>
+                <Text style={styles.sectionTitle}>Popular this week</Text>
+                <View
+                  style={styles.grid}
+                  onLayout={e => setGridWidth(e.nativeEvent.layout.width)}
+                >
+                  {filtered.map(flower => (
+                    <FlowerCard
+                      key={flower.id}
+                      flower={flower}
+                      cardWidth={cardWidth}
+                      onPress={() => setSelectedFlower(flower)}
+                    />
+                  ))}
+                </View>
+              </>
+            ) : (
+              <View
+                style={styles.grid}
+                onLayout={e => setGridWidth(e.nativeEvent.layout.width)}
+              >
+                {premiumItems.map(item => (
+                  <FlowerCard
+                    key={item.id}
+                    flower={item}
+                    cardWidth={cardWidth}
+                    priceLabel={rcPriceFor(item) ?? `$${item.price}`}
+                    onPress={() => setSelectedFlower(item)}
+                  />
+                ))}
+              </View>
+            )}
           </View>
         )}
       </ScrollView>
@@ -450,11 +611,17 @@ export default function StoreScreen() {
       {selectedFlower && (
         <BuyModal
           flower={selectedFlower}
-          onBuy={() => buyFlower(selectedFlower.id)}
+          onBuy={
+            selectedFlower.itemType === "coins"
+              ? () => handlePremiumBuy(selectedFlower)
+              : () => buyFlower(selectedFlower.id)
+          }
           onClose={() => setSelectedFlower(null)}
-          isPending={isPending}
+          isPending={selectedFlower.itemType === "coins" ? isPremiumPending : isPending}
+          priceLabel={selectedFlower.itemType === "coins" ? (rcPriceFor(selectedFlower) ?? `$${selectedFlower.price}`) : undefined}
         />
       )}
+
     </PageTransition>
   );
 }

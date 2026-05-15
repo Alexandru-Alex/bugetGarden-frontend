@@ -17,6 +17,8 @@ import { LogBox, Platform } from "react-native";
 import { Analytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
 import { registerEmailNotVerifiedHandler } from "@/lib/api";
+import { configureRevenueCat } from "@/lib/purchases";
+import { PurchasesProvider } from "@/context/purchases-context";
 
 const isWeb = Platform.OS === "web";
 
@@ -26,6 +28,9 @@ import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
+
+// Configure once before any render — safe to call on web (no-op there)
+configureRevenueCat();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,6 +68,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+    <PurchasesProvider>
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -91,6 +97,7 @@ export default function RootLayout() {
         </ThemeProvider>
       </SafeAreaProvider>
     </QueryClientProvider>
+    </PurchasesProvider>
     </GestureHandlerRootView>
   );
 }
