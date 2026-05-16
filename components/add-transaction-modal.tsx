@@ -8,6 +8,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
+  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -18,6 +19,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+
 import { DatePickerField } from "./date-picker-field";
 
 type ModalTab = "expenses" | "income";
@@ -132,6 +134,8 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol, initi
         >
           <Animated.View
             style={[s.card, cardStyle]}
+            onStartShouldSetResponder={() => true}
+            onResponderRelease={() => Keyboard.dismiss()}
             {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
           >
             {/* Form fields scroll — flexShrink so it compresses on small screens */}
@@ -185,13 +189,13 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol, initi
                   returnKeyType="done"
                 />
               </View>
-
-              {/* Date */}
-              <Text style={s.sectionLabel}>Date</Text>
-              <View style={s.datePickerWrap}>
-                <DatePickerField key={dateKey} value={selectedDate} onChange={setSelectedDate} />
-              </View>
             </ScrollView>
+
+            {/* Date — outside scrollArea to avoid Pressable/scroll gesture conflict */}
+            <Text style={s.sectionLabel}>Date</Text>
+            <View style={s.datePickerWrap}>
+              <DatePickerField key={dateKey} value={selectedDate} onChange={setSelectedDate} />
+            </View>
 
             {/* Categories — sibling of outer scroll, not nested inside it */}
             <Text style={s.sectionLabel}>Category</Text>

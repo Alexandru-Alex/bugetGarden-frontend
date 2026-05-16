@@ -1,12 +1,8 @@
 import { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const androidClientId =
-    process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID ??
-    "975323074001-qdr2kgv00149gc5ru0106sa9qffuj5nh.apps.googleusercontent.com";
-  const iosClientId =
-    process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ??
-    "975323074001-re455uukp107dpf8l25q75nia9co29td.apps.googleusercontent.com";
+  const androidClientId = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID ?? "";
+  const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? "";
 
   const androidScheme = `com.googleusercontent.apps.${androidClientId.replace(".apps.googleusercontent.com", "")}`;
   const iosScheme = `com.googleusercontent.apps.${iosClientId.replace(".apps.googleusercontent.com", "")}`;

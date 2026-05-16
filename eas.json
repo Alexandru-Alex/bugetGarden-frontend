@@ -6,13 +6,31 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://localhost:8080",
+        "EXPO_PUBLIC_DOMAIN": "http://localhost:8081"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://budgetgarden-backend-latest.onrender.com",
+        "EXPO_PUBLIC_DOMAIN": "https://getmoneygarden.com",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "975323074001-kuerkjh4jje7oidr8kb4l888p6lh81sv.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "975323074001-qdr2kgv00149gc5ru0106sa9qffuj5nh.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "975323074001-re455uukp107dpf8l25q75nia9co29td.apps.googleusercontent.com"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://budgetgarden-backend-latest.onrender.com",
+        "EXPO_PUBLIC_DOMAIN": "https://getmoneygarden.com",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "975323074001-kuerkjh4jje7oidr8kb4l888p6lh81sv.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "975323074001-qdr2kgv00149gc5ru0106sa9qffuj5nh.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "975323074001-re455uukp107dpf8l25q75nia9co29td.apps.googleusercontent.com"
+      }
     }
   },
   "submit": {

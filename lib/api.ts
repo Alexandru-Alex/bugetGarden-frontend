@@ -3,8 +3,10 @@ import { Platform } from "react-native";
 
 
 // 10.0.2.2 = emulator AVD loopback; for physical device set EXPO_PUBLIC_DEV_HOST to your PC's LAN IP
-const DEV_HOST = process.env.EXPO_PUBLIC_DEV_HOST
-  ?? (Platform.OS === "android" ? "10.0.2.2" : "localhost");
+// Web always uses localhost — EXPO_PUBLIC_DEV_HOST is for native devices only
+const DEV_HOST = Platform.OS === "web"
+  ? "localhost"
+  : (process.env.EXPO_PUBLIC_DEV_HOST ?? (Platform.OS === "android" ? "10.0.2.2" : "localhost"));
 export const BASE_URL = __DEV__
   ? `http://${DEV_HOST}:8080`
   : (process.env.EXPO_PUBLIC_API_URL ?? "https://budgetgarden-backend-latest.onrender.com");

@@ -31,8 +31,9 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
-.env.production
+.env
+.env.*
+!.env.example
 
 # typescript
 *.tsbuildinfo
@@ -45,3 +46,9 @@ app-example
 
 # Git worktrees
 .worktrees/
+
+# Local tooling
+.superpowers/
+.swarm/
+ruvector.db
+.claude/settings.local.json
