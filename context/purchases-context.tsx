@@ -86,7 +86,8 @@ export function PurchasesProvider({ children }: { children: React.ReactNode }) {
 
   const loginUser = useCallback(async (userId: string) => {
     await rcLogIn(userId);
-  }, []);
+    await refresh();
+  }, [refresh]);
 
   const logoutUser = useCallback(async () => {
     await rcLogOut();

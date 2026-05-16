@@ -45,7 +45,7 @@ interface ShopItemDto {
   isUnlocked: boolean;
   ownedQuantity: number;
   itemType: string;
-  productId?: string; // RevenueCat product identifier for non-flower items
+  revenueCatId?: string;
 }
 
 const RARITY_STYLE: Record<string, { bg: string; text: string }> = {
@@ -334,7 +334,8 @@ function BuyModal({
 export default function StoreScreen() {
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<"flowers" | "premium">("flowers");
-  const effectiveTab = Platform.OS === "web" ? "flowers" : activeTab;
+  const isWeb = Platform.OS === "web";
+  const effectiveTab = isWeb ? "flowers" : activeTab;
   const [search, setSearch] = useState("");
   const [selectedFlower, setSelectedFlower] = useState<ShopItemDto | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -413,18 +414,18 @@ export default function StoreScreen() {
     return flowers.filter(f => f.name.toLowerCase().includes(q));
   }, [search, flowers]);
 
-  const rcPriceFor = useCallback((item: ShopItemDto): string | undefined => {
-    const pid = item.productId ?? item.id;
-    return offerings?.current?.availablePackages
-      .find(p => p.product.identifier === pid)
-      ?.product.priceString;
+  const findPackage = useCallback((item: ShopItemDto) => {
+    if (!offerings || !item.revenueCatId) return undefined;
+    const allPkgs = Object.values(offerings.all).flatMap(o => o.availablePackages);
+    return allPkgs.find(p => p.product.identifier === item.revenueCatId);
   }, [offerings]);
 
+  const rcPriceFor = useCallback((item: ShopItemDto): string | undefined => {
+    return findPackage(item)?.product.priceString;
+  }, [findPackage]);
+
   const handlePremiumBuy = useCallback(async (item: ShopItemDto) => {
-    const pid = item.productId ?? item.id;
-    const pkg = offerings?.current?.availablePackages.find(
-      p => p.product.identifier === pid
-    );
+    const pkg = findPackage(item);
     if (!pkg) {
       showToast("Product not available");
       return;
@@ -557,7 +558,7 @@ export default function StoreScreen() {
               <DailyBonusCard />
               <ProgressCard owned={owned} total={total} />
             </View>
-            <TabSwitcher active={activeTab} onChange={setActiveTab} />
+            {!isWeb && <TabSwitcher active={activeTab} onChange={setActiveTab} />}
             {activeTab === "flowers" ? (
               <>
                 <View style={styles.searchBar}>
