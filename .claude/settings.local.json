@@ -69,7 +69,13 @@
       "Bash(eas env:list --environment production)",
       "Read(//c/Users/g3d0m/Desktop/**)",
       "Bash(mkdir -p \"D:/IdeaProjects/bugetGarden-front/docs/superpowers/specs\")",
-      "Bash(mkdir -p \"D:/IdeaProjects/bugetGarden-front/docs/superpowers/plans\")"
+      "Bash(mkdir -p \"D:/IdeaProjects/bugetGarden-front/docs/superpowers/plans\")",
+      "Bash(Test-Path *)",
+      "Bash(eas build *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\IdeaProjects\\\\bugetGarden-front\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(bash *)",
+      "Skill(superpowers:brainstorming)"
     ]
   }
 }

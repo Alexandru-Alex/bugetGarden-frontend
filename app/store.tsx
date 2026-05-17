@@ -359,17 +359,17 @@ export default function StoreScreen() {
     return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
   }, []);
 
-  const { data: account } = useQuery<{ goldCoins: number; email: string }>({
+  const { data: account } = useQuery<{ goldCoins: number; email: string; id: string }>({
     queryKey: ["account"],
     queryFn: () => api.get("/accounts"),
     staleTime: Infinity,
     enabled: !!token,
   });
 
-  // Link RC purchases to the logged-in user as soon as we have their email
+  // Link RC purchases to the logged-in user by account ID (stable, not PII)
   useEffect(() => {
-    if (account?.email) loginUser(account.email);
-  }, [account?.email, loginUser]);
+    if (account?.id) loginUser(account.id);
+  }, [account?.id, loginUser]);
 
   const { data: shopData = [] } = useQuery<ShopItemDto[]>({
     queryKey: ["shop"],

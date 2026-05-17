@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import Purchases, {
   Offerings,
-  PurchasesError,
   PurchasesPackage,
 } from "react-native-purchases";
 import { Platform } from "react-native";
@@ -45,7 +44,7 @@ export function PurchasesProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       setOfferings(await getOfferings());
     } catch (e) {
-      setError(e instanceof PurchasesError ? e.message : "Failed to load products");
+      setError(e != null && typeof e === "object" && "message" in e ? (e as any).message : "Failed to load products");
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +63,7 @@ export function PurchasesProvider({ children }: { children: React.ReactNode }) {
       // Invalidate the account query so the balance refreshes.
     } catch (e) {
       if (isCancelledError(e)) return;
-      const msg = e instanceof PurchasesError ? e.message : "Purchase failed";
+      const msg = e != null && typeof e === "object" && "message" in e ? (e as any).message : "Purchase failed";
       setError(msg);
       throw e;
     } finally {
@@ -78,7 +77,7 @@ export function PurchasesProvider({ children }: { children: React.ReactNode }) {
     try {
       await restorePurchases();
     } catch (e) {
-      setError(e instanceof PurchasesError ? e.message : "Restore failed");
+      setError(e != null && typeof e === "object" && "message" in e ? (e as any).message : "Restore failed");
     } finally {
       setIsLoading(false);
     }

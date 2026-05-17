@@ -2,7 +2,6 @@ import Purchases, {
   CustomerInfo,
   LOG_LEVEL,
   Offerings,
-  PurchasesError,
   PurchasesPackage,
 } from "react-native-purchases";
 import { Platform } from "react-native";
@@ -56,5 +55,5 @@ export async function restorePurchases(): Promise<CustomerInfo> {
 }
 
 export function isCancelledError(e: unknown): boolean {
-  return e instanceof PurchasesError && e.userCancelled === true;
+  return e != null && typeof e === "object" && (e as any).userCancelled === true;
 }
