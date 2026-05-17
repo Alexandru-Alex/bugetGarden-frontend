@@ -437,7 +437,11 @@ export default function StoreScreen() {
       queryClient.invalidateQueries({ queryKey: ["account"] });
       setSelectedFlower(null);
       showToast("Purchase successful!");
-    } catch {
+    } catch (e) {
+      if ((e as any)?.userCancelled === true) {
+        setSelectedFlower(null);
+        return;
+      }
       showToast("Purchase failed. Please try again.");
     } finally {
       setIsPremiumPending(false);

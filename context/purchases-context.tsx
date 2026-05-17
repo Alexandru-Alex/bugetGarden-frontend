@@ -62,7 +62,7 @@ export function PurchasesProvider({ children }: { children: React.ReactNode }) {
       // Coins are granted server-side via RevenueCat webhook → your backend.
       // Invalidate the account query so the balance refreshes.
     } catch (e) {
-      if (isCancelledError(e)) return;
+      if (isCancelledError(e)) throw e;
       const msg = e != null && typeof e === "object" && "message" in e ? (e as any).message : "Purchase failed";
       setError(msg);
       throw e;
