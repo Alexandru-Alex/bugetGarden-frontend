@@ -224,17 +224,21 @@ function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalMo
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
-      <View style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "padding"}
+        style={{ flex: 1 }}
+      >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.backdrop}>
             <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={{ width: "100%", paddingHorizontal: 20 }}
+            <View
+              style={[styles.modalCard, { width: "100%", maxWidth: 400, alignSelf: "center", marginHorizontal: 20 }]}
+              {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
             >
-              <View
-                style={[styles.modalCard, { width: "100%", maxWidth: 400, alignSelf: "center" }]}
-                {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+                bounces={false}
               >
                 <Text style={styles.modalTitle}>New Goal</Text>
 
@@ -293,16 +297,16 @@ function CreateGoalModal({ visible, isPending, onClose, onCreate }: CreateGoalMo
                     <Text style={styles.saveText}>{isPending ? "Saving…" : "Create"}</Text>
                   </Pressable>
                 </View>
+              </ScrollView>
+            </View>
+            {!!toast && (
+              <View style={styles.toast} pointerEvents="none">
+                <Text style={styles.toastText}>{toast}</Text>
               </View>
-            </KeyboardAvoidingView>
+            )}
           </View>
         </TouchableWithoutFeedback>
-        {!!toast && (
-          <View style={styles.toast} pointerEvents="none">
-            <Text style={styles.toastText}>{toast}</Text>
-          </View>
-        )}
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -353,102 +357,102 @@ function AddTransactionModal({ goal, symbol, decimals, isPending, onClose, onAdd
 
   return (
     <Modal visible={!!goal} transparent animationType="fade" onRequestClose={handleClose}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "padding"}
+        style={{ flex: 1 }}
+      >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.backdrop}>
             <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={{ width: "100%", paddingHorizontal: 20 }}
+            <View
+              style={[styles.modalCard, { width: "100%", maxWidth: 400, alignSelf: "center", marginHorizontal: 20 }]}
+              {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
             >
-              <View
-                style={[styles.modalCard, { width: "100%", maxWidth: 400, alignSelf: "center" }]}
-                {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
-              >
-                <Text style={styles.modalTitle}>{goal.name}</Text>
+              <Text style={styles.modalTitle}>{goal.name}</Text>
 
-                <View style={styles.amountsRow}>
-                  <Text style={styles.amountSaved}>{symbol}{formatAmount(goal.currentAmount, decimals)}</Text>
-                  <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount, decimals)}</Text>
-                </View>
-                <View style={[styles.progressTrack, { marginBottom: 20 }]}>
-                  <View
-                    style={[
-                      styles.progressFill,
-                      { backgroundColor: goal.color, width: `${pct * 100}%` as any },
-                    ]}
-                  />
-                </View>
-
-                <View style={styles.typeRow}>
-                  <Pressable
-                    style={[styles.tabPill, txType === "DEPOSIT" && styles.tabPillActive]}
-                    onPress={() => setTxType("DEPOSIT")}
-                  >
-                    <Text style={[styles.tabPillText, txType === "DEPOSIT" && styles.tabPillTextActive]}>
-                      Deposit
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.tabPill, txType === "WITHDRAW" && styles.tabPillActive]}
-                    onPress={() => setTxType("WITHDRAW")}
-                  >
-                    <Text style={[styles.tabPillText, txType === "WITHDRAW" && styles.tabPillTextActive]}>
-                      Withdraw
-                    </Text>
-                  </Pressable>
-                </View>
-
-                <Text style={styles.fieldLabel}>Amount</Text>
-                <TextInput
-                  style={[
-                    styles.textInput,
-                    { color: "#346739" },
-                    Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
-                  ]}
-                  value={amountInput}
-                  onChangeText={v => setAmountInput(v.replace(/[^0-9.]/g, ""))}
-                  keyboardType="number-pad"
-                  placeholder="0.00"
-                  placeholderTextColor="#bbb"
-                  autoFocus
-                />
-
-                <Text style={styles.fieldLabel}>Date</Text>
-                <View style={styles.datePickerWrapper}>
-                  <DatePickerField value={txDate} onChange={setTxDate} />
-                </View>
-
-                <Text style={styles.fieldLabel}>Note (optional)</Text>
-                <TextInput
-                  style={[
-                    styles.textInput,
-                    { color: "#346739" },
-                    Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
-                  ]}
-                  value={note}
-                  onChangeText={setNote}
-                  placeholder="e.g. Monthly savings"
-                  placeholderTextColor="#bbb"
-                />
-
-                <View style={styles.modalButtons}>
-                  <Pressable style={styles.cancelBtn} onPress={handleClose}>
-                    <Text style={styles.cancelText}>Cancel</Text>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.saveBtn, isPending && { opacity: 0.6 }]}
-                    onPress={handleConfirm}
-                    disabled={isPending}
-                  >
-                    <Text style={styles.saveText}>
-                      {isPending ? "Saving…" : txType === "DEPOSIT" ? "Deposit" : "Withdraw"}
-                    </Text>
-                  </Pressable>
-                </View>
+              <View style={styles.amountsRow}>
+                <Text style={styles.amountSaved}>{symbol}{formatAmount(goal.currentAmount, decimals)}</Text>
+                <Text style={styles.amountTarget}>of {symbol}{formatAmount(goal.targetAmount, decimals)}</Text>
               </View>
-            </KeyboardAvoidingView>
+              <View style={[styles.progressTrack, { marginBottom: 20 }]}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    { backgroundColor: goal.color, width: `${pct * 100}%` as any },
+                  ]}
+                />
+              </View>
+
+              <View style={styles.typeRow}>
+                <Pressable
+                  style={[styles.tabPill, txType === "DEPOSIT" && styles.tabPillActive]}
+                  onPress={() => setTxType("DEPOSIT")}
+                >
+                  <Text style={[styles.tabPillText, txType === "DEPOSIT" && styles.tabPillTextActive]}>
+                    Deposit
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.tabPill, txType === "WITHDRAW" && styles.tabPillActive]}
+                  onPress={() => setTxType("WITHDRAW")}
+                >
+                  <Text style={[styles.tabPillText, txType === "WITHDRAW" && styles.tabPillTextActive]}>
+                    Withdraw
+                  </Text>
+                </Pressable>
+              </View>
+
+              <Text style={styles.fieldLabel}>Amount</Text>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  { color: "#346739" },
+                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                ]}
+                value={amountInput}
+                onChangeText={v => setAmountInput(v.replace(/[^0-9.]/g, ""))}
+                keyboardType="number-pad"
+                placeholder="0.00"
+                placeholderTextColor="#bbb"
+                autoFocus
+              />
+
+              <Text style={styles.fieldLabel}>Date</Text>
+              <View style={styles.datePickerWrapper}>
+                <DatePickerField value={txDate} onChange={setTxDate} />
+              </View>
+
+              <Text style={styles.fieldLabel}>Note (optional)</Text>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  { color: "#346739" },
+                  Platform.select({ web: { outlineStyle: "none", outlineWidth: 0 } as any }),
+                ]}
+                value={note}
+                onChangeText={setNote}
+                placeholder="e.g. Monthly savings"
+                placeholderTextColor="#bbb"
+              />
+
+              <View style={styles.modalButtons}>
+                <Pressable style={styles.cancelBtn} onPress={handleClose}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.saveBtn, isPending && { opacity: 0.6 }]}
+                  onPress={handleConfirm}
+                  disabled={isPending}
+                >
+                  <Text style={styles.saveText}>
+                    {isPending ? "Saving…" : txType === "DEPOSIT" ? "Deposit" : "Withdraw"}
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
           </View>
         </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

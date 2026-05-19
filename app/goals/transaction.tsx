@@ -146,15 +146,15 @@ function EditGoalTransactionModal({ tx, symbol, goalId, onClose }: EditGoalTrans
 
   return (
     <Modal visible={!!tx} transparent animationType="fade" onRequestClose={handleClose}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.backdrop}>
-          <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ width: "100%", paddingHorizontal: 20 }}
-          >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "padding"}
+        style={{ flex: 1 }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.backdrop}>
+            <Pressable style={StyleSheet.absoluteFillObject} onPress={handleClose} />
             <View
-              style={[styles.modalCard, { width: "100%", maxWidth: 400, alignSelf: "center" }]}
+              style={[styles.modalCard, { width: "100%", maxWidth: 400, alignSelf: "center", marginHorizontal: 20 }]}
               {...(Platform.OS === "web" ? { onClick: (e: any) => e.stopPropagation() } : {})}
             >
               <Text style={styles.modalTitle}>Edit Transaction</Text>
@@ -255,15 +255,15 @@ function EditGoalTransactionModal({ tx, symbol, goalId, onClose }: EditGoalTrans
               )}
 
             </View>
-          </KeyboardAvoidingView>
 
-          {!!errorToast && (
-            <View style={styles.errorToast} pointerEvents="none">
-              <Text style={styles.errorToastText}>{errorToast}</Text>
-            </View>
-          )}
-        </View>
-      </TouchableWithoutFeedback>
+            {!!errorToast && (
+              <View style={styles.errorToast} pointerEvents="none">
+                <Text style={styles.errorToastText}>{errorToast}</Text>
+              </View>
+            )}
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
