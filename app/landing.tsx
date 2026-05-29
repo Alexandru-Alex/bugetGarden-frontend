@@ -16,6 +16,7 @@ import {
   Dimensions,
   Image,
   KeyboardAvoidingView,
+  Linking,
   Modal,
   Platform,
   Pressable,
@@ -631,6 +632,20 @@ export default function LandingScreen() {
               <Animated.View style={[styles.pulseRing, pulseRingStyle]} />
               <Text style={styles.ctaText}>Get Started 🌿</Text>
             </Pressable>
+            {Platform.OS === "web" && (
+              <Pressable
+                style={({ pressed }) => [styles.playStoreBadge, pressed && { opacity: 0.7 }]}
+                onPress={() => Linking.openURL("https://play.google.com/store/apps/details?id=com.g3d0manz00.bugetGardenfront")}
+              >
+                <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+                  <SvgPath d="M3.18 1.07 13.41 12 3.18 22.93A2 2 0 0 1 2 21V3a2 2 0 0 1 1.18-1.93Z" fill="#EA4335" />
+                  <SvgPath d="m13.41 12 3.54 3.54-9.77 5.64a2 2 0 0 1-2-.29L13.41 12Z" fill="#FBBC05" />
+                  <SvgPath d="m20.28 9.17 1.44.83a2 2 0 0 1 0 3.46l-1.44.83-3.54-2.29 3.54-2.83Z" fill="#4285F4" />
+                  <SvgPath d="M5.18 2.93a2 2 0 0 1 2-.29l9.77 5.64-3.54 3.54L5.18 2.93Z" fill="#34A853" />
+                </Svg>
+                <Text style={styles.playStoreText}>Get it on Google Play</Text>
+              </Pressable>
+            )}
           </Animated.View>
         </Animated.View>
       </SafeAreaView>

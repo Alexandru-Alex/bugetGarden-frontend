@@ -88,6 +88,24 @@ export const styles = StyleSheet.create({
     fontFamily: "Nunito_800ExtraBold",
     letterSpacing: 0.6,
   },
+  playStoreBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 14,
+    backgroundColor: "rgba(0,0,0,0.35)",
+    paddingVertical: 9,
+    paddingHorizontal: 18,
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
+  },
+  playStoreText: {
+    color: "#ffffff",
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
+    letterSpacing: 0.3,
+  },
 });
 
 export const auth = StyleSheet.create({
