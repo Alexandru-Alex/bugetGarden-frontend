@@ -106,12 +106,15 @@ function StickyNav({ onOpenApp }: { onOpenApp: () => void }) {
   );
 }
 
-function StoreBadge({ label, store }: { label: string; store: string }) {
+function StoreBadge({ label, store, onPress }: { label: string; store: string; onPress?: () => void }) {
   return (
-    <View style={styles.storeBadge}>
+    <Pressable
+      style={({ pressed }) => [styles.storeBadge, pressed && { opacity: 0.75 }]}
+      onPress={onPress}
+    >
       <Text style={styles.storeBadgeSmall}>{label}</Text>
       <Text style={styles.storeBadgeBig}>{store}</Text>
-    </View>
+    </Pressable>
   );
 }
 
@@ -201,7 +204,7 @@ function HeroSection({ contentStyle }: {
             Money Garden is an app that helps you build healthy money habits and turn financial discipline into something you can see — a beautiful, growing garden.
           </Text>
           <View style={styles.storeBadgesRow}>
-            <StoreBadge label="GET IT ON" store="Google Play" />
+            <StoreBadge label="GET IT ON" store="Google Play" onPress={() => Linking.openURL("https://play.google.com/store/apps/details?id=com.g3d0manz00.bugetGardenfront")} />
             <StoreBadge label="Download on the" store="App Store" />
           </View>
         </View>
