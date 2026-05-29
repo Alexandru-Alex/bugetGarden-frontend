@@ -79,6 +79,15 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           androidMode: "default",
         },
       ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          androidAppId: "ca-app-pub-6487095991586093~4686511193",
+          // iOS not in use yet — Google's public sample app ID keeps iOS builds valid.
+          // Replace with a real iOS App ID when an iOS AdMob app exists.
+          iosAppId: "ca-app-pub-3940256099942544~1458002511",
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,

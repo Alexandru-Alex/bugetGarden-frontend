@@ -18,6 +18,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
 import { registerEmailNotVerifiedHandler } from "@/lib/api";
 import { configureRevenueCat } from "@/lib/purchases";
+import { initAds } from "@/lib/ads";
 import { PurchasesProvider } from "@/context/purchases-context";
 
 const isWeb = Platform.OS === "web";
@@ -52,6 +53,11 @@ export default function RootLayout() {
   useEffect(() => {
     registerEmailNotVerifiedHandler(() => router.replace("/pending-verification"));
   }, [router]);
+
+  // Initialize AdMob (consent + SDK + preload). No-op on web.
+  useEffect(() => {
+    void initAds();
+  }, []);
 
   const [fontsLoaded] = useFonts({
     Nunito_700Bold:      { uri: Nunito_700Bold,      display: FontDisplay.SWAP },

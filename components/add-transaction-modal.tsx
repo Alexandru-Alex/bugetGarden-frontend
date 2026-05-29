@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import { showInterstitial } from "@/lib/ads";
 import { formatDateISO } from "@/lib/date";
 import { CategoryDto } from "@/lib/types";
 import { useQuestProgress } from "@/hooks/use-quest-progress";
@@ -43,6 +44,9 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol, initi
   const [showSuccess, setShowSuccess] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [dateKey, setDateKey] = useState(0);
+  // Track whether at least one entry was saved this session so we can show an
+  // interstitial when the modal closes (not mid-flow, to avoid covering the toast).
+  const savedThisSession = useRef(false);
 
   const { data: allCategories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["categories"],
@@ -67,6 +71,7 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol, initi
       setSelectedCategory(null);
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 2500);
+      savedThisSession.current = true;
       void checkProgress();
     },
   });
@@ -84,6 +89,7 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol, initi
       setShowSuccess(false);
       setSelectedDate(new Date());
       setDateKey((k) => k + 1);
+      savedThisSession.current = false;
       cardY.setValue(60);
       cardOpacity.setValue(0);
       Animated.parallel([
@@ -95,7 +101,15 @@ export function AddTransactionModal({ visible, onClose, onAddMore, symbol, initi
         Animated.timing(cardY, { toValue: 60, duration: 180, useNativeDriver: true }),
         Animated.timing(cardOpacity, { toValue: 0, duration: 180, useNativeDriver: true }),
       ]).start(({ finished }) => {
-        if (finished) setModalVisible(false);
+        if (finished) {
+          setModalVisible(false);
+          // Show an interstitial after a successful save, once the modal is gone.
+          // Internally frequency-capped (5 min) and no-op on web.
+          if (savedThisSession.current) {
+            savedThisSession.current = false;
+            showInterstitial();
+          }
+        }
       });
     }
   }, [visible]);
