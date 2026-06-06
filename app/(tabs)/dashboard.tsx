@@ -397,17 +397,19 @@ export default function DashboardScreen() {
             onAdd={() => setShowAddModal(true)}
             onPressSegment={handleSegmentPress}
           />
+
+          {/* ── Insight card ── */}
+          <InsightCard
+            expenseItems={expenseSummaryItems ?? []}
+            incomeItems={incomeSummaryItems ?? []}
+            prevExpenseItems={prevExpenseSummaryItems}
+            prevIncomeItems={prevIncomeSummaryItems}
+            symbol={symbol}
+            decimals={decimals}
+            period={activePeriod}
+            isLoading={expenseSummaryLoading || incomeSummaryLoading || prevExpenseLoading || prevIncomeLoading}
+          />
         </View>
-        <InsightCard
-          expenseItems={expenseSummaryItems ?? []}
-          incomeItems={incomeSummaryItems ?? []}
-          prevExpenseItems={prevExpenseSummaryItems}
-          prevIncomeItems={prevIncomeSummaryItems}
-          symbol={symbol}
-          decimals={decimals}
-          period={activePeriod}
-          isLoading={expenseSummaryLoading || incomeSummaryLoading || prevExpenseLoading || prevIncomeLoading}
-        />
       </ScrollView>
       <AddTransactionModal
         visible={showAddModal}

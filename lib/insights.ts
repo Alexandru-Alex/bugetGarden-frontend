@@ -93,7 +93,7 @@ export function computeInsights(
     if (best) {
       insights.push({
         key: "biggest_drop",
-        text: `📉 You spent ${best.pct}% less on ${best.name} vs last ${label}`,
+        text: `You spent ${best.pct}% less on ${best.name} vs last ${label}`,
       });
     }
   }
@@ -110,7 +110,7 @@ export function computeInsights(
     if (best) {
       insights.push({
         key: "biggest_spike",
-        text: `📈 Spending on ${best.name} is up ${best.pct}% vs last ${label}`,
+        text: `Spending on ${best.name} is up ${best.pct}% vs last ${label}`,
       });
     }
   }
@@ -121,7 +121,7 @@ export function computeInsights(
     const [name, amount] = sorted[0];
     insights.push({
       key: "top_category",
-      text: `🏆 Biggest expense: ${symbol}${formatAmount(amount, decimals)} on ${name}`,
+      text: `Biggest expense: ${symbol}${formatAmount(amount, decimals)} on ${name}`,
     });
   }
 
@@ -133,7 +133,7 @@ export function computeInsights(
     if (pct > 0) {
       insights.push({
         key: "savings_rate",
-        text: `💰 You saved ${pct}% of your income this ${label}`,
+        text: `You saved ${pct}% of your income this ${label}`,
       });
     }
   }
@@ -144,7 +144,7 @@ export function computeInsights(
     const pct = Math.round((totalIncome / totalExpense) * 100);
     insights.push({
       key: "income_cover",
-      text: `⚠️ Your income only covers ${pct}% of your expenses`,
+      text: `Your income only covers ${pct}% of your expenses`,
     });
   }
 
@@ -155,7 +155,7 @@ export function computeInsights(
       if (!prevExpMap.has(name)) {
         insights.push({
           key: "new_category",
-          text: `✨ First time spending on ${name} this ${label}`,
+          text: `First time spending on ${name} this ${label}`,
         });
         break;
       }
