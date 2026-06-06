@@ -140,7 +140,7 @@ export function computeInsights(
   }
 
   // 6. First-time category (in current but not in prev)
-  if (hasPrev) {
+  if (prevExpense.length > 0) {
     for (const [name] of curExpMap) {
       if (!prevExpMap.has(name)) {
         insights.push({
