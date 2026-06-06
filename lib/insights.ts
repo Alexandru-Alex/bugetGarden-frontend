@@ -4,8 +4,16 @@ import { FinancialSummaryItem } from "@/lib/types";
 
 export type InsightPeriod = "Day" | "Week" | "Month" | "Year" | "Period";
 
+export type InsightKey =
+  | "biggest_drop"
+  | "biggest_spike"
+  | "top_category"
+  | "savings_rate"
+  | "income_cover"
+  | "new_category";
+
 export interface Insight {
-  key: string;
+  key: InsightKey;
   text: string;
 }
 
@@ -78,7 +86,7 @@ export function computeInsights(
     let best: { name: string; pct: number } | null = null;
     for (const [name, cur] of curExpMap) {
       const prev = prevExpMap.get(name);
-      if (!prev || prev === 0) continue;
+      if (prev == null || prev <= 0) continue;
       const pct = Math.round(((prev - cur) / prev) * 100);
       if (pct >= 10 && (!best || pct > best.pct)) best = { name, pct };
     }
@@ -95,7 +103,7 @@ export function computeInsights(
     let best: { name: string; pct: number } | null = null;
     for (const [name, cur] of curExpMap) {
       const prev = prevExpMap.get(name);
-      if (!prev || prev === 0) continue;
+      if (prev == null || prev <= 0) continue;
       const pct = Math.round(((cur - prev) / prev) * 100);
       if (pct >= 10 && (!best || pct > best.pct)) best = { name, pct };
     }
@@ -130,16 +138,17 @@ export function computeInsights(
     }
   }
 
-  // 5. Income coverage
-  if (totalExpense > 0 && totalIncome > 0) {
+  // 5. Income coverage — only shown as a warning when expenses exceed income
+  if (totalExpense > 0 && totalIncome > 0 && totalExpense > totalIncome) {
     const pct = Math.round((totalIncome / totalExpense) * 100);
     insights.push({
       key: "income_cover",
-      text: `✅ Your income covers ${pct}% of your expenses`,
+      text: `⚠️ Your income only covers ${pct}% of your expenses`,
     });
   }
 
   // 6. First-time category (in current but not in prev)
+  // Guard on prevExpense specifically — hasPrev alone would incorrectly flag all categories as new when only income history exists
   if (prevExpense.length > 0) {
     for (const [name] of curExpMap) {
       if (!prevExpMap.has(name)) {
