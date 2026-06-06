@@ -6,7 +6,7 @@ import { api, getStoredToken } from "@/lib/api";
 import { currencySymbolFor, formatAmount } from "@/lib/currency";
 import { formatDateISO } from "@/lib/date";
 import { NavTransition } from "@/lib/nav-direction";
-import { CategoryDto } from "@/lib/types";
+import { CategoryDto, FinancialSummaryItem } from "@/lib/types";
 import { styles } from "@/styles/tabs/dashboard.styles";
 import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
@@ -19,12 +19,6 @@ import Svg, { Circle, G } from "react-native-svg";
 import { AccountDto, ACCOUNT_QUERY_KEY } from "@/lib/query-keys";
 export type { AccountDto };
 export { ACCOUNT_QUERY_KEY };
-
-interface FinancialSummaryItem {
-  name: string;
-  color: string;
-  total: string | number;
-}
 
 type Tab = "expenses" | "income";
 type Period = "Day" | "Week" | "Month" | "Year" | "Period";

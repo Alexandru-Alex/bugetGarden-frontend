@@ -36,3 +36,9 @@ export interface CategoryDto {
   color: string;
   system: boolean;
 }
+
+export interface FinancialSummaryItem {
+  name: string;
+  color: string;
+  total: string | number;
+}
