@@ -24,10 +24,10 @@ interface InsightTheme {
 }
 
 const INSIGHT_CONFIG: Record<InsightKey, InsightTheme> = {
-  biggest_drop:  { icon: "trending-down",        bg: "#E8F5E9", border: "#A5D6A7", iconColor: "#4CAF50" },
+  biggest_drop:  { icon: "trending-down",        bg: "#E8F4FD", border: "#90CAF9", iconColor: "#1565C0" },
   biggest_spike: { icon: "trending-up",           bg: "#FFF8E1", border: "#E8C050", iconColor: "#E8960A" },
-  top_category:  { icon: "trophy-outline",        bg: "#EDF6ED", border: "#79AE6F", iconColor: "#346739" },
-  savings_rate:  { icon: "leaf",                  bg: "#F0F7EF", border: "#9FCB98", iconColor: "#346739" },
+  top_category:  { icon: "trophy-outline",        bg: "#EDE7F6", border: "#B39DDB", iconColor: "#512DA8" },
+  savings_rate:  { icon: "leaf",                  bg: "#E0F7FA", border: "#80DEEA", iconColor: "#006064" },
   income_cover:  { icon: "alert-circle-outline",  bg: "#FFF0EF", border: "#E8A09A", iconColor: "#C0392B" },
   new_category:  { icon: "sprout",                bg: "#F5F2E8", border: "#C4B98A", iconColor: "#7A6640" },
 };
