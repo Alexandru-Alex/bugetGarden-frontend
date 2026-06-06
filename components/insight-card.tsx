@@ -2,7 +2,7 @@ import { computeInsights, InsightPeriod } from "@/lib/insights";
 import { FinancialSummaryItem } from "@/lib/types";
 import { styles } from "@/styles/tabs/insight-card.styles";
 import React, { useEffect, useMemo, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import Animated, {
   runOnJS,
   useAnimatedStyle,
