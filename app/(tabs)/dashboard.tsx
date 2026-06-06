@@ -228,7 +228,7 @@ export default function DashboardScreen() {
   });
 
   const { data: prevExpenseSummaryItems = [], isLoading: prevExpenseLoading, refetch: refetchPrevExpenseSummary } = useQuery({
-    queryKey: ["summary", "EXPENSE", "prev", activePeriod, startDate, endDate],
+    queryKey: ["summary", "EXPENSE", "prev", activePeriod],
     queryFn: () =>
       api.get<FinancialSummaryItem[]>(
         `/financial-entries/summary?type=EXPENSE&start=${prevPeriodRange!.start}&end=${prevPeriodRange!.end}`,
@@ -238,7 +238,7 @@ export default function DashboardScreen() {
   });
 
   const { data: prevIncomeSummaryItems = [], isLoading: prevIncomeLoading, refetch: refetchPrevIncomeSummary } = useQuery({
-    queryKey: ["summary", "INCOME", "prev", activePeriod, startDate, endDate],
+    queryKey: ["summary", "INCOME", "prev", activePeriod],
     queryFn: () =>
       api.get<FinancialSummaryItem[]>(
         `/financial-entries/summary?type=INCOME&start=${prevPeriodRange!.start}&end=${prevPeriodRange!.end}`,
@@ -282,15 +282,13 @@ export default function DashboardScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([
-      refetchAccount(),
-      refetchExpenseSummary(),
-      refetchIncomeSummary(),
-      refetchPrevExpenseSummary(),
-      refetchPrevIncomeSummary(),
-    ]);
+    const base = [refetchAccount(), refetchExpenseSummary(), refetchIncomeSummary()];
+    const prev = prevPeriodRange !== null
+      ? [refetchPrevExpenseSummary(), refetchPrevIncomeSummary()]
+      : [];
+    await Promise.all([...base, ...prev]);
     setRefreshing(false);
-  }, [refetchAccount, refetchExpenseSummary, refetchIncomeSummary, refetchPrevExpenseSummary, refetchPrevIncomeSummary]);
+  }, [refetchAccount, refetchExpenseSummary, refetchIncomeSummary, refetchPrevExpenseSummary, refetchPrevIncomeSummary, prevPeriodRange]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
@@ -408,7 +406,7 @@ export default function DashboardScreen() {
           symbol={symbol}
           decimals={decimals}
           period={activePeriod}
-          isLoading={prevExpenseLoading || prevIncomeLoading}
+          isLoading={expenseSummaryLoading || incomeSummaryLoading || prevExpenseLoading || prevIncomeLoading}
         />
       </ScrollView>
       <AddTransactionModal
