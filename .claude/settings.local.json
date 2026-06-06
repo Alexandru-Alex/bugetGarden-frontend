@@ -75,7 +75,8 @@
       "Bash(Get-ChildItem -Path \"D:\\\\IdeaProjects\\\\bugetGarden-front\" -Directory)",
       "Bash(Select-Object Name)",
       "Bash(bash *)",
-      "Skill(superpowers:brainstorming)"
+      "Skill(superpowers:brainstorming)",
+      "Bash(dir \"D:\\\\IdeaProjects\\\\bugetGarden-front\")"
     ]
   }
 }

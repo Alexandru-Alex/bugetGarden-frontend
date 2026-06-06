@@ -1,0 +1,28 @@
+# Normalize line endings: store everything as LF in the repo,
+# let each OS check out its native form. Prevents the "everything
+# shows as modified on Windows" CRLF noise.
+* text=auto eol=lf
+
+# Binary assets - never touch their bytes
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+*.svg   text eol=lf
+*.ttf   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+*.eot   binary
+*.mp3   binary
+*.mp4   binary
+*.wav   binary
+*.zip   binary
+*.jar   binary
+*.keystore binary
+
+# Windows-only scripts must keep CRLF or they break
+*.bat text eol=crlf
+*.cmd text eol=crlf
