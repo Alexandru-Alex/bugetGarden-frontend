@@ -5,10 +5,8 @@ export const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 420,
     marginTop: 20,
-    backgroundColor: "#F0F7EF",
     borderRadius: 16,
     borderWidth: 1.5,
-    borderColor: "#C8E0C5",
     paddingVertical: 22,
     paddingHorizontal: 20,
     alignItems: "center",
@@ -16,6 +14,10 @@ export const styles = StyleSheet.create({
   },
   cardPressed: {
     opacity: 0.85,
+  },
+  content: {
+    alignItems: "center",
+    gap: 10,
   },
   insightText: {
     fontSize: 15,
