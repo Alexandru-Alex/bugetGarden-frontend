@@ -138,7 +138,8 @@ export function computeInsights(
     }
   }
 
-  // 5. Income coverage — only shown as a warning when expenses exceed income
+  // 5. Income coverage — warning-only: skipped when income >= expenses to avoid repeating the same
+  // positive signal as savings_rate (#4). Only surfaced when overspending, where it is actionable.
   if (totalExpense > 0 && totalIncome > 0 && totalExpense > totalIncome) {
     const pct = Math.round((totalIncome / totalExpense) * 100);
     insights.push({
