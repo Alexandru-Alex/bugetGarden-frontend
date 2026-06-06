@@ -76,8 +76,6 @@ export function InsightCard({
   const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
   const skeletonStyle = useAnimatedStyle(() => ({ opacity: skeletonOpacity.value }));
 
-  if (!isLoading && insights.length === 0) return null;
-
   const handleTap = useCallback(() => {
     if (insights.length <= 1) return;
     const nextIndex = (activeIndex + 1) % insights.length;
@@ -88,6 +86,8 @@ export function InsightCard({
       }
     });
   }, [insights.length, activeIndex, opacity]);
+
+  if (!isLoading && insights.length === 0) return null;
 
   return (
     <Pressable
