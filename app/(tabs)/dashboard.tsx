@@ -1,10 +1,12 @@
 import { AddTransactionModal } from "@/components/add-transaction-modal";
 import { DatePickerField } from "@/components/date-picker-field";
+import { InsightCard } from "@/components/insight-card";
 import { NavMenu } from "@/components/nav-menu";
 import { PageTransition } from "@/components/page-transition";
 import { api, getStoredToken } from "@/lib/api";
 import { currencySymbolFor, formatAmount } from "@/lib/currency";
 import { formatDateISO } from "@/lib/date";
+import { getPreviousPeriodRange } from "@/lib/insights";
 import { NavTransition } from "@/lib/nav-direction";
 import { CategoryDto, FinancialSummaryItem } from "@/lib/types";
 import { styles } from "@/styles/tabs/dashboard.styles";
@@ -191,6 +193,11 @@ export default function DashboardScreen() {
   const startDate = useMemo(() => startDateObj ? formatDateISO(startDateObj) : "", [startDateObj]);
   const endDate = useMemo(() => endDateObj ? formatDateISO(endDateObj) : "", [endDateObj]);
 
+  const prevPeriodRange = useMemo(
+    () => getPreviousPeriodRange(activePeriod),
+    [activePeriod],
+  );
+
   const expenseSummaryPath = buildSummaryPath("EXPENSE", activePeriod, startDate, endDate);
   const incomeSummaryPath = buildSummaryPath("INCOME", activePeriod, startDate, endDate);
 
@@ -217,6 +224,26 @@ export default function DashboardScreen() {
     queryKey: ["summary", "INCOME", activePeriod, startDate, endDate],
     queryFn: () => api.get<FinancialSummaryItem[]>(incomeSummaryPath!),
     enabled: !!token && incomeSummaryPath !== null,
+    staleTime: 30_000,
+  });
+
+  const { data: prevExpenseSummaryItems = [], isLoading: prevExpenseLoading, refetch: refetchPrevExpenseSummary } = useQuery({
+    queryKey: ["summary", "EXPENSE", "prev", activePeriod, startDate, endDate],
+    queryFn: () =>
+      api.get<FinancialSummaryItem[]>(
+        `/financial-entries/summary?type=EXPENSE&start=${prevPeriodRange!.start}&end=${prevPeriodRange!.end}`,
+      ),
+    enabled: !!token && prevPeriodRange !== null,
+    staleTime: 30_000,
+  });
+
+  const { data: prevIncomeSummaryItems = [], isLoading: prevIncomeLoading, refetch: refetchPrevIncomeSummary } = useQuery({
+    queryKey: ["summary", "INCOME", "prev", activePeriod, startDate, endDate],
+    queryFn: () =>
+      api.get<FinancialSummaryItem[]>(
+        `/financial-entries/summary?type=INCOME&start=${prevPeriodRange!.start}&end=${prevPeriodRange!.end}`,
+      ),
+    enabled: !!token && prevPeriodRange !== null,
     staleTime: 30_000,
   });
 
@@ -255,9 +282,15 @@ export default function DashboardScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([refetchAccount(), refetchExpenseSummary(), refetchIncomeSummary()]);
+    await Promise.all([
+      refetchAccount(),
+      refetchExpenseSummary(),
+      refetchIncomeSummary(),
+      refetchPrevExpenseSummary(),
+      refetchPrevIncomeSummary(),
+    ]);
     setRefreshing(false);
-  }, [refetchAccount, refetchExpenseSummary, refetchIncomeSummary]);
+  }, [refetchAccount, refetchExpenseSummary, refetchIncomeSummary, refetchPrevExpenseSummary, refetchPrevIncomeSummary]);
 
   if (token === undefined) return null;
   if (!token) return <Redirect href="/landing" />;
@@ -367,6 +400,16 @@ export default function DashboardScreen() {
             onPressSegment={handleSegmentPress}
           />
         </View>
+        <InsightCard
+          expenseItems={expenseSummaryItems ?? []}
+          incomeItems={incomeSummaryItems ?? []}
+          prevExpenseItems={prevExpenseSummaryItems}
+          prevIncomeItems={prevIncomeSummaryItems}
+          symbol={symbol}
+          decimals={decimals}
+          period={activePeriod}
+          isLoading={prevExpenseLoading || prevIncomeLoading}
+        />
       </ScrollView>
       <AddTransactionModal
         visible={showAddModal}
