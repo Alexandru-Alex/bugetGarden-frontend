@@ -1,9 +1,10 @@
 import { computeInsights, InsightPeriod } from "@/lib/insights";
 import { FinancialSummaryItem } from "@/lib/types";
 import { styles } from "@/styles/tabs/insight-card.styles";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
 import Animated, {
+  cancelAnimation,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
@@ -57,7 +58,11 @@ export function InsightCard({
   }, [period, expenseItems, incomeItems]);
 
   useEffect(() => {
-    if (!isLoading) return;
+    if (!isLoading) {
+      cancelAnimation(skeletonOpacity);
+      skeletonOpacity.value = 0.4;
+      return;
+    }
     skeletonOpacity.value = withRepeat(
       withSequence(
         withTiming(1, { duration: 700 }),
@@ -66,14 +71,14 @@ export function InsightCard({
       -1,
       false,
     );
-  }, [isLoading]);
+  }, [isLoading, skeletonOpacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
   const skeletonStyle = useAnimatedStyle(() => ({ opacity: skeletonOpacity.value }));
 
   if (!isLoading && insights.length === 0) return null;
 
-  function handleTap() {
+  const handleTap = useCallback(() => {
     if (insights.length <= 1) return;
     const nextIndex = (activeIndex + 1) % insights.length;
     opacity.value = withTiming(0, { duration: 150 }, (finished) => {
@@ -82,10 +87,13 @@ export function InsightCard({
         opacity.value = withTiming(1, { duration: 200 });
       }
     });
-  }
+  }, [insights.length, activeIndex, opacity]);
 
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={insights[activeIndex]?.text ?? "Financial insight"}
+      accessibilityHint={insights.length > 1 ? "Tap to see next insight" : undefined}
       style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       onPress={handleTap}
     >
@@ -99,9 +107,9 @@ export function InsightCard({
 
       {!isLoading && insights.length > 1 && (
         <View style={styles.dots}>
-          {insights.map((_, i) => (
+          {insights.map((insight, i) => (
             <View
-              key={i}
+              key={insight.key}
               style={[styles.dot, i === activeIndex && styles.dotActive]}
             />
           ))}
